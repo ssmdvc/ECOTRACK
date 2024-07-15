@@ -23,8 +23,8 @@ function LoginForm() {
             
         } catch (error) {
             console.log(error);
-            toast.success(error.message, {
-                position: "bottom-center",
+            toast.error(error.message, {
+                position: "top-center",
             });
         }
      }
