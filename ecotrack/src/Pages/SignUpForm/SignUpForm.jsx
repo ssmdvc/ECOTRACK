@@ -5,7 +5,8 @@ import { auth } from '../firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { db } from "../firebase";
 import { setDoc, doc } from 'firebase/firestore';
-import { toast } from "react-toastify"
+import { toast } from "react-toastify";
+
 
 
 function SignUpForm() {
@@ -41,8 +42,9 @@ function SignUpForm() {
 
 
   return (
-    <div className='signup-container'>
-      <form className='signupform' onSubmit={handleSubmit}>
+    <div className='signup-page'>
+         <div className='signup-container'>
+    <form className='signupform' onSubmit={handleSubmit}>
         <h1>Welcome to EcoTrack</h1>
         <p>Please Sign Up</p>
         <div className='input-box'>
@@ -74,6 +76,7 @@ function SignUpForm() {
         <p1>Already registered? <Link to="/login">Login Here</Link></p1>
         </div>
       </form>
+    </div>
     </div>
   );
 }

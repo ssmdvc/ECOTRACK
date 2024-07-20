@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
+.sidebar {
+    background-color: #FFFFFF;
+    flex: 1;
+    border-right: 0.5px solid rgb(186, 32, 32);
+    min-height: 100vh;
+    
+    .top {
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: rgba(43, 54, 116, 1);
+        }
+    }
+}
+
+.center {
+    padding-left: 10px;
+    
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+
+        .title {
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            padding: 5px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #ece8ff;
+            }
+
+            .icon {
+                font-size: 18px;
+            }
+
+            span{
+                font-size: 14px;
+                font-weight: 600;
+                font-family: "Lato", sans-serif;
+                margin-left: 10px;
+            }
+        }
+    }
+
+    .bottom {
+            display: flex;
+            align-self: center;
+            margin: 10px;
+
+            .colorOption{
+                width: 20px;
+                height: 20px;
+                border-radius: 5px;
+                border: 1px solid grey;
+                cursor: pointer;
+                margin: 5px;
+                
+
+                &:nth-child(1){
+                    background-color: whitesmoke;
+                }
+                &:nth-child(2){
+                    background-color: #333;
+                }
+            }
+    }
+}

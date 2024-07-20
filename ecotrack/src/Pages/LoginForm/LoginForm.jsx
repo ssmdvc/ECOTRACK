@@ -28,8 +28,11 @@ function LoginForm() {
             });
         }
      }
+
+
   return (
-    <div className='signup-container'>
+    <div className='login-page'>
+      <div className='signup-container'>
       <form className='signupform' onSubmit={handleSubmit}>
         <h1>Welcome to Ecotrack</h1>
         <p>Please login with your Username and Password</p>
@@ -48,6 +51,7 @@ function LoginForm() {
         <p1>Don't have account? <Link to="/signup">Register Here</Link></p1>
         </div>
       </form>
+    </div>
     </div>
   );
 }
