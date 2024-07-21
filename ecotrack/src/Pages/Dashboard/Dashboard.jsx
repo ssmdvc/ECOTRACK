@@ -1,12 +1,29 @@
 import React from 'react';
 import "./Dashboard.scss"
 import Sidebar from '../../Components/Sidebar/Sidebar';
+import Navbar from '../../Components/Navbar/Navbar';
+import Widgets from '../../Components/Widgets/Widgets';
+import Featured from '../../Components/Featured/Featured';
+import Chart from '../../Components/Chart/Chart';
+
 
 const Dashboard = () => {
   return (
     <div className='dashboard'>
       <Sidebar />
-      <div className='dashboardContainer'>container</div>
+      <div className='dashboardContainer'>
+        <Navbar />
+        <div className='widgets'>
+          <Widgets type="user"/>
+          <Widgets type="places" />
+          <Widgets type="garbage-collected" />
+          <Widgets type="admin" />
+        </div>
+        <div className="charts">
+          <Featured />
+          <Chart />
+        </div>
+      </div>
     </div>
   )
 }

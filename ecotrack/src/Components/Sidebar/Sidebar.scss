@@ -3,7 +3,7 @@
 .sidebar {
     background-color: #FFFFFF;
     flex: 1;
-    border-right: 0.5px solid rgb(186, 32, 32);
+    border-right: 0.5px solid rgba(255, 255, 255, 1);
     min-height: 100vh;
     
     .top {
@@ -28,8 +28,14 @@
         margin: 0;
         padding: 0;
 
+
+
+        .title-1 {
+            margin-top: 50px;
+        }
+
         .title {
-            margin-top: 10px;
+            margin-top: 15px;
             margin-bottom: 5px;
         }
 
