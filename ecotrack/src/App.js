@@ -19,10 +19,10 @@ function App() {
       <Route exact path="/signup" element={<SignUpForm />}/>
       <Route path="/login" element={<LoginForm />}/>
       <Route path="/dashboard" element={<Dashboard />}/>
-      <Route path="users">
-        <Route index element={<List/>}/>
-        <Route path=":userId" element={<SinglePage/>}/>
-        <Route path="new" element={<NewPage/>}/>
+      <Route path="user">
+        <Route index element={<List />}/>
+        <Route path=":userId" element={<SinglePage />}/>
+        <Route path="new" element={<NewPage />}/>
       </Route>
       <Route path="products">
         <Route index element={<List/>}/>
