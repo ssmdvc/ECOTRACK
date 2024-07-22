@@ -43,7 +43,7 @@ const Navbar = () => {
                      className="avatar"
                      /> 
                     <div className="item-admin"></div>
-                    <h5>Administartion</h5>
+                    <h5>Administration</h5>
                     </div>
                 </div>
             </div>
