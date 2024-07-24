@@ -7,6 +7,7 @@ import AnalyticsIcon from '@mui/icons-material/Analytics';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import LogoutIcon from '@mui/icons-material/Logout';
+import {Link} from "react-router-dom"
 
 
 
@@ -14,25 +15,33 @@ const Sidebar = () => {
     return (
         <div className="sidebar">
             <div className="top">
+                <Link to="/dashboard" style={{textDecoration:"none"}}>
                 <span className="logo">EcoTrack</span>
+                </Link>
             </div>
             <div className="center">
                 <ul>
                     <p className="title-1"></p>
+                    <Link to="/dashboard" style={{textDecoration:"none"}}>
                     <li>
                         <SpaceDashboardIcon className="icon" />
                         <span>Dashboard</span>
                     </li>
+                    </Link>
                     <p className="title"></p>
+                    <Link to="/user" style={{textDecoration:"none"}}>
                     <li>
                         <PeopleOutlineIcon className="icon" />
                         <span>User</span>
                     </li>
+                    </Link>
                     <p className="title"></p>
+                    <Link to="/route" style={{textDecoration:"none"}}>
                     <li>
                         <LocationOnIcon className="icon" />
                         <span>Route</span>
                     </li>
+                    </Link>
                     <p className="title"></p>
                     <li>
                         <DateRangeIcon className="icon" />
@@ -59,7 +68,7 @@ const Sidebar = () => {
                         <span>Logout</span>
                     </li>
                 </ul>
-            </div>
+            </div> 
         </div>
     )
 }

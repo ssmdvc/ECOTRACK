@@ -10,6 +10,7 @@ import Dashboard from "./Pages/Dashboard/Dashboard";
 import List from './Pages/List/List';
 import SinglePage from './Pages/SinglePage/SinglePage';
 import NewPage from './Pages/NewPage/NewPage';
+import { userInputs } from './formSource';
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
       <Route path="user">
         <Route index element={<List />}/>
         <Route path=":userId" element={<SinglePage />}/>
-        <Route path="new" element={<NewPage />}/>
+        <Route path="new" element={<NewPage inputs = {userInputs} title="Add New User" />}/>
       </Route>
       <Route path="products">
         <Route index element={<List/>}/>
