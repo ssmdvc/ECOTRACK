@@ -1,0 +1,78 @@
+.single{
+    display: flex;
+    width: 100%;
+    .singleContainer{
+        flex: 6;
+
+        .top{
+            padding: 20px;
+            display: flex;
+            gap: 20px;
+
+            .left{
+                flex: 1;
+                -webkit-box-shadow: -2px 7px 18px -8px #000000; 
+                box-shadow: -2px 7px 18px -8px #000000;
+                padding: 20px;
+                position: relative;
+
+                .editButton{
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    padding: 5px;
+                    font-size: 12px;
+                    color: #7451f8;
+                    background-color: #7551f818;
+                    cursor: pointer;
+                    border-radius: 0px 0px 0px 5px;
+                }
+
+                .item{
+                    display: flex;
+                    gap: 20px;
+
+                    .details{
+                        .itemTitle{
+                            margin-bottom: 10px;
+                            color: #555;
+                        }
+
+                        .detailItem{
+                            margin-bottom: 10px;
+                            font-size: 16px;
+
+                            .itemKey{
+                                font-weight: bold;
+                                color: gray;
+                                margin-right: 7px;
+                            }
+
+                            .itemValue{
+                                font-weight: 300;
+
+                            }
+                        }
+                    }
+                }
+            }
+
+            .right{
+                flex: 2;
+            }
+        }
+    }
+
+    .bottom{
+        -webkit-box-shadow: -2px 7px 18px -8px #000000; 
+        box-shadow: -2px 7px 18px -8px #000000;
+        padding: 20px;
+        margin: 10px 20px;
+    }
+
+    .title{
+        font-size: 16px;
+        color: #404040;
+        margin-bottom: 20px;
+    }
+}
