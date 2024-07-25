@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 
 const Datatable = () => {
-    const actionColumn = [{ field: "action", headerName: "Action", width: 200, renderCell:()=>{
+    const actionColumn = [{ field: "action", headerName: "Action", width: 150, renderCell:()=>{
       return(
         <div className='cellAction'>
           <Link to="/user/test" style={{textDecoration:"none"}}>
@@ -23,12 +23,10 @@ const Datatable = () => {
   return (
     <div className='datatable' div style={{ height: 600, width: '100%' }}>
       <div className="datatableTitle">
-        Add New User
-        <Link to="/user/new" style={{textDecoration:"none"}}>
-        Add New
-        </Link>
+        User Management
+        <Link to="/user/new" style={{textDecoration:"none"}}className='link'>Add New</Link>
       </div>
-       <DataGrid
+       <DataGrid className='datagrid'
         rows={userRows}
         columns={userColumns.concat(actionColumn)}
         initialState={{

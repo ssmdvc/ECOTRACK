@@ -1,8 +1,16 @@
 //temporary data (later be fetched)
 
 export const userColumns = [
-    { field: 'id', headerName: 'ID', width: 100 },
-
+    { 
+        field: 'id', 
+        headerName: 'ID', 
+        width: 100 
+    },
+    { 
+        field: 'user', 
+        headerName: 'User', 
+        width: 100 
+    },
     {
         field:"email", 
         headerName:"Email", 

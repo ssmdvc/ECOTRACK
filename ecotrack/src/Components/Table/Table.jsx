@@ -8,6 +8,8 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
 
+
+
 const List = () => {
     const rows = [
         {
@@ -79,22 +81,20 @@ const List = () => {
     <TableContainer component={Paper} className='table'>
     <Table sx={{ minWidth: 650 }} aria-label="simple table">
       <TableHead>
-        <TableRow>
-          <TableCell className="tableCell">Tracking ID </TableCell>
-          <TableCell className="tableCell">User</TableCell>
-          <TableCell className="tableCell">Email Address</TableCell>
-          <TableCell className="tableCell">Date</TableCell>
-          <TableCell className="tableCell">Location</TableCell>
-          <TableCell className="tableCell">Status</TableCell>
+        <TableRow className='tableRow'>
+          <TableCell className="tableCell" style={{color:'white'}}>Tracking ID</TableCell>
+          <TableCell className="tableCell" style={{color:'white'}}>User</TableCell>
+          <TableCell className="tableCell" style={{color:'white'}}>Email Address</TableCell>
+          <TableCell className="tableCell" style={{color:'white'}}>Date</TableCell>
+          <TableCell className="tableCell" style={{color:'white'}}>Location</TableCell>
+          <TableCell className="tableCell" style={{color:'white'}}>Status</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
         {rows.map((row) => (
           <TableRow
             key={row.id}>
-            <TableCell>
-              {row.id}
-            </TableCell>
+            <TableCell className='tableCell'>{row.id}</TableCell>
             <TableCell className="tableCell">{row.user}</TableCell>
             <TableCell className="tableCell">{row.email}</TableCell>
             <TableCell className="tableCell">{row.date}</TableCell>

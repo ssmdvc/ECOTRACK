@@ -11,9 +11,11 @@ import List from './Pages/List/List';
 import SinglePage from './Pages/SinglePage/SinglePage';
 import NewPage from './Pages/NewPage/NewPage';
 import { userInputs } from './formSource';
+import "./style/dark.scss"
 
 function App() {
   return (
+    <div className='app dark'>
     <BrowserRouter>
     <Routes>
       <Route exact path="/" element={<LoginForm />}/>
@@ -33,7 +35,7 @@ function App() {
     </Routes>
     <ToastContainer />
     </BrowserRouter>
-   
+    </div>
 
   );
 }

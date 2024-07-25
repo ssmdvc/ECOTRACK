@@ -34,7 +34,7 @@ function LoginForm() {
     <div className='login-page'>
       <div className='signup-container'>
       <form className='signupform' onSubmit={handleSubmit}>
-        <h1>Welcome to Ecotrack</h1>
+        <h1>Welcome to EcoTrack</h1>
         <p>Please login with your Username and Password</p>
         <div className='input-box'>
         <label htmlFor="email">
@@ -48,7 +48,7 @@ function LoginForm() {
         </div>
         <button type="submit">Login</button> <br />
         <div className='register-link'>
-        <p1>Don't have account? <Link to="/signup">Register Here</Link></p1>
+        <p1>Don't have account? <Link to="/signup" className='here-link'>Register Here</Link></p1>
         </div>
       </form>
     </div>

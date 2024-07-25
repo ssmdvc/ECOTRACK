@@ -11,32 +11,33 @@ import {Link} from "react-router-dom"
 
 
 
+
 const Sidebar = () => {
     return (
         <div className="sidebar">
             <div className="top">
-                <Link to="/dashboard" style={{textDecoration:"none"}}>
+                <Link to="/dashboard" className="custom-link" style={{textDecoration:"none", color:"black"}}>
                 <span className="logo">EcoTrack</span>
                 </Link>
             </div>
             <div className="center">
                 <ul>
                     <p className="title-1"></p>
-                    <Link to="/dashboard" style={{textDecoration:"none"}}>
+                    <Link to="/dashboard" className="custom-link" style={{textDecoration:"none"}}>
                     <li>
                         <SpaceDashboardIcon className="icon" />
                         <span>Dashboard</span>
                     </li>
                     </Link>
                     <p className="title"></p>
-                    <Link to="/user" style={{textDecoration:"none"}}>
+                    <Link to="/user" className="custom-link" style={{textDecoration:"none"}}>
                     <li>
                         <PeopleOutlineIcon className="icon" />
                         <span>User</span>
                     </li>
                     </Link>
                     <p className="title"></p>
-                    <Link to="/route" style={{textDecoration:"none"}}>
+                    <Link to="/route" className="custom-link" style={{textDecoration:"none"}}>
                     <li>
                         <LocationOnIcon className="icon" />
                         <span>Route</span>

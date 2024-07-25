@@ -2,7 +2,6 @@
     display: flex;
 
     .dashboardContainer {
-        background-color: rgba(239, 244, 251, 1);
         flex: 6;
 
         .widgets, .charts{
@@ -23,7 +22,7 @@
 
             .listTitle{
                 font-weight: 500;
-                color: gray;
+                color: rgba(43, 54, 116, 1);
                 margin-bottom: 15px;
             }
         }

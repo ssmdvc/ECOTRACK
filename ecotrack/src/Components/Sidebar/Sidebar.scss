@@ -5,7 +5,7 @@
     flex: 1;
     border-right: 0.5px solid rgba(255, 255, 255, 1);
     min-height: 100vh;
-    
+
     .top {
         height: 50px;
         display: flex;
@@ -14,7 +14,7 @@
 
         .logo {
             font-size: 20px;
-            font-weight: bold;
+            font-weight: bolder;
             color: rgba(43, 54, 116, 1);
         }
     }
@@ -39,12 +39,13 @@
             margin-bottom: 5px;
         }
 
+        
         li {
             display: flex;
             align-items: center;
             padding: 5px;
             cursor: pointer;
-
+            
             &:hover {
                 background-color: #ece8ff;
             }
@@ -59,6 +60,10 @@
                 font-family: "Lato", sans-serif;
                 margin-left: 10px;
             }
+
+            .custom-link{
+                color: black;
+            }
         }
     }
 
@@ -66,22 +71,5 @@
             display: flex;
             align-self: center;
             margin: 10px;
-
-            .colorOption{
-                width: 20px;
-                height: 20px;
-                border-radius: 5px;
-                border: 1px solid grey;
-                cursor: pointer;
-                margin: 5px;
-                
-
-                &:nth-child(1){
-                    background-color: whitesmoke;
-                }
-                &:nth-child(2){
-                    background-color: #333;
-                }
-            }
     }
 }

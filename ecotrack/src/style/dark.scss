@@ -1,0 +1,105 @@
+.app.dark{
+    background-color: rgba(56, 71, 93, 1);
+    color: rgb(156, 156, 156);
+
+    .login-page{
+        color: whitesmoke;
+        
+
+        input{
+            color: white;
+        }
+
+        .signup-container,
+        .signupform{
+            background-color: transparent;
+            
+
+            .input-box{
+                background-color: transparent;
+            }   
+            }
+
+            .here-link{
+                color: #bb54ff;
+            }
+        }
+    }
+
+    .signup-container{
+        color: white;
+        background-color: transparent;
+        
+        form p{
+            background-color: #154c79 ;
+        }
+
+        button{
+            background-color: #154c79;
+        }
+
+        .login-link{
+            color: #bb54ff;
+        }
+    }
+
+    .chartGrid{
+        stroke: rgba(228, 228, 288, 0.219);
+    }
+
+    .table{
+        background-color: #141414 ;
+
+        .tableCell{
+            color: gray;
+        }
+    }
+
+    .navbar{
+        color: #fff5ea;
+        border-color: #333;
+        
+        .search{
+            border-color: gray;
+        }
+    }
+
+    .sidebar{
+        background-color: rgba(31, 41, 55, 1) ;
+        border-color: #333;
+        color: #fff5ea;
+
+        .top{
+            .logo{
+                color: white;
+            }
+        }
+
+        ul{
+            li{
+                &:hover{
+                    background-color: #333;
+                }
+            }
+        }
+
+        .custom-link{
+            color: #fff5ea;
+        }
+    }
+
+    .datatable{
+        .datagrid{
+            color: gray;
+            border: none;
+            background-color: transparent;
+
+            .viewButton,.deleteButton{
+                color: gray;
+                border: none;
+            }
+        }
+    }
+
+
+
