@@ -82,12 +82,12 @@ const List = () => {
     <Table sx={{ minWidth: 650 }} aria-label="simple table">
       <TableHead>
         <TableRow className='tableRow'>
-          <TableCell className="tableCell" style={{color:'white'}}>Tracking ID</TableCell>
-          <TableCell className="tableCell" style={{color:'white'}}>User</TableCell>
-          <TableCell className="tableCell" style={{color:'white'}}>Email Address</TableCell>
-          <TableCell className="tableCell" style={{color:'white'}}>Date</TableCell>
-          <TableCell className="tableCell" style={{color:'white'}}>Location</TableCell>
-          <TableCell className="tableCell" style={{color:'white'}}>Status</TableCell>
+          <TableCell className="tableCell">Tracking ID</TableCell>
+          <TableCell className="tableCell" >User</TableCell>
+          <TableCell className="tableCell" >Email Address</TableCell>
+          <TableCell className="tableCell" >Date</TableCell>
+          <TableCell className="tableCell" >Location</TableCell>
+          <TableCell className="tableCell" >Status</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>

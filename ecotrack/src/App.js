@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
 import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
@@ -12,10 +12,13 @@ import SinglePage from './Pages/SinglePage/SinglePage';
 import NewPage from './Pages/NewPage/NewPage';
 import { userInputs } from './formSource';
 import "./style/dark.scss"
+import { DarkModeContext } from './Context/darkModeContext';
 
 function App() {
+
+  const {darkMode} = useContext(DarkModeContext)
   return (
-    <div className='app dark'>
+    <div className={ darkMode ? "app dark" : "app"}>
     <BrowserRouter>
     <Routes>
       <Route exact path="/" element={<LoginForm />}/>
@@ -27,9 +30,9 @@ function App() {
         <Route path=":userId" element={<SinglePage />}/>
         <Route path="new" element={<NewPage inputs = {userInputs} title="Add New User" />}/>
       </Route>
-      <Route path="products">
+      <Route path="routes">
         <Route index element={<List/>}/>
-        <Route path=":productId" element={<SinglePage/>}/>
+        <Route path="route" element={<SinglePage/>}/>
         <Route path="new" element={<NewPage/>}/>
       </Route>
     </Routes>

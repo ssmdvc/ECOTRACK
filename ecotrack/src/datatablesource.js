@@ -9,7 +9,7 @@ export const userColumns = [
     { 
         field: 'user', 
         headerName: 'User', 
-        width: 100 
+        width: 125 
     },
     {
         field:"email", 
@@ -20,7 +20,7 @@ export const userColumns = [
     {
         field:"date", 
         headerName:"Joined", 
-        width: 150,
+        width: 140,
     },
 
     {
@@ -32,7 +32,7 @@ export const userColumns = [
     {
         field:"status", 
         headerName:"Status", 
-        width: 150,
+        width: 140,
     }
     
 ]

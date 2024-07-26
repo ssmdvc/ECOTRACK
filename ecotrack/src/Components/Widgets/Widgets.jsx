@@ -20,11 +20,7 @@ const Widgets =  ({ type }) => {
                 title:"USERS",
                 isMoney: false,
                 link: "See all users",
-                icon: <PeopleOutlineIcon className='wid-icon' style={{
-                    color:'white',
-                    background:'rgba(43, 54, 116, 1)',
-                }} 
-                />,
+                icon: <PeopleOutlineIcon className='wid-icon'/>,
             }; 
             break;
             case "places":
@@ -67,7 +63,7 @@ const Widgets =  ({ type }) => {
             <div className="right">
                 <div className="percentage positive">
                     <KeyboardArrowUpOutlinedIcon />
-                    {diff} %
+                    {diff}%
                     </div>
                     {data.icon}
             </div>

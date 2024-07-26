@@ -1,7 +1,180 @@
 .app.dark{
-    background-color: rgba(56, 71, 93, 1);
+    background-color: #171616;
     color: rgb(156, 156, 156);
+    font-family: "Raleway", sans-serif;
 
+    //chart 
+    .chartGrid{
+        stroke: rgba(228, 228, 288, 0.215);
+    }
+
+    //table 
+    .table{
+        background-color: #171616;
+
+        .simple table{
+            color: #171616;
+        }
+
+        .tableCell{
+            color:rgb(186, 185, 185);
+        }
+    }
+
+    //Sidebar 
+    .sidebar{
+        background-color: rgba(30, 30, 30, 1) ;
+        border-color: #333;
+        color: rgba(174, 174, 174, 1);
+
+        .top{
+            .logo{
+                color: #1e8fffd6;
+            }
+        }
+
+        ul{
+            li{
+                &:hover{
+                    background-color: #333;
+                }
+            }
+        }
+
+        .custom-link{
+            color: rgba(174, 174, 174, 1);
+        }
+    }
+
+     //Navbar
+     .navbar{
+        color: #F9F6EE;
+        border-color: #333;
+        
+        .search{
+            border-color: gray;
+        }
+    }
+
+     //Datatable
+     .datatable{
+        .datatableTitle{
+            color: #F9F6EE;
+
+            .link{
+                background-color: #136bb4;
+                color: #F9F6EE;
+            }
+        }
+        
+        .datagrid{
+            color:rgb(186, 185, 185);
+            border: none;
+
+            .MuiDataGrid-columnHeader {
+                background-color: black;
+                color: rgb(213, 212, 212) ;
+                border: none;
+            }
+
+            .MuiTablePagination-root{
+                color: #F9F6EE;
+            }
+        }
+    }
+
+    //Widget
+    .widget{
+        background-color: #2D2D2D;
+
+        .left{
+
+            .title{
+                color: #FFFFFF;
+                font-weight: 200     ;
+            }
+
+            .counter{
+                color:  #FFFFFF;
+            }
+        }
+
+        .right{
+
+            .percentage{
+
+                &.positive{
+                    color: lightgreen;
+                }
+
+                &.negative{
+                    color: lightcoral;
+                }
+            }
+
+            .wid-icon{
+                background-color: #136bb4;
+            }
+        }
+    }
+
+    .new{
+        .newContainer{
+
+            .top{
+                color: #F9F6EE;
+            }
+            
+            .formInput{
+                label{
+                    color: #F9F6EE;
+                }
+            }
+
+             
+        }
+    }
+
+
+    .listContainer{
+
+        .listTitle{
+            color: #fff5ea;
+        }
+    }
+
+    .featured{
+        background-color: #2D2D2D;
+
+        .top{
+            .title{
+                color: #F9F6EE;
+            }
+        }
+
+        .bottom{
+            color: #F9F6EE;
+
+            .title{
+                color: #F9F6EE;
+            }
+
+            .desc{
+                color: #F9F6EE;
+            }
+
+            .summary{
+
+                .item{
+                    .itemTitle{
+                        color: #F9F6EE;
+                    }
+                } 
+            }
+        }
+    }
+
+///login page css
     .login-page{
         color: whitesmoke;
         
@@ -10,7 +183,7 @@
             color: white;
         }
 
-        .signup-container,
+        .signup-container, ///same with signup (i created it with same classname
         .signupform{
             background-color: transparent;
             
@@ -26,6 +199,7 @@
         }
     }
 
+/// signup form
     .signup-container{
         color: white;
         background-color: transparent;
@@ -43,63 +217,19 @@
         }
     }
 
-    .chartGrid{
-        stroke: rgba(228, 228, 288, 0.219);
-    }
+   
 
-    .table{
-        background-color: #141414 ;
 
-        .tableCell{
-            color: gray;
-        }
-    }
+   
+    
+    
 
-    .navbar{
-        color: #fff5ea;
-        border-color: #333;
-        
-        .search{
-            border-color: gray;
-        }
-    }
+    
 
-    .sidebar{
-        background-color: rgba(31, 41, 55, 1) ;
-        border-color: #333;
-        color: #fff5ea;
+    
 
-        .top{
-            .logo{
-                color: white;
-            }
-        }
+   
 
-        ul{
-            li{
-                &:hover{
-                    background-color: #333;
-                }
-            }
-        }
-
-        .custom-link{
-            color: #fff5ea;
-        }
-    }
-
-    .datatable{
-        .datagrid{
-            color: gray;
-            border: none;
-            background-color: transparent;
-
-            .viewButton,.deleteButton{
-                color: gray;
-                border: none;
-            }
-        }
-    }
 
 
 

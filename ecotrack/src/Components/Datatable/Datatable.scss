@@ -1,14 +1,33 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,500;1,500&display=swap');
 
 .datatable{
     height: 600px;
     padding: 20px;  
-    
-    .datagrid{
-        background-color: black;
+
+    .MuiSvgIcon-root {
+        color: gray;
     }
+
+    .MuiDataGrid-cell {
+        background-color: transparent;
+    }
+    
+    .MuiDataGrid-columnHeader {
+        color: black;
+    }
+
+    .MuiDataGrid-filler{
+        display: none;
+    }
+
+
         
     .datatableTitle{
+        font-family: "Raleway", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
         width: 100%;
         font-size: 24px;
         color: rgba(43, 54, 116, 1);

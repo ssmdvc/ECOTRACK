@@ -1,5 +1,7 @@
- .login-page {
-    font-family:'Poppins', sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap');
+
+.login-page {
+   font-family: "Raleway", sans-serif; 
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     display: flex;
