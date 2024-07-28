@@ -3,14 +3,22 @@ import { DataGrid } from '@mui/x-data-grid';
 import { userColumns, userRows} from "../../datatablesource"
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import { Box, useMediaQuery, useTheme } from '@mui/material';
 
 const Datatable = () => {
-  const [data, setData] = useState(userRows)
+  const [data, setData] = useState(userRows);
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const handleDelete = (id)=>{
     setData(data.filter(item=>item.id !== id))
   }
-  const actionColumn = [{ field: "action", headerName: "Action", width: 200 , renderCell:(params)=>{
+
+  const actionColumn = [{ 
+    field: "action", 
+    headerName: "Action", 
+    width: 200 , 
+    renderCell:(params)=>{
     return(
       <div className='cellAction'>
         <Link to="/user/test" style={{textDecoration:"none"}}>

@@ -23,7 +23,7 @@ const Widgets =  ({ type }) => {
                 icon: <PeopleOutlineIcon className='wid-icon'/>,
             }; 
             break;
-            case "places":
+        case "places":
             data={
                 title:"PLACES VISITED",
                 isMoney: false,
@@ -31,7 +31,7 @@ const Widgets =  ({ type }) => {
                 icon: <RoomOutlinedIcon className='wid-icon' />,
             }; 
             break;
-            case "garbage-collected":
+        case "garbage-collected":
             data={
                 title:"GARBAGE COLLECTED",
                 isMoney: false,
@@ -39,7 +39,7 @@ const Widgets =  ({ type }) => {
                 icon: <DeleteOutlinedIcon className='wid-icon' />,
             }; 
             break;
-            case "admin":
+        case "admin":
             data={
                 title:"ADMIN",
                 isMoney: false,
@@ -60,14 +60,6 @@ const Widgets =  ({ type }) => {
                 </span>
                 <span className="link">{data.link}</span>
             </div>
-            <div className="right">
-                <div className="percentage positive">
-                    <KeyboardArrowUpOutlinedIcon />
-                    {diff}%
-                    </div>
-                    {data.icon}
-            </div>
-            
         </div>
     )
 }

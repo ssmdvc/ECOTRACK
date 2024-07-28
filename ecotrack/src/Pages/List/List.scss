@@ -1,7 +1,41 @@
 .list{
     display: flex;
     width: 100%;
+    height: 100vh;
+
     .listContainer{
         flex: 6;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        box-sizing: border-box;
+
+        @media (max-width: 1024px) {
+            .list {
+              flex-direction: column; 
+            }
+        
+            .listContainer {
+              flex: 1; 
+              padding: 10px; 
+            }
+          }
+        
+          @media (max-width: 768px) {
+            .list { 
+              flex-direction: column;
+            }
+        
+            .listContainer {
+              flex: 1; 
+              padding: 5px; 
+            }
+          }
+        
+          @media (max-width: 480px) {
+            .listContainer {
+              padding: 0; 
+            }
+          }
+        }
     }
-}

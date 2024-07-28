@@ -2,11 +2,18 @@
     display: flex;
     justify-content: space-between;
     flex: 1;
-    padding: 10px;
+    padding: 20px;
+    border: 1px solid #ddd;
     -webkit-box-shadow: -2px 7px 18px -8px #000000; 
     box-shadow: -2px 7px 18px -8px #000000;
     border-radius: 10px;
     height: 100px;
+    transition: all 0.3s ease;
+   
+    @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 
     .left, 
     .right {
@@ -17,43 +24,52 @@
 
         .title{
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
             color: rgba(43, 54, 116, 1);
+
+            @media (max-width: 768px) {
+            font-size: 11px; }
         }
 
         .counter {
             font-size: 28px;
             font-weight: 300;
+
+            @media (max-width: 768px) {
+                font-size: 22px;
+            }
         }
 
         .link {
             width: max-content;
             font-size: 12px;
             border-bottom: 1px solid gray;
-        }
 
-        .percentage{
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-
-            &.positive{
-                color: green;
-            }
-            &.negative{
-                color: red;
+            @media (max-width: 768px) {
+                font-size: 10px; 
+                margin-bottom: 5px; 
             }
         }
 
         .wid-icon{
-            font-size: 30px;
+            font-size: 2rem;
             padding: 5px;
             color: whitesmoke;
             background-color: rgba(43, 54, 116, 1);
             border-radius: 5px;
             align-self: flex-end;
-        }
+        }  
+        
+        @media (max-width: 768px) {
+            .widget {
+                flex-direction: column;
+                align-items: flex-start;
+            }
 
+            .widget .wid-icon {
+                font-size: 1rem;
+            }
 
+            
     }
-}
+}}
