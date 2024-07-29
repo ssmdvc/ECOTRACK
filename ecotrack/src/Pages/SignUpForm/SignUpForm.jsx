@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import './SignUpForm.css';
 import { Link } from 'react-router-dom';
-import { auth } from '../firebase';
+import { auth } from '../../firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { db } from "../firebase";
+import { db } from '../../firebase';
 import { setDoc, doc } from 'firebase/firestore';
 import { toast } from "react-toastify";
 
