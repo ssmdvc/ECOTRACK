@@ -37,7 +37,7 @@ const Sidebar = () => {
                     </li>
                     </Link>
                     <p className="title"></p>
-                    <Link to="/route" className="custom-link">
+                    <Link to="/routespage" className="custom-link">
                     <li>
                         <LocationOnIcon className="icon" />
                         <span>Route</span>

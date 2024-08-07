@@ -1,5 +1,4 @@
 import './Widgets.scss'
-import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutlined';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import RoomOutlinedIcon from '@mui/icons-material/RoomOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
@@ -12,7 +11,6 @@ const Widgets =  ({ type }) => {
 
     //temporary
     const amount = 100
-    const diff = 20
 
     switch(type){
         case "user":

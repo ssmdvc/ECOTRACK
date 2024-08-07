@@ -1,5 +1,5 @@
-import React, { useContext, useState } from 'react';
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
+import React, { useContext } from 'react';
+import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -13,27 +13,32 @@ import NewPage from './Pages/NewPage/NewPage';
 import { userInputs } from './formSource';
 import "./style/dark.scss"
 import { DarkModeContext } from './Context/darkModeContext';
+import RoutesPage from './Pages/RoutesPage/RoutesPage';
+import { AuthContext } from './Context/AuthContext';
 
 function App() {
+  const {darkMode} = useContext(DarkModeContext); 
 
-  const {darkMode} = useContext(DarkModeContext)
   return (
     <div className={ darkMode ? "app dark" : "app"}>
     <BrowserRouter>
     <Routes>
-      <Route exact path="/" element={<LoginForm />}/>
-      <Route exact path="/signup" element={<SignUpForm />}/>
+      <Route path="/" element={<Dashboard />}/>
+      <Route path="/signup" element={<SignUpForm />}/>
       <Route path="/login" element={<LoginForm />}/>
       <Route path="/dashboard" element={<Dashboard />}/>
       <Route path="user">
-        <Route index element={<List />}/>
-        <Route path=":userId" element={<SinglePage />}/>
-        <Route path="new" element={<NewPage inputs = {userInputs} title="Add New User" />}/>
+        <Route index element={<List />         
+          }/>
+        <Route path=":userId" element={          
+            <SinglePage />        
+        }/>
+        <Route path="new" element={          
+            <NewPage inputs = {userInputs} title="Add New User" />}/>
       </Route>
-      <Route path="routes">
-        <Route index element={<List/>}/>
-        <Route path="route" element={<SinglePage/>}/>
-        <Route path="new" element={<NewPage/>}/>
+      <Route path="routespage">
+        <Route index element={<RoutesPage />
+        }/>
       </Route>
     </Routes>
     <ToastContainer />

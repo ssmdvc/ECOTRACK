@@ -2,11 +2,33 @@ import './Datatable.scss'
 import { DataGrid } from '@mui/x-data-grid';
 import { userColumns, userRows} from "../../datatablesource"
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, useMediaQuery, useTheme } from '@mui/material';
+import { collection, doc, getDocs } from "firebase/firestore";
+import { db } from "../../firebase";
 
 const Datatable = () => {
-  const [data, setData] = useState(userRows);
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let list = [];
+      try {
+        const querySnapshot = await getDocs(collection(db, "Users"));
+        querySnapshot.forEach((doc) => {
+          list.push(doc.data())
+        });
+        //setData(list);
+        console.log(list)
+      }catch(err) {
+        console.log(err);
+      }
+    };
+    fetchData()
+  }, []);
+
+  console.log(data);
+
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
