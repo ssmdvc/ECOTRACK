@@ -11,6 +11,11 @@
     box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.3);
     
 
+    .custom-link {
+        text-decoration: none;
+        color: #555;
+    }
+
     .dropdown_wrapper {
         flex-direction: column;
         gap: 4px;
@@ -34,7 +39,6 @@
             background-color: #90cdf4; 
             
         }
-
 
         .mid_child {
             margin-bottom: 15px;

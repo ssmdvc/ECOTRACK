@@ -1,0 +1,23 @@
+.disposal {
+    display: flex;
+    
+
+    .disposalContainer { 
+        flex: 6;
+    }
+
+    .disposalTitle{
+        padding: 20px;
+        font-family: "Raleway", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        width: 100%;
+        font-size: 24px;
+        color: rgba(43, 54, 116, 1);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}

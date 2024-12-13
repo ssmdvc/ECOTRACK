@@ -20,7 +20,14 @@
             color: rgba(43, 54, 116, 1);
         }
     }
+
+    .custom-link{
+        text-decoration: none;
+        color: black;
+    }
 }
+
+
 
 .center {
     padding-left: 10px;
@@ -61,11 +68,6 @@
                 font-weight: 600;
                 font-family: "Lato", sans-serif;
                 margin-left: 10px;
-            }
-
-            .custom-link{
-                text-decoration: none;
-                color: black;
             }
         }
     }

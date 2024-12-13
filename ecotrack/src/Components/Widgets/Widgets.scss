@@ -1,7 +1,8 @@
 .widget{
     display: flex;
     justify-content: space-between;
-    flex: 1;
+    width: 250px;
+    left: 0;
     padding: 20px;
     border: 1px solid #ddd;
     -webkit-box-shadow: -2px 7px 18px -8px #000000; 
@@ -9,6 +10,7 @@
     border-radius: 10px;
     height: 100px;
     transition: all 0.3s ease;
+    position: relative;
    
     @media (max-width: 768px) {
         flex-direction: column;

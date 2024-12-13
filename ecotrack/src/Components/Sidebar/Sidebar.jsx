@@ -4,6 +4,8 @@ import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
+import RecyclingIcon from '@mui/icons-material/Recycling';
+import FeedbackIcon from '@mui/icons-material/Feedback';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -37,17 +39,26 @@ const Sidebar = () => {
                     </li>
                     </Link>
                     <p className="title"></p>
-                    <Link to="/routespage" className="custom-link">
+                    <Link to="/trackingpage" className="custom-link">
                     <li>
                         <LocationOnIcon className="icon" />
-                        <span>Route</span>
+                        <span>Truck Tracking</span>
                     </li>
                     </Link>
                     <p className="title"></p>
+                    <Link to="/disposal" className="custom-link">
+                    <li>
+                        <RecyclingIcon className="icon" />
+                        <span>Disposal Request</span>
+                    </li>
+                    </Link>
+                    <p className="title"></p>
+                    <Link to="/schedule" className="custom-link">
                     <li>
                         <DateRangeIcon className="icon" />
-                        <span>Scheduling</span>
+                        <span>Schedule</span>
                     </li>
+                    </Link>
                     <p className="title"></p>
                     <li>
                         <AnalyticsIcon className="icon" />
@@ -55,18 +66,18 @@ const Sidebar = () => {
                     </li>
                     <p className="title"></p>
                     <li>
+                        <FeedbackIcon className="icon" />
+                        <span>User Feedback</span>
+                    </li>
+                    <p className="title"></p>
+                    <li>
                         <NotificationsIcon className="icon" />
-                        <span>Notification and Alert</span>
+                        <span>Notification</span>
                     </li>
                     <p className="title"></p>
                     <li>
                         <AdminPanelSettingsIcon className="icon" />
                         <span>Setting</span>
-                    </li>
-                    <p className="title"></p>
-                    <li>
-                        <LogoutIcon className="icon" />
-                        <span>Logout</span>
                     </li>
                 </ul>
             </div> 

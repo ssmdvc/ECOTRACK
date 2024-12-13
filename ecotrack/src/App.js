@@ -13,8 +13,10 @@ import NewPage from './Pages/NewPage/NewPage';
 import { userInputs } from './formSource';
 import "./style/dark.scss"
 import { DarkModeContext } from './Context/darkModeContext';
-import RoutesPage from './Pages/RoutesPage/RoutesPage';
 import { AuthContext } from './Context/AuthContext';
+import SchedulePage from './Pages/SchedulePage/SchedulePage';
+import Tracking from './Pages/TruckTracking/Tracking';
+import Disposal from './Pages/DisposalPage/Disposal';
 
 function App() {
   const {darkMode} = useContext(DarkModeContext); 
@@ -36,9 +38,14 @@ function App() {
         <Route path="new" element={          
             <NewPage inputs = {userInputs} title="Add New User" />}/>
       </Route>
-      <Route path="routespage">
-        <Route index element={<RoutesPage />
-        }/>
+      <Route path="trackingpage">
+        <Route index element={<Tracking />}/>
+      </Route>
+      <Route path="/disposal">
+        <Route index element={<Disposal />}/>
+      </Route>
+      <Route path="schedule">
+        <Route index element={<SchedulePage />}/>
       </Route>
     </Routes>
     <ToastContainer />

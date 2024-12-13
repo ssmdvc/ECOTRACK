@@ -2,10 +2,6 @@ import "./Navbar.scss"
 import SearchIcon from '@mui/icons-material/Search';
 import LanguageIcon from '@mui/icons-material/Language';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
-import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import ListOutlinedIcon from '@mui/icons-material/ListOutlined';
 import { DarkModeContext } from "../../Context/darkModeContext";
 import { useContext, useState } from "react";
 import Dropdown from "../Dropdown/Dropdown";
@@ -19,8 +15,6 @@ const [openProfile, setOpenProfile] = useState(false);
         <div className="navbar">
             <div className="nav-wrapper">
                 <div className="search">
-                    <input type="text" placeholder="Search..." />
-                    <SearchIcon />
                 </div>
                 <div className="items">
                     <div className="item">
