@@ -15,14 +15,17 @@ const Dashboard = () => {
       <Sidebar />
       <div className='dashboardContainer'>
         <Navbar />
+
         <div className='first-layer'>
           <Map />
           <Widgets/>
         </div>
+
         <div className="charts">
           <Featured />
           <Chart title="Last 6 Months (Revenue)" aspect={2 / 1} />
         </div>
+
         </div>
       </div>
   )
