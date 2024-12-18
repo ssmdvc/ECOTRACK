@@ -4,28 +4,257 @@
     font-family: "Raleway", sans-serif;
     display: flex;
     
+    
 
     .dashboardContainer {
         flex: 6;
-        background-color: #EFF4FB;
+        background-color: #EFF4FB;}
+        
 
-        .first-layer, .charts{
+        .section1{  
+            width: 100%;
+            height: 46.5%; 
             display: flex;
-            padding: 20px;
-            gap: 20px;  
+            flex-direction: row;   
+            align-items: center;
+            justify-content: center;
         }
 
-        .listContainer {
-            -webkit-box-shadow: -2px 7px 18px -8px #000000; 
-            box-shadow: -2px 7px 18px -8px #000000;
-            padding: 20px;
-            margin: 20px;
+        .section2 {  
+            width: 100%;
+            height: 46.5%; 
+            display: flex;
+            flex-direction: row;
+            justify-content: flex;
+            align-items: center;
+            
+        }
 
-            .listTitle{
-                font-weight: 500;
-                color: rgba(43, 54, 116, 1);
-                margin-bottom: 15px;
+        .left-div{
+            width: 70%;
+            height: 92%;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            margin-left: 1em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid yellow;
+            margin-top: 1em;
+        }
+
+
+
+        .right-div{
+            height: 90%;
+            width: 27%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            margin-left: 1em;
+          
+            
+        }
+
+        .map-div{
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80%;
+            border: 2px solid yellow;
+        }
+
+
+        .dis-div{  
+            width: 90%;
+            height: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fff;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .feed-div{
+            width: 90%;
+            height: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fff;
+            padding: 20px;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+
+        .collected-div{
+            border: 2px solid yellow;
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+        }
+
+        .Track-div{
+          
+            width: 90%;
+            height: 90%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #fff;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .left1-div{
+          
+            height: 100%;
+            width: 27%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            
+        }
+
+        .right1-div{
+    
+            height: 100%;
+            width: 73%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+        .right1-divContent{
+            width: 95%;
+            height: 90%;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+         h2{
+            display: flex;
+            justify-content: center;
+        }
+            
+            
+        }
+
+        .Dis-line{
+            height:1px;
+            width: 160px;
+            background-color: #9F9E9E;
+            margin-top: 10px;
+
+
+        }
+
+        .dis-icon{
+          
+            color: #2B3674;
+            font-size: 4em;
+        }
+
+        .disposalText{
+            margin: 8px;
+        }
+
+        .feedText{
+            margin: 8px;
+        }
+
+        h3 {
+            color: #2e4374;
+            margin-bottom: 10em;
+
+          }
+
+        .totalCollected {
+            color: #333;
+            font-size: 1rem;
+            margin: 1rem 0;
+          }
+
+        .trackingStats {
+            display: flex;
+            justify-content: space-around;
+            width: 18em;
+        }
+         
+      .Stats{
+            margin: 0.3rem 0;
+            color: #777;
+            gap: 2em;
+          }
+          
+        .percentage{
+            font-weight: bold;
+              color: red;
             }
-        }
+
+      .truck-table {
+        width: 100%;
+        height: 30%;
+        border-collapse: collapse;
+        text-align: center;
+      }
+      
+      .truck-table th {
+        background-color: #2e4374;
+        color: #ffffff;
+      
+      }
+      
+      .truck-table td {
+        border-bottom: 1px solid #ddd;
+        font-size: small;
+      }
+      
+      /* Zebra striping for rows */
+      .truck-table tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+      
+      .truck-table tbody tr:nth-child(odd) {
+        background-color: #ffffff;
+      }
+      
+      /* Status styling */
+      .active {
+        color: green;
+        font-weight: bold;
+      }
+      
+      .inactive {
+        color: red;
+        font-weight: bold;
+      }
+
+      th{
+        font-size: 15px;
+      }
+
+
+      
     }
-}
+
+
+    

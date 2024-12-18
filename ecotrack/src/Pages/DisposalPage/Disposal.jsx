@@ -15,7 +15,18 @@ const Disposal = () => {
         <div className='disposalTitle'>
            Disposal Request Management
          </div>
+
+         <div className="disposalContent">
+          content
         </div>
+
+
+
+         
+        </div>
+        
+        
+      
     </div>
   )
 }

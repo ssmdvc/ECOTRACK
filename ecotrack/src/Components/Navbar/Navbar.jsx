@@ -43,6 +43,7 @@ const [openProfile, setOpenProfile] = useState(false);
                      onClick={() => setOpenProfile ((prev) => !prev)}
                      /> 
                     </div>
+                    
                     {
                         openProfile && <Dropdown /> 
                     }
