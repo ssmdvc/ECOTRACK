@@ -8,7 +8,6 @@ import RecyclingIcon from '@mui/icons-material/Recycling';
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import LogoutIcon from '@mui/icons-material/Logout';
 import {Link} from "react-router-dom"
 
 
@@ -60,25 +59,33 @@ const Sidebar = () => {
                     </li>
                     </Link>
                     <p className="title"></p>
+                    <Link to="/report" className="custom-link">
                     <li>
                         <AnalyticsIcon className="icon" />
-                        <span>Report and Analytics</span>
+                        <span>Report</span>
                     </li>
+                    </Link>
                     <p className="title"></p>
+                    <Link className="custom-link">
                     <li>
                         <FeedbackIcon className="icon" />
                         <span>User Feedback</span>
                     </li>
+                    </Link>
                     <p className="title"></p>
+                    <Link className="custom-link">
                     <li>
                         <NotificationsIcon className="icon" />
                         <span>Notification</span>
                     </li>
+                    </Link>
                     <p className="title"></p>
+                    <Link className="custom-link">
                     <li>
                         <AdminPanelSettingsIcon className="icon" />
                         <span>Setting</span>
                     </li>
+                    </Link>
                 </ul>
             </div> 
         </div>

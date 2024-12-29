@@ -1,3 +1,4 @@
+// This if for USER MANAGEMENT
 //temporary data (later be fetched)
 
 export const userColumns = [

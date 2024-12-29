@@ -17,6 +17,7 @@ import { AuthContext } from './Context/AuthContext';
 import SchedulePage from './Pages/SchedulePage/SchedulePage';
 import Tracking from './Pages/TruckTracking/Tracking';
 import Disposal from './Pages/DisposalPage/Disposal';
+import Report from './Pages/Report/Report';
 
 function App() {
   const {darkMode} = useContext(DarkModeContext); 
@@ -41,11 +42,14 @@ function App() {
       <Route path="trackingpage">
         <Route index element={<Tracking />}/>
       </Route>
-      <Route path="/disposal">
+      <Route path="disposal">
         <Route index element={<Disposal />}/>
       </Route>
       <Route path="schedule">
         <Route index element={<SchedulePage />}/>
+      </Route>
+      <Route path="report">
+        <Route index element={<Report />}/>
       </Route>
     </Routes>
     <ToastContainer />

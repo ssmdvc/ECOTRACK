@@ -95,7 +95,7 @@ const SchedulePage = () => {
             </Box>
 
             {/* CALENDAR */}
-            <Box flex="1 1 50%" 
+            <Box flex="1 1 40%" 
               ml="5px" 
               sx={{
               border: "2px solid #ccc", // Add a border with color and thickness

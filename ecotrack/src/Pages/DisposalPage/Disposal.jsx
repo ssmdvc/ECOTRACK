@@ -14,8 +14,7 @@ const Disposal = () => {
             <Navbar />
         <div className='disposalTitle'>
            Disposal Request Management
-         </div>
-
+         </div>   
          <div className="disposalContent">
           content
         </div>

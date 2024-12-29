@@ -1,0 +1,40 @@
+.report {
+    display: flex;
+    height: 600px;
+
+    .reportContainer{
+        flex: 6;
+
+        .reportTitle{
+        padding: 20px;
+        font-family: "Raleway", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 500;
+        font-style: normal;
+        width: 100%;
+        font-size: 24px;
+        color: rgba(43, 54, 116, 1);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        }
+    }
+
+    .cellAction {
+        display: flex;
+        gap: 15px;
+      
+        .viewButton {
+          color: #3f51b5;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+      
+        .deleteButton {
+          color: #d32f2f;;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+      }
+}

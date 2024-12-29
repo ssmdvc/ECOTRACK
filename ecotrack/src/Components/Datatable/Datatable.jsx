@@ -7,6 +7,9 @@ import { Box, useMediaQuery, useTheme } from '@mui/material';
 import { collection, doc, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
 
+
+///USER MANAGAMENT
+
 const Datatable = () => {
   const [data, setData] = useState([]);
 
