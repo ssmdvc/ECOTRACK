@@ -66,7 +66,7 @@ const Sidebar = () => {
                     </li>
                     </Link>
                     <p className="title"></p>
-                    <Link className="custom-link">
+                    <Link to= '/feedback' className="custom-link">
                     <li>
                         <FeedbackIcon className="icon" />
                         <span>User Feedback</span>
