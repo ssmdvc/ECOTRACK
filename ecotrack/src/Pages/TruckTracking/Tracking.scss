@@ -23,3 +23,70 @@
         justify-content: space-between;
     }
 }
+
+.truck-routes-container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+  }
+  
+  .routes-details {
+    flex: 1;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+  }
+  
+  .routes-details h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .route-section {
+    margin-bottom: 30px;
+  }
+  
+  .route-section h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+  }
+  
+  .route-section ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .route-section li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  
+  .route-section .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .route-section .start {
+    background-color: red;
+  }
+  
+  .route-section .stop {
+    background-color: blue;
+  }
+  
+  .map-section {
+    flex: 2;
+    height: 100%;
+  }
+
+  .trackingdets{
+    border: 2px solid red;
+    width: 100%;
+    height: 100%;
+  }
+  

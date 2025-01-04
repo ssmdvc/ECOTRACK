@@ -45,7 +45,7 @@ const Sidebar = () => {
                     </li>
                     </Link>
                     <p className="title"></p>
-                    <Link to="/disposal" className="custom-link">
+                    <Link to="/request" className="custom-link">
                     <li>
                         <RecyclingIcon className="icon" />
                         <span>Disposal Request</span>
