@@ -45,7 +45,7 @@ const Request = () => {
       ]);
     };
     fetchData();
-  }, []); 
+  }, []);
 
   // Function to handle opening the request details pop-up
   const openRequestDetails = (request) => {
@@ -133,23 +133,23 @@ const Request = () => {
         {/* Pop-up for Request Details */}
         {isPopupVisible && selectedRequest && (
           <div className="popup-container">
-            <div className="popup-content">
+            <div className="popup-banner">
               <button className="close-button" onClick={closePopup}>
-                &larr; Back
+                &larr; 
               </button>
               <h2>Disposal Request Information</h2>
               <div className="popup-details">
-                <p><strong>Request ID:</strong> {selectedRequest.id}</p>
-                <p><strong>Date:</strong> {selectedRequest.date}</p>
+                <p><strong>Request ID: </strong><span>{selectedRequest.id}</span></p>
+                <p><strong>Date: </strong><span>{selectedRequest.date}</span></p>
                 <div className="request-info">
-                  <p><strong>Name:</strong> {selectedRequest.name}</p>
-                  <p><strong>Phone Number:</strong> {selectedRequest.phoneNumber}</p>
-                  <p><strong>Location:</strong> {selectedRequest.location}</p>
-                  <p><strong>Garbage Description:</strong> {selectedRequest.description}</p>
-                  <p><strong>Reference Image:</strong></p>
+                  <p><strong>Name: </strong><span>{selectedRequest.name}</span></p>
+                  <p><strong>Phone Number: </strong><span>{selectedRequest.phoneNumber}</span></p>
+                  <p><strong>Location: </strong><span>{selectedRequest.location}</span></p>
+                  <p><strong>Garbage Description: </strong><span>{selectedRequest.description}</span></p>
+                  <p><strong>Reference Image: </strong></p>
                   <img src={selectedRequest.imageUrl} alt="Garbage" className="popup-image" />
                 </div>
-              </div>
+                </div>
               <div className="popup-actions">
                 <button className="approve-button">Approve</button>
                 <button className="reject-button">Reject</button>

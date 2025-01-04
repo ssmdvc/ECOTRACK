@@ -83,3 +83,97 @@
     color: red;
   }
   
+
+.popup-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .popup-banner {
+    background-color: white;  // Background color for the banner
+    color: black;
+    width: 90%;
+    max-width: 600px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+ 
+  }
+  
+  .popup-banner h2 {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+ 
+  }
+  
+  .popup-details p {
+    font-size: 16px;
+    margin: 5px 0;
+
+    
+  }
+  
+  .popup-actions {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .popup-actions button {
+    background-color: white;
+    color: #4CAF50;  // Matching the banner color
+    padding: 10px 20px;
+    border: none;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .popup-actions button:hover {
+    background-color: rgba(76, 175, 80, 0.1);
+  }
+  
+  .popup-image {
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 13em;
+   
+  }
+  
+  .close-button {
+    background: none;
+    font-size: 18px;
+    width: 3em;
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  
+  .popup-details p {
+    margin-bottom: 10px; /* Adds space between each paragraph */
+    display: flex;
+    align-items: center; /* Ensures label and value are aligned vertically */
+  }
+  
+  .popup-details p strong {
+    margin-right: 5em; /* Adds space between label and value */
+    width: 150px; /* Fixed width for the labels to align the values */
+  }
+
+  .popup-details p span {
+    flex-grow: 1; /* Ensures that the value spans the remaining space */
+  }
+  
