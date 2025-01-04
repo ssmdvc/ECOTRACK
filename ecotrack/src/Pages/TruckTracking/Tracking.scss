@@ -1,92 +1,92 @@
 .tracking {
-    display: flex;
-    width: 100%;
-    
-    
-
-    .trackingContainer {
-        flex: 6;
-    }
-
-    .trackingTitle {
-        padding: 20px;
-        font-family: "Raleway", sans-serif;
-        font-optical-sizing: auto;
-        font-weight: 500;
-        font-style: normal;
-        width: 100%;
-        font-size: 24px;
-        color: rgba(43, 54, 116, 1);
-        margin-bottom: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
+  display: flex;
+  width: 100%;
 }
 
-.truck-routes-container {
-    display: flex;
-    flex-direction: row;
-    height: 100vh;
-  }
-  
-  .routes-details {
-    flex: 1;
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-right: 1px solid #ddd;
-    overflow-y: auto;
-  }
-  
-  .routes-details h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-  
-  .route-section {
-    margin-bottom: 30px;
-  }
-  
-  .route-section h2 {
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
-  
-  .route-section ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .route-section li {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    font-size: 14px;
-  }
-  
-  .route-section .dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin-right: 10px;
-  }
-  
-  .route-section .start {
-    background-color: red;
-  }
-  
-  .route-section .stop {
-    background-color: blue;
-  }
-  
-  .map-section {
-    flex: 2;
-    height: 100%;
-  }
+.trackingContainer {
+  flex: 6;
+}
 
-  .trackingdets{
-    border: 2px solid red;
-    width: 100%;
-    height: 100%;
-  }
-  
+.trackingTitle {
+  padding: 20px;
+  font-family: "Raleway", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  width: 100%;
+  font-size: 24px;
+  color: rgba(43, 54, 116, 1);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.trackingContent {
+  display: flex;
+  gap: 20px;
+}
+
+.routesDetails {
+  flex: 1;
+  max-width: 300px;
+  background: rgba(44, 62, 80, 0.8); /* Navy blue with opacity */
+  color: white;
+  border-radius: 10px;
+  padding: 20px;
+  overflow-y: auto;
+  height: 500px;
+}
+
+.routesHeader {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.routeSection {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.routeSection h3 {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.routeSection p {
+  font-size: 14px;
+  color: #d1d8e0;
+}
+
+.stopItem {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.dot.start {
+  background-color: red;
+}
+
+.dot.stop {
+  background-color: blue;
+}
+
+.mapContainer {
+  flex: 2;
+  height: 500px;
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
