@@ -177,3 +177,64 @@
     flex-grow: 1; /* Ensures that the value spans the remaining space */
   }
   
+  .rejected-requests-section {
+    margin-top: 20px;
+  }
+  
+  .rejected-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .rejected-header h3 {
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  .top-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .edit-button,
+  .delete-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-left: 80em;
+  }
+  
+  .delete-button {
+    background-color: #dc3545;
+  }
+  
+  .requests-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+  }
+  
+  .requests-table th,
+  .requests-table td {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  .requests-table th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+  }
+  
+  .requests-table .request-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+  }
+  
