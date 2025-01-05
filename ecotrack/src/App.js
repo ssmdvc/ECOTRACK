@@ -27,7 +27,7 @@ function App() {
     <div className={ darkMode ? "app dark" : "app"}>
     <BrowserRouter>
     <Routes>
-      <Route path="/" element={<Dashboard />}/>
+      <Route path="/" element={<LoginForm />}/>
       <Route path="/signup" element={<SignUpForm />}/>
       <Route path="/login" element={<LoginForm />}/>
       <Route path="/dashboard" element={<Dashboard />}/>
