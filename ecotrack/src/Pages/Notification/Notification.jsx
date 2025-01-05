@@ -7,6 +7,8 @@ const Notification = () => {
   const [activeTab, setActiveTab] = useState(1);
   const [title, setTitle] = useState(""); // State for Title Box
   const [message, setMessage] = useState(""); // State for Message Box
+  const [deliveryType, setDeliveryType] = useState("Quick Notification"); // State for Delivery Type
+  const [targetDate, setTargetDate] = useState(""); // State for Target Date
   const [output, setOutput] = useState(null); // State to display the output
 
   const handleTabClick = (tabIndex) => {
@@ -14,12 +16,13 @@ const Notification = () => {
   };
 
   const handleSend = () => {
-    if (title && message) {
-      setOutput({ title, message });
+    if (title && message && (deliveryType === "Quick Notification" || targetDate)) {
+      setOutput({ title, message, deliveryType, targetDate });
       setTitle("");
       setMessage("");
+      setTargetDate(""); // Reset the date after sending
     } else {
-      alert("Please fill in both the title and message!");
+      alert("Please fill in all required fields!");
     }
   };
 
@@ -80,6 +83,34 @@ const Notification = () => {
           {activeTab === 4 && (
             <div className="content">
               <h2>Create New Push Notification</h2>
+
+              {/* Delivery Type */}
+              <div className="input-group">
+                <label htmlFor="deliveryType">Delivery Type:</label>
+                <select
+                  id="deliveryType"
+                  value={deliveryType}
+                  onChange={(e) => setDeliveryType(e.target.value)}
+                >
+                  <option value="Quick Notification">Quick Notification</option>
+                  <option value="Scheduled Notification">Scheduled Notification</option>
+                </select>
+              </div>
+
+              {/* Target Date for Scheduled Notifications */}
+              {deliveryType === "Scheduled Notification" && (
+                <div className="input-group">
+                  <label htmlFor="targetDate">Target Date:</label>
+                  <input
+                    type="date"
+                    id="targetDate"
+                    value={targetDate}
+                    onChange={(e) => setTargetDate(e.target.value)}
+                  />
+                </div>
+              )}
+
+              {/* Title Input */}
               <div className="input-group">
                 <label htmlFor="title">Title:</label>
                 <input
@@ -90,6 +121,8 @@ const Notification = () => {
                   placeholder="Enter the title"
                 />
               </div>
+
+              {/* Message Input */}
               <div className="input-group">
                 <label htmlFor="message">Message:</label>
                 <textarea
@@ -99,6 +132,8 @@ const Notification = () => {
                   placeholder="Enter your message"
                 ></textarea>
               </div>
+
+              {/* Send Button */}
               <button onClick={handleSend} className="send-button">
                 Send
               </button>
@@ -107,6 +142,10 @@ const Notification = () => {
               {output && (
                 <div className="output">
                   <h2>Preview</h2>
+                  <p><strong>Delivery Type:</strong> {output.deliveryType}</p>
+                  {output.deliveryType === "Scheduled Notification" && (
+                    <p><strong>Target Date:</strong> {output.targetDate}</p>
+                  )}
                   <p><strong>Title:</strong> {output.title}</p>
                   <p><strong>Message:</strong> {output.message}</p>
                 </div>

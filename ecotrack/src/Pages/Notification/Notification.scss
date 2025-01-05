@@ -119,4 +119,30 @@
       font-size: 16px;
     }
   }
+
+  .tab-content .input-group select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  
+    &:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+  }
+
+  .tab-content .input-group input[type="date"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  
+    &:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+  }
   
