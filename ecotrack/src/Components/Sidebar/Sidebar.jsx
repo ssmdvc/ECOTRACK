@@ -72,13 +72,15 @@ const Sidebar = () => {
                         <span>User Feedback</span>
                     </li>
                     </Link>
+
                     <p className="title"></p>
-                    <Link className="custom-link">
+                    <Link to= '/notification' className="custom-link">
                     <li>
                         <NotificationsIcon className="icon" />
                         <span>Notification</span>
                     </li>
                     </Link>
+
                     <p className="title"></p>
                     <Link className="custom-link">
                     <li>
@@ -86,6 +88,7 @@ const Sidebar = () => {
                         <span>Setting</span>
                     </li>
                     </Link>
+
                 </ul>
             </div> 
         </div>

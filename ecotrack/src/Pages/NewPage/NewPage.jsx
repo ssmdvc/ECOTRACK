@@ -23,6 +23,7 @@ const NewPage = ({inputs, title}) => {
       <Sidebar />
       <div className="newContainer">
         <Navbar />
+        
         <div className="top">
           <h1>{title}</h1></div>
         <div className="bottom">

@@ -19,6 +19,7 @@ import Tracking from './Pages/TruckTracking/Tracking';
 import Request from './Pages/DisposalPage/Request';
 import Report from './Pages/Report/Report';
 import UserFeedback from './Pages/UserFeedback/UserFeedback';
+import Notification from './Pages/Notification/Notification';
 
 function App() {
   const {darkMode} = useContext(DarkModeContext); 
@@ -54,6 +55,9 @@ function App() {
       </Route>
       <Route path="feedback">
         <Route index element={<UserFeedback />}/>
+      </Route>
+      <Route path="notification">
+        <Route index element={<Notification />}/>
       </Route>
     </Routes>
     <ToastContainer />

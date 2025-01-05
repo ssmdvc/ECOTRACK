@@ -1,0 +1,122 @@
+// Basic Reset
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  // Container Styles
+  .tabs-container {
+    max-width: 600px;
+    margin: 50px auto;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+  
+  // Tabs Header
+  .tabs {
+    display: flex;
+    background-color: #f4f4f9;
+    border-bottom: 2px solid #ddd;
+  }
+  
+  .tab {
+    flex: 1;
+    text-align: center;
+    padding: 12px 0;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #333;
+    background-color: #f4f4f9;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  
+    &.active {
+      background-color: #007BFF;
+      color: #fff;
+      border-bottom: 2px solid #007BFF;
+    }
+  
+    &:hover {
+      background-color: #e6e6f7;
+    }
+  }
+  
+  // Tab Content
+  .tab-content {
+    padding: 20px;
+  
+    .content {
+      display: block;
+      h2 {
+        margin-bottom: 10px;
+        font-size: 20px;
+        color: #007BFF;
+      }
+  
+      p {
+        font-size: 16px;
+        color: #555;
+      }
+    }
+  }
+  
+  .tab-content .input-group {
+    margin-bottom: 15px;
+    text-align: left;
+  
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+  
+    input,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+  
+      &:focus {
+        border-color: #007bff;
+        outline: none;
+      }
+    }
+  
+    textarea {
+      height: 100px;
+      resize: none;
+    }
+  }
+  
+  .tab-content .send-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .tab-content .output {
+    margin-top: 20px;
+  
+    h2 {
+      margin-bottom: 10px;
+      color: #007bff;
+    }
+  
+    p {
+      margin: 5px 0;
+      font-size: 16px;
+    }
+  }
+  
