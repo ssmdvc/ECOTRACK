@@ -21,18 +21,13 @@
     "@testing-library/user-event": "^13.5.0",
     "firebase": "^10.12.3",
     "framer-motion": "^11.3.21",
-<<<<<<< Updated upstream
     "lucide-react": "^0.469.0",
-=======
-    "mapbox-gl": "^3.9.2",
->>>>>>> Stashed changes
     "react": "^18.3.1",
     "react-circular-progressbar": "^2.1.0",
     "react-dom": "^18.3.1",
     "react-icons": "^5.2.1",
-    "react-map-gl": "^7.1.8",
     "react-router-dom": "^6.24.1",
-    "react-scripts": "^5.0.1",
+    "react-scripts": "5.0.1",
     "react-toastify": "^10.0.5",
     "recharts": "^2.12.7",
     "sass": "^1.77.8",
