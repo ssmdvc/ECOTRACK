@@ -53,7 +53,7 @@ const actionColumn = {
 
 // Temporary Data
 const rows = [
-{ id: 1, date: '03/12/23', user: 'Harry Potter', location: 'Hogwarts', report: 'You-Know-How killed my fam',},
+{ id: 1, date: '03/12/23', user: 'John Doe', location: 'Brgy. Pamplona ', report: 'Truck drivers forgot to pick up my garbage',},
 ];
 
 
