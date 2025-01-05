@@ -1,8 +1,7 @@
-import { Box, Tab, Tabs } from '@mui/material';
 import Navbar from '../../Components/Navbar/Navbar'
 import Sidebar from '../../Components/Sidebar/Sidebar'
 import './Report.scss'
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 
 //Fields for the Table

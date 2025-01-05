@@ -1,6 +1,4 @@
 import "./Navbar.scss"
-import SearchIcon from '@mui/icons-material/Search';
-import LanguageIcon from '@mui/icons-material/Language';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import { DarkModeContext } from "../../Context/darkModeContext";
