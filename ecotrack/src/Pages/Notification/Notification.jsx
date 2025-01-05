@@ -9,7 +9,9 @@ const Notification = () => {
   const [message, setMessage] = useState(""); // State for Message Box
   const [deliveryType, setDeliveryType] = useState("Quick Notification"); // State for Delivery Type
   const [targetDate, setTargetDate] = useState(""); // State for Target Date
-  const [output, setOutput] = useState(null); // State to display the output
+  const [quickNotifications, setQuickNotifications] = useState([]); // Quick Notifications List
+  const [scheduledNotifications, setScheduledNotifications] = useState([]); // Scheduled Notifications List
+  const [archivedNotifications, setArchivedNotifications] = useState([]); // Archived Notifications List
 
   const handleTabClick = (tabIndex) => {
     setActiveTab(tabIndex);
@@ -17,12 +19,44 @@ const Notification = () => {
 
   const handleSend = () => {
     if (title && message && (deliveryType === "Quick Notification" || targetDate)) {
-      setOutput({ title, message, deliveryType, targetDate });
+      const newNotification = {
+        title,
+        message,
+        deliveryType,
+        targetDate: deliveryType === "Scheduled Notification" ? targetDate : null,
+      };
+
+      if (deliveryType === "Quick Notification") {
+        setQuickNotifications([...quickNotifications, newNotification]);
+      } else {
+        setScheduledNotifications([...scheduledNotifications, newNotification]);
+      }
+
       setTitle("");
       setMessage("");
-      setTargetDate(""); // Reset the date after sending
+      setTargetDate("");
     } else {
       alert("Please fill in all required fields!");
+    }
+  };
+
+  const moveToArchive = (notification, type) => {
+    setArchivedNotifications([...archivedNotifications, notification]);
+
+    if (type === "Quick Notification") {
+      setQuickNotifications(quickNotifications.filter((notif) => notif !== notification));
+    } else if (type === "Scheduled Notification") {
+      setScheduledNotifications(scheduledNotifications.filter((notif) => notif !== notification));
+    }
+  };
+
+  const deleteNotification = (notification, type) => {
+    if (type === "Quick Notification") {
+      setQuickNotifications(quickNotifications.filter((notif) => notif !== notification));
+    } else if (type === "Scheduled Notification") {
+      setScheduledNotifications(scheduledNotifications.filter((notif) => notif !== notification));
+    } else if (type === "Archived Notification") {
+      setArchivedNotifications(archivedNotifications.filter((notif) => notif !== notification));
     }
   };
 
@@ -62,24 +96,82 @@ const Notification = () => {
 
         {/* Tab Content */}
         <div className="tab-content">
+          {/* Quick Notifications Tab */}
           {activeTab === 1 && (
             <div className="content">
-              <h2>Quick Notification</h2>
-              <p>This is the content of Quick Notification.</p>
+              <h2>Quick Notifications</h2>
+              {quickNotifications.length > 0 ? (
+                <ul>
+                  {quickNotifications.map((notif, index) => (
+                    <li key={index}>
+                      <strong>{notif.title}</strong>: {notif.message}
+                      <div className="notification-actions">
+                        <button onClick={() => moveToArchive(notif, "Quick Notification")}>
+                          Archive
+                        </button>
+                        <button onClick={() => deleteNotification(notif, "Quick Notification")}>
+                          Delete
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No Quick Notifications yet.</p>
+              )}
             </div>
           )}
+
+          {/* Scheduled Notifications Tab */}
           {activeTab === 2 && (
             <div className="content">
-              <h2>Schedule Notification</h2>
-              <p>This is the content of Schedule Notification.</p>
+              <h2>Scheduled Notifications</h2>
+              {scheduledNotifications.length > 0 ? (
+                <ul>
+                  {scheduledNotifications.map((notif, index) => (
+                    <li key={index}>
+                      <strong>{notif.title}</strong>: {notif.message} (Scheduled for: {notif.targetDate})
+                      <div className="notification-actions">
+                        <button onClick={() => moveToArchive(notif, "Scheduled Notification")}>
+                          Archive
+                        </button>
+                        <button onClick={() => deleteNotification(notif, "Scheduled Notification")}>
+                          Delete
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No Scheduled Notifications yet.</p>
+              )}
             </div>
           )}
+
+          {/* Archived Notifications Tab */}
           {activeTab === 3 && (
             <div className="content">
-              <h2>Archived Notification</h2>
-              <p>This is the content of Archived Notification.</p>
+              <h2>Archived Notifications</h2>
+              {archivedNotifications.length > 0 ? (
+                <ul>
+                  {archivedNotifications.map((notif, index) => (
+                    <li key={index}>
+                      <strong>{notif.title}</strong>: {notif.message} {notif.targetDate && `(Scheduled for: ${notif.targetDate})`}
+                      <div className="notification-actions">
+                        <button onClick={() => deleteNotification(notif, "Archived Notification")}>
+                          Delete
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No Archived Notifications yet.</p>
+              )}
             </div>
           )}
+
+          {/* Create New Push Notification Tab */}
           {activeTab === 4 && (
             <div className="content">
               <h2>Create New Push Notification</h2>
@@ -137,19 +229,6 @@ const Notification = () => {
               <button onClick={handleSend} className="send-button">
                 Send
               </button>
-
-              {/* Output Section */}
-              {output && (
-                <div className="output">
-                  <h2>Preview</h2>
-                  <p><strong>Delivery Type:</strong> {output.deliveryType}</p>
-                  {output.deliveryType === "Scheduled Notification" && (
-                    <p><strong>Target Date:</strong> {output.targetDate}</p>
-                  )}
-                  <p><strong>Title:</strong> {output.title}</p>
-                  <p><strong>Message:</strong> {output.message}</p>
-                </div>
-              )}
             </div>
           )}
         </div>
