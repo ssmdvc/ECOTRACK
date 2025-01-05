@@ -135,10 +135,10 @@ const Dashboard = () => {
                     cy="50%"
                     outerRadius={60}
                     innerRadius={50}
-                    fill="#0088FE"
+                    fill="#2e4374"
                     label
                   >
-                    <Cell fill="#0088FE" />
+                    <Cell fill="#2e4374" />
                   </Pie>
                   <Tooltip />
                 </PieChart>
