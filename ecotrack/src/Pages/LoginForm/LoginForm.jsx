@@ -24,7 +24,7 @@ const LoginForm = () => {
           // Signed in 
           const user = userCredential.user;
           dispatch({typeof:"LOGIN", payload:user})
-          navigate("/")
+          navigate("/dashboard")
           toast.success("User Login Successfully!", {
             position: "top-center",
         });
