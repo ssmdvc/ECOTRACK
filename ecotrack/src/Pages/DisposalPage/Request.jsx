@@ -15,26 +15,30 @@ const Request = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const requestsPerPage = 5;
 
-  const sampleData = Array.from({ length: 25 }, (_, index) => ({
-    id: String(index + 1).padStart(3, "0"),
-    date: "2024-11-13",
-    name: `User ${index + 1}`,
-    phoneNumber: "09234567890",
-    location: "321 Pine St.",
-    description: "Electronics",
-    imageUrl: "https://via.placeholder.com/150",
-    status: "Pending",
-  }));
+
 
   useEffect(() => {
-    setRequests(sampleData);
+    const fetchRequests = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "requests"));
+        const requestData = querySnapshot.docs.map((doc) => ({
+          id: doc.id, 
+          ...doc.data(),
+        }));
+        setRequests(requestData);
+      } catch (error) {
+        console.error("Error fetching requests:", error);
+      }
+    };
+
+  fetchRequests();
   }, []);
 
   const handleApprove = (id) => {
     setRequests((prevRequests) => prevRequests.filter((request) => request.id !== id));
     setArchivedRequests((prevArchived) => {
       if (!prevArchived.some((request) => request.id === id)) {
-        const approvedRequest = sampleData.find((request) => request.id === id);
+        const approvedRequest = requests.find((request) => request.id === id);
         return [...prevArchived, { ...approvedRequest, status: "Approved" }];
       }
       return prevArchived;
@@ -46,7 +50,7 @@ const Request = () => {
     setRequests((prevRequests) => prevRequests.filter((request) => request.id !== id));
     setArchivedRequests((prevArchived) => {
       if (!prevArchived.some((request) => request.id === id)) {
-        const rejectedRequest = sampleData.find((request) => request.id === id);
+        const rejectedRequest = requests.find((request) => request.id === id);
         return [...prevArchived, { ...rejectedRequest, status: "Rejected" }];
       }
       return prevArchived;
