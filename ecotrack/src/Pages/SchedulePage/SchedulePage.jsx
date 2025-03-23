@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Sidebar from "../../Components/Sidebar/Sidebar"
 import Navbar from "../../Components/Navbar/Navbar"
-import { initializeApp, getApps, getApp } from "firebase/app"
-import { getDatabase, ref, push, onValue, remove, update, get, set } from "firebase/database"
+import { initializeApp } from "firebase/app"
+import { getFirestore, collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, setDoc } from "firebase/firestore"
 import "./SchedulePage.scss"
 
 // Firebase configuration
@@ -15,13 +15,12 @@ const firebaseConfig = {
   storageBucket: "ecotrack-web-panel.appspot.com",
   messagingSenderId: "879072790810",
   appId: "1:879072790810:web:8a510c63c94958365904a3",
-  databaseURL: "https://ecotrack-web-panel-default-rtdb.asia-southeast1.firebasedatabase.app (https://ecotrack-web-panel-default-rtdb.firebaseio.com/)",
-
 }
 
-const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-const database = getDatabase(app);
-console.log("Firebase initialized with database URL:", firebaseConfig.databaseURL)
+// Initialize Firebase
+const app = initializeApp(firebaseConfig)
+const db = getFirestore(app)
+console.log("Firebase Firestore initialized")
 
 const SchedulePage = () => {
   // State management
@@ -33,7 +32,11 @@ const SchedulePage = () => {
   const [showAddScheduleForm, setShowAddScheduleForm] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [isFirstLoad, setIsFirstLoad] = useState(true)
+  const [showTimePicker, setShowTimePicker] = useState(false)
+
+  // Time picker refs
+  const timePickerRef = useRef(null)
+  const timeInputRef = useRef(null)
 
   // Form state
   const [newDriver, setNewDriver] = useState({ name: "", id: "" })
@@ -43,116 +46,60 @@ const SchedulePage = () => {
     driver: "",
     route: "",
     estimatedTime: "",
+    date: new Date().toISOString().split("T")[0], // Add default date
   })
 
-  // Ensure the initializeEmptyData function is present and properly implemented
-  const initializeEmptyData = async () => {
-    try {
-      console.log("Attempting to initialize empty data...")
-
-      // Check if drivers node exists
-      const driversRef = ref(database, "drivers")
-      const driversSnapshot = await get(driversRef)
-      console.log("Drivers node exists:", driversSnapshot.exists())
-
-      if (!driversSnapshot.exists()) {
-        console.log("Creating initial drivers data")
-        // Create initial drivers data
-        await set(driversRef, {
-          driver1: {
-            name: "Albert Brillantes",
-            id: "D001",
-            avatar: "/placeholder.svg",
-          },
-          driver2: {
-            name: "Eric Lanto",
-            id: "D002",
-            avatar: "/placeholder.svg",
-          },
-        })
-        console.log("Initial drivers data created successfully")
-      }
-
-      // Check if schedules node exists
-      const schedulesRef = ref(database, "schedules")
-      const schedulesSnapshot = await get(schedulesRef)
-      console.log("Schedules node exists:", schedulesSnapshot.exists())
-
-      if (!schedulesSnapshot.exists()) {
-        console.log("Creating initial schedules data")
-        // Create initial schedules data
-        const today = new Date()
-        const dateString = today.toISOString().split("T")[0]
-
-        await set(schedulesRef, {
-          schedule1: {
-            status: "Pending",
-            truckId: "0001",
-            driver: "Albert Brillantes",
-            route: "Burgos - Bondoc",
-            estimatedTime: "9:00 AM",
-            date: dateString,
-          },
-          schedule2: {
-            status: "Completed",
-            truckId: "0002",
-            driver: "Eric Lanto",
-            route: "Zamora-BFM-Floresca",
-            estimatedTime: "10:00 AM",
-            date: dateString,
-          },
-        })
-        console.log("Initial schedules data created successfully")
-      }
-
-      console.log("Database initialization complete")
-      return true
-    } catch (error) {
-      console.error("Error initializing data:", error)
-      alert("Failed to initialize data: " + error.message)
-      return false
-    }
-  }
-
-  // Add more detailed error handling in the useEffect
+  // Initialize weekly schedule structure
   useEffect(() => {
-    console.log("Starting to fetch data from Firebase")
-    console.log("Database URL:", firebaseConfig.databaseURL)
+    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    const initialWeeklySchedules = {}
+
+    days.forEach((day) => {
+      initialWeeklySchedules[day] = {
+        truck1: { route: "" },
+        truck2: { route: "" },
+      }
+    })
+
+    setWeeklySchedules(initialWeeklySchedules)
+  }, [])
+
+  // Handle clicks outside the time picker
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        timePickerRef.current &&
+        !timePickerRef.current.contains(event.target) &&
+        timeInputRef.current &&
+        !timeInputRef.current.contains(event.target)
+      ) {
+        setShowTimePicker(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [timePickerRef])
+
+  // Fetch data from Firestore on component mount
+  useEffect(() => {
+    console.log("Starting to fetch data from Firestore")
     setLoading(true)
 
     try {
-      // Test database connection
-      console.log("Testing database connection...")
-      try {
-        const testRef = ref(database, ".info/connected")
-        onValue(testRef, (snapshot) => {
-          console.log("Firebase connection status:", snapshot.val() ? "connected" : "disconnected")
-        })
-      } catch (connErr) {
-        console.error("Connection test failed:", connErr)
-      }
-
-      // Reference to drivers in Firebase
-      const driversRef = ref(database, "drivers")
-      console.log("Created drivers reference")
-
-      // Listen for changes to drivers
-      const driversUnsubscribe = onValue(
-        driversRef,
+      // Set up listeners for drivers collection
+      const driversUnsubscribe = onSnapshot(
+        collection(db, "drivers"),
         (snapshot) => {
-          console.log("Drivers data received:", snapshot.exists())
-          const data = snapshot.val()
-          if (data) {
-            const driversList = Object.entries(data).map(([key, value]) => ({
-              id: key,
-              ...value,
-            }))
-            setDrivers(driversList)
-            console.log("Drivers loaded:", driversList.length)
-          } else {
-            console.log("No drivers data found")
-            setDrivers([])
-          }
+          console.log("Drivers data received:", !snapshot.empty)
+          const driversList = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+          setDrivers(driversList)
+          console.log("Drivers loaded:", driversList.length)
         },
         (error) => {
           console.error("Error fetching drivers:", error)
@@ -160,65 +107,22 @@ const SchedulePage = () => {
         },
       )
 
-      // Reference to schedules in Firebase
-      const schedulesRef = ref(database, "schedules")
-      console.log("Created schedules reference")
-
-      // Listen for changes to schedules
-      const schedulesUnsubscribe = onValue(
-        schedulesRef,
+      // Set up listeners for schedules collection
+      const schedulesUnsubscribe = onSnapshot(
+        collection(db, "schedules"),
         (snapshot) => {
-          console.log("Schedules data received:", snapshot.exists())
-          const data = snapshot.val()
-          let schedulesList = []
-
-          if (data) {
-            schedulesList = Object.entries(data).map(([key, value]) => ({
-              id: key,
-              ...value,
-            }))
-            console.log("Schedules loaded:", schedulesList.length)
-          } else {
-            console.log("No schedules data found")
-          }
-
+          console.log("Schedules data received:", !snapshot.empty)
+          const schedulesList = snapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
           setSchedules(schedulesList)
+          console.log("Schedules loaded:", schedulesList.length)
 
-          // Process weekly schedules
-          const weekly = {}
-          ;["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].forEach((day) => {
-            weekly[day] = { truck1: { route: "" }, truck2: { route: "" } }
-          })
-
-          // Populate weekly schedules from data
+          // Sync with weekly schedules
           if (schedulesList.length > 0) {
-            const today = new Date()
-            const startOfWeek = new Date(today)
-            startOfWeek.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1)) // Start from Monday
-
-            for (let i = 0; i < 7; i++) {
-              const currentDate = new Date(startOfWeek)
-              currentDate.setDate(startOfWeek.getDate() + i)
-              const dateString = currentDate.toISOString().split("T")[0]
-              const dayName = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][i]
-
-              // Find schedules for this day
-              const daySchedules = schedulesList.filter((schedule) => schedule.date === dateString)
-
-              // Group by truck
-              daySchedules.forEach((schedule) => {
-                if (schedule.truckId === "0001") {
-                  weekly[dayName].truck1.route = schedule.route
-                } else if (schedule.truckId === "0002") {
-                  weekly[dayName].truck2.route = schedule.route
-                }
-              })
-            }
+            syncWeeklySchedules()
           }
-
-          setWeeklySchedules(weekly)
-          setLoading(false)
-          console.log("Data loading complete")
         },
         (error) => {
           console.error("Error fetching schedules:", error)
@@ -227,33 +131,57 @@ const SchedulePage = () => {
         },
       )
 
-      // Check if this is the first load
-      Promise.all([get(ref(database, "drivers")), get(ref(database, "schedules"))])
-        .then(([driversSnapshot, schedulesSnapshot]) => {
-          const hasDrivers = driversSnapshot.exists()
-          const hasSchedules = schedulesSnapshot.exists()
-          setIsFirstLoad(!hasDrivers && !hasSchedules)
-          setLoading(false)
-        })
-        .catch((err) => {
-          console.error("Error checking initial data:", err)
-          setLoading(false)
-        })
+      // Set up listeners for weekly schedules collection
+      const weeklySchedulesUnsubscribe = onSnapshot(
+        collection(db, "weeklySchedules"),
+        (snapshot) => {
+          console.log("Weekly schedules data received:", !snapshot.empty)
 
-      // Cleanup function to unsubscribe from Firebase listeners
+          // Initialize with empty values
+          const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+          const weekly = {}
+          days.forEach((day) => {
+            weekly[day] = { truck1: { route: "" }, truck2: { route: "" } }
+          })
+
+          // Fill with data from Firestore
+          snapshot.docs.forEach((doc) => {
+            const data = doc.data()
+            if (weekly[data.day]) {
+              if (data.truckId === "0001") {
+                weekly[data.day].truck1.route = data.route || ""
+              } else if (data.truckId === "0002") {
+                weekly[data.day].truck2.route = data.route || ""
+              }
+            }
+          })
+
+          setWeeklySchedules(weekly)
+          setLoading(false)
+          console.log("Weekly schedules loaded")
+        },
+        (error) => {
+          console.error("Error fetching weekly schedules:", error)
+          setError("Failed to load weekly schedules. Please try again later.")
+          setLoading(false)
+        },
+      )
+
+      // Cleanup function to unsubscribe from Firestore listeners
       return () => {
         driversUnsubscribe()
         schedulesUnsubscribe()
-        console.log("Firebase listeners unsubscribed")
+        weeklySchedulesUnsubscribe()
+        console.log("Firestore listeners unsubscribed")
       }
     } catch (err) {
-      console.error("Error setting up Firebase:", err)
+      console.error("Error setting up Firestore:", err)
       setError("Failed to connect to the database. Please try again later.")
       setLoading(false)
     }
   }, [])
 
-  // Add a new driver to Firebase
+  // Add a new driver to Firestore
   const addDriver = async () => {
     if (!newDriver.name || !newDriver.id) {
       alert("Please fill in all driver fields")
@@ -261,8 +189,7 @@ const SchedulePage = () => {
     }
 
     try {
-      const driversRef = ref(database, "drivers")
-      await push(driversRef, {
+      await addDoc(collection(db, "drivers"), {
         ...newDriver,
         avatar: "/placeholder.svg", // Default avatar
       })
@@ -276,7 +203,7 @@ const SchedulePage = () => {
     }
   }
 
-  // Add a new schedule to Firebase
+  // Add a new schedule to Firestore
   const addSchedule = async () => {
     if (!newSchedule.truckId || !newSchedule.driver || !newSchedule.route || !newSchedule.estimatedTime) {
       alert("Please fill in all schedule fields")
@@ -284,11 +211,20 @@ const SchedulePage = () => {
     }
 
     try {
-      const schedulesRef = ref(database, "schedules")
-      await push(schedulesRef, {
+      // Add to schedules collection
+      await addDoc(collection(db, "schedules"), {
         ...newSchedule,
-        date: date.toISOString().split("T")[0],
       })
+
+      // Also update weekly schedule
+      // First, determine the day of week from the selected date
+      const scheduleDate = new Date(newSchedule.date)
+      const dayIndex = scheduleDate.getDay()
+      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+      const dayName = days[dayIndex]
+
+      // Update the weekly schedule for this day and truck
+      await updateWeeklySchedule(dayName, newSchedule.truckId, newSchedule.route)
 
       // Reset form
       setNewSchedule({
@@ -297,6 +233,7 @@ const SchedulePage = () => {
         driver: "",
         route: "",
         estimatedTime: "",
+        date: new Date().toISOString().split("T")[0], // Reset to today's date
       })
       setShowAddScheduleForm(false)
     } catch (error) {
@@ -305,66 +242,161 @@ const SchedulePage = () => {
     }
   }
 
-  // Delete a schedule from Firebase
+  // Delete a schedule from Firestore
   const deleteSchedule = async (scheduleId) => {
     try {
-      const scheduleRef = ref(database, `schedules/${scheduleId}`)
-      await remove(scheduleRef)
+      // Get the schedule before deleting it
+      const scheduleToDelete = schedules.find((s) => s.id === scheduleId)
+
+      // Delete from schedules collection
+      await deleteDoc(doc(db, "schedules", scheduleId))
+
+      // If this is the only schedule for this day and truck, also update weekly schedule
+      if (scheduleToDelete) {
+        const scheduleDate = new Date(scheduleToDelete.date)
+        const dayIndex = scheduleDate.getDay()
+        const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+        const dayName = days[dayIndex]
+
+        // Check if there are other schedules for this day and truck
+        const otherSchedulesForSameDayAndTruck = schedules.filter(
+          (s) =>
+            s.id !== scheduleId && s.truckId === scheduleToDelete.truckId && new Date(s.date).getDay() === dayIndex,
+        )
+
+        // If no other schedules, clear the weekly schedule entry
+        if (otherSchedulesForSameDayAndTruck.length === 0) {
+          await updateWeeklySchedule(dayName, scheduleToDelete.truckId, "")
+        }
+      }
     } catch (error) {
       console.error("Error deleting schedule:", error)
       alert("Failed to delete schedule. Please try again.")
     }
   }
 
-  // Update a schedule status
+  // Update a schedule status in Firestore
   const updateScheduleStatus = async (scheduleId, newStatus) => {
     try {
-      const scheduleRef = ref(database, `schedules/${scheduleId}`)
-      await update(scheduleRef, { status: newStatus })
+      await updateDoc(doc(db, "schedules", scheduleId), {
+        status: newStatus,
+      })
     } catch (error) {
       console.error("Error updating schedule status:", error)
       alert("Failed to update schedule status. Please try again.")
     }
   }
 
-  // Update weekly schedule
+  // Update weekly schedule in Firestore
   const updateWeeklySchedule = async (day, truckId, newRoute) => {
     try {
-      // Find schedules for this day
-      const today = new Date()
-      const startOfWeek = new Date(today)
-      startOfWeek.setDate(today.getDate() - today.getDay() + (today.getDay() === 0 ? -6 : 1)) // Start from Monday
+      // Create a unique ID for the weekly schedule entry
+      const docId = `${day}_${truckId}`
 
-      const dayIndex = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(day)
-      const currentDate = new Date(startOfWeek)
-      currentDate.setDate(startOfWeek.getDate() + dayIndex)
-      const dateString = currentDate.toISOString().split("T")[0]
+      // Reference to the document
+      const weeklyScheduleRef = doc(db, "weeklySchedules", docId)
 
-      // Check if there's already a schedule for this truck on this day
-      const existingSchedule = schedules.find(
-        (schedule) => schedule.date === dateString && schedule.truckId === truckId,
+      // Set the document with merge option to update if exists or create if not
+      await setDoc(
+        weeklyScheduleRef,
+        {
+          day,
+          truckId,
+          route: newRoute,
+          updatedAt: new Date().toISOString(),
+        },
+        { merge: true },
       )
 
-      if (existingSchedule) {
-        // Update existing schedule
-        const scheduleRef = ref(database, `schedules/${existingSchedule.id}`)
-        await update(scheduleRef, { route: newRoute })
-      } else {
-        // Create new schedule
-        const schedulesRef = ref(database, "schedules")
-        await push(schedulesRef, {
-          status: "Pending",
-          truckId: truckId,
-          driver: "", // You might want to assign a default driver
-          route: newRoute,
-          estimatedTime: "",
-          date: dateString,
-        })
-      }
+      console.log(`Updated weekly schedule for ${day}, truck ${truckId}`)
     } catch (error) {
       console.error("Error updating weekly schedule:", error)
       alert("Failed to update weekly schedule. Please try again.")
     }
+  }
+
+  // Handle time selection
+  const handleTimeSelect = (hours, minutes, period) => {
+    const formattedTime = `${hours}:${minutes} ${period}`
+    setNewSchedule({ ...newSchedule, estimatedTime: formattedTime })
+    // Keep the picker open to allow for adjustments
+  }
+
+  // Render time picker
+  const renderTimePicker = () => {
+    const hours = Array.from({ length: 12 }, (_, i) => (i === 0 ? 12 : i))
+    const minutes = ["00", "15", "30", "45"]
+    const periods = ["AM", "PM"]
+
+    // Parse current time values
+    const timeRegex = /^(\d+):(\d+)\s(AM|PM)$/
+    const currentTime = newSchedule.estimatedTime || "12:00 AM"
+    const match = currentTime.match(timeRegex)
+
+    const currentHour = match ? Number.parseInt(match[1]) : 12
+    const currentMinute = match ? match[2] : "00"
+    const currentPeriod = match ? match[3] : "AM"
+
+    return (
+      <div className="time-picker" ref={timePickerRef}>
+        <div className="time-picker-header">
+          <h3>Select Time</h3>
+          <button className="close-btn" onClick={() => setShowTimePicker(false)}>
+            ×
+          </button>
+        </div>
+        <div className="time-picker-content">
+          <div className="time-column">
+            <div className="time-column-header">Hour</div>
+            <div className="time-column-items">
+              {hours.map((hour) => (
+                <div
+                  key={`hour-${hour}`}
+                  className={`time-item ${hour === currentHour ? "selected" : ""}`}
+                  onClick={() => {
+                    handleTimeSelect(hour, currentMinute, currentPeriod)
+                  }}
+                >
+                  {hour}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="time-column">
+            <div className="time-column-header">Minute</div>
+            <div className="time-column-items">
+              {minutes.map((minute) => (
+                <div
+                  key={`minute-${minute}`}
+                  className={`time-item ${minute === currentMinute ? "selected" : ""}`}
+                  onClick={() => {
+                    handleTimeSelect(currentHour, minute, currentPeriod)
+                  }}
+                >
+                  {minute}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="time-column">
+            <div className="time-column-header">AM/PM</div>
+            <div className="time-column-items">
+              {periods.map((period) => (
+                <div
+                  key={`period-${period}`}
+                  className={`time-item ${period === currentPeriod ? "selected" : ""}`}
+                  onClick={() => {
+                    handleTimeSelect(currentHour, currentMinute, period)
+                  }}
+                >
+                  {period}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   // Render calendar
@@ -439,96 +471,36 @@ const SchedulePage = () => {
     return schedules.filter((schedule) => schedule.date === dateString)
   }
 
-  // Let's also add a fallback to initialize the database even if no data exists yet
-  // Add this function after the useEffect
+  // Add a function to sync daily schedules with weekly schedules
+  const syncWeeklySchedules = () => {
+    // Create a map to store the latest schedule for each day and truck
+    const latestSchedules = {}
 
-  // Add a button to initialize data
-  const InitializeDataButton = () => (
-    <div className="initialize-data">
-      <p>No data found in the database. Would you like to create initial data?</p>
-      <button onClick={initializeEmptyData}>Initialize Database</button>
-    </div>
-  )
+    // Process all schedules
+    schedules.forEach((schedule) => {
+      const scheduleDate = new Date(schedule.date)
+      const dayIndex = scheduleDate.getDay()
+      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+      const dayName = days[dayIndex]
+      const key = `${dayName}_${schedule.truckId}`
 
-  // First time setup guide component
-  const FirstTimeSetupGuide = () => (
-    <div className="first-time-setup">
-      <h2>Welcome to Schedule Management!</h2>
-      <p>It looks like this is your first time using the application. Let's set up your data:</p>
+      // If we don't have this day+truck combo yet, or this schedule is newer
+      if (!latestSchedules[key] || new Date(schedule.date) > new Date(latestSchedules[key].date)) {
+        latestSchedules[key] = schedule
+      }
+    })
 
-      <div className="setup-steps">
-        <div className="setup-step">
-          <h3>Step 1: Add Drivers</h3>
-          <p>Start by adding drivers who will be assigned to schedules.</p>
-          <div className="add-form">
-            <input
-              type="text"
-              placeholder="Driver Name"
-              value={newDriver.name}
-              onChange={(e) => setNewDriver({ ...newDriver, name: e.target.value })}
-            />
-            <input
-              type="text"
-              placeholder="Driver ID"
-              value={newDriver.id}
-              onChange={(e) => setNewDriver({ ...newDriver, id: e.target.value })}
-            />
-            <button onClick={addDriver}>Add Driver</button>
-          </div>
-        </div>
+    // Update weekly schedules based on the latest daily schedules
+    Object.values(latestSchedules).forEach((schedule) => {
+      const scheduleDate = new Date(schedule.date)
+      const dayIndex = scheduleDate.getDay()
+      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+      const dayName = days[dayIndex]
 
-        {drivers.length > 0 && (
-          <div className="setup-step">
-            <h3>Step 2: Create Your First Schedule</h3>
-            <p>Now, let's create a schedule for today ({date.toLocaleDateString()}).</p>
-            <div className="add-form">
-              <input
-                type="text"
-                placeholder="Truck ID (e.g., 0001)"
-                value={newSchedule.truckId}
-                onChange={(e) => setNewSchedule({ ...newSchedule, truckId: e.target.value })}
-              />
-              <select
-                value={newSchedule.driver}
-                onChange={(e) => setNewSchedule({ ...newSchedule, driver: e.target.value })}
-              >
-                <option value="">Select Driver</option>
-                {drivers.map((driver) => (
-                  <option key={driver.id} value={driver.name}>
-                    {driver.name}
-                  </option>
-                ))}
-              </select>
-              <input
-                type="text"
-                placeholder="Route (e.g., Burgos - Bondoc)"
-                value={newSchedule.route}
-                onChange={(e) => setNewSchedule({ ...newSchedule, route: e.target.value })}
-              />
-              <input
-                type="text"
-                placeholder="Estimated Time (e.g., 9:00 AM)"
-                value={newSchedule.estimatedTime}
-                onChange={(e) => setNewSchedule({ ...newSchedule, estimatedTime: e.target.value })}
-              />
-              <button onClick={addSchedule}>Add Schedule</button>
-            </div>
-          </div>
-        )}
-
-        {schedules.length > 0 && (
-          <div className="setup-step success">
-            <h3>Great job! You're all set up!</h3>
-            <p>
-              You've successfully created your first driver and schedule. You can continue adding more or start using
-              the application.
-            </p>
-            <button onClick={() => setIsFirstLoad(false)}>Start Using the Application</button>
-          </div>
-        )}
-      </div>
-    </div>
-  )
+      // Update weekly schedule
+      updateWeeklySchedule(dayName, schedule.truckId, schedule.route)
+    })
+  }
 
   return (
     <div className="schedule">
@@ -547,11 +519,9 @@ const SchedulePage = () => {
 
         {loading ? (
           <div className="loading">
-            <p>Loading schedule data...</p>
-            <p className="loading-details">Connecting to: {firebaseConfig.databaseURL}</p>
+            <p>Loading schedule data from Firestore...</p>
+            <p className="loading-details">Connecting to Firebase project: {firebaseConfig.projectId}</p>
           </div>
-        ) : isFirstLoad && (drivers.length === 0 || schedules.length === 0) ? (
-          <FirstTimeSetupGuide />
         ) : (
           <div className="schedule-content">
             <div className="main-content">
@@ -565,8 +535,13 @@ const SchedulePage = () => {
                 {showAddScheduleForm && (
                   <div className="add-form">
                     <input
+                      type="date"
+                      value={newSchedule.date}
+                      onChange={(e) => setNewSchedule({ ...newSchedule, date: e.target.value })}
+                    />
+                    <input
                       type="text"
-                      placeholder="Truck ID"
+                      placeholder="Truck ID (e.g., 0001 or 0002)"
                       value={newSchedule.truckId}
                       onChange={(e) => setNewSchedule({ ...newSchedule, truckId: e.target.value })}
                     />
@@ -587,12 +562,34 @@ const SchedulePage = () => {
                       value={newSchedule.route}
                       onChange={(e) => setNewSchedule({ ...newSchedule, route: e.target.value })}
                     />
-                    <input
-                      type="text"
-                      placeholder="Estimated Time"
-                      value={newSchedule.estimatedTime}
-                      onChange={(e) => setNewSchedule({ ...newSchedule, estimatedTime: e.target.value })}
-                    />
+                    <div className="time-input-container">
+                      <input
+                        type="text"
+                        ref={timeInputRef}
+                        placeholder="Estimated Time"
+                        value={newSchedule.estimatedTime}
+                        onClick={() => {
+                          // Initialize with a default time if empty
+                          if (!newSchedule.estimatedTime) {
+                            setNewSchedule({ ...newSchedule, estimatedTime: "12:00 AM" })
+                          }
+                          setShowTimePicker(true)
+                        }}
+                        readOnly
+                      />
+                      <span
+                        className="time-icon"
+                        onClick={() => {
+                          if (!newSchedule.estimatedTime) {
+                            setNewSchedule({ ...newSchedule, estimatedTime: "12:00 AM" })
+                          }
+                          setShowTimePicker(true)
+                        }}
+                      >
+                        🕒
+                      </span>
+                      {showTimePicker && renderTimePicker()}
+                    </div>
                     <button onClick={addSchedule}>Add Schedule</button>
                   </div>
                 )}
@@ -669,7 +666,7 @@ const SchedulePage = () => {
                                   truck1: { route: e.target.value },
                                 },
                               })
-                              // Debounce the Firebase update to avoid too many writes
+                              // Debounce the Firestore update to avoid too many writes
                               if (e.target.value !== trucks.truck1.route) {
                                 const timeoutId = setTimeout(() => {
                                   updateWeeklySchedule(day, "0001", e.target.value)
@@ -692,7 +689,7 @@ const SchedulePage = () => {
                                   truck2: { route: e.target.value },
                                 },
                               })
-                              // Debounce the Firebase update to avoid too many writes
+                              // Debounce the Firestore update to avoid too many writes
                               if (e.target.value !== trucks.truck2.route) {
                                 const timeoutId = setTimeout(() => {
                                   updateWeeklySchedule(day, "0002", e.target.value)
