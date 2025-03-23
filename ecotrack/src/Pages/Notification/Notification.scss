@@ -1,142 +1,140 @@
+.newContainer {
+  padding: 20px;
+  background-color: #f5f7fa;
+  min-height: 100vh;
+}
 
-  // Container Styles
-  .tabs-container {
-    max-width: 600px;
-    margin: 50px auto;
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+
+  .tab {
+    padding: 10px 20px;
+    margin-right: 10px;
+    cursor: pointer;
     background-color: #fff;
     border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-  }
-  
-  // Tabs Header
-  .tabs {
-    display: flex;
-    background-color: #f4f4f9;
-    border-bottom: 2px solid #ddd;
-  }
-  
-  .tab {
-    flex: 1;
-    text-align: center;
-    padding: 12px 0;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    color: #333;
-    background-color: #f4f4f9;
-    transition: background-color 0.3s ease, color 0.3s ease;
-  
-    &.active {
-      background-color:#2e4374;
-      color: #fff;
-      border-bottom: 2px solid #007BFF;
-    }
-  
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.3s ease;
+    font-weight: 500;
+
     &:hover {
-      background-color: #e6e6f7;
+      background-color: #e9eff5;
+    }
+
+    &.active {
+      background-color: #3498db;
+      color: #fff;
+      border-color: #3498db;
     }
   }
-  
-  // Tab Content
-  .tab-content {
-    padding: 20px;
-  
-    .content {
-      display: block;
-      h2 {
+}
+
+.tab-content {
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+
+  .content {
+    h2 {
+      margin-bottom: 15px;
+      color: #333;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        background-color: #f9f9f9;
+        padding: 15px;
         margin-bottom: 10px;
-        font-size: 20px;
-        color: #007BFF;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        strong {
+          display: block;
+          margin-bottom: 5px;
+          color: #2c3e50;
+        }
+
+        .notification-actions {
+          button {
+            margin-left: 10px;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background-color: #3498db;
+            color: #fff;
+            transition: background-color 0.3s ease;
+
+            &:hover {
+              background-color: #2980b9;
+            }
+
+            &:nth-child(2) {
+              background-color: #e74c3c;
+
+              &:hover {
+                background-color: #c0392b;
+              }
+            }
+          }
+        }
       }
-  
-      p {
-        font-size: 16px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 15px;
+
+      label {
+        margin-bottom: 6px;
+        font-weight: 500;
         color: #555;
       }
-    }
-  }
-  
-  .tab-content .input-group {
-    margin-bottom: 15px;
-    text-align: left;
-  
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-  
-    input,
-    textarea {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-  
-      &:focus {
-        border-color: #007bff;
+
+      input,
+      select,
+      textarea {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
         outline: none;
+        transition: border-color 0.3s ease;
+
+        &:focus {
+          border-color: #3498db;
+        }
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 80px;
       }
     }
-  
-    textarea {
-      height: 100px;
-      resize: none;
-    }
-  }
-  
-  .tab-content .send-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #fff;
-    background-color: #007bff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .tab-content .output {
-    margin-top: 20px;
-  
-    h2 {
-      margin-bottom: 10px;
-      color: #007bff;
-    }
-  
-    p {
-      margin: 5px 0;
-      font-size: 16px;
-    }
-  }
 
-  .tab-content .input-group select {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  
-    &:focus {
-      border-color: #007bff;
-      outline: none;
-    }
-  }
+    .send-button {
+      padding: 10px 20px;
+      background-color: #27ae60;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
 
-  .tab-content .input-group input[type="date"] {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  
-    &:focus {
-      border-color: #007bff;
-      outline: none;
+      &:hover {
+        background-color: #1e8449;
+      }
     }
   }
-  
+}
