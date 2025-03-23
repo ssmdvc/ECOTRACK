@@ -1,197 +1,369 @@
-.schedule-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
+.schedule {
+  display: flex;
+  width: 100%;
+  background-color: #EFF4FB;
 
-  h1 {
-    margin-bottom: 20px;
-  }
+  .scheduleContainer {
+    flex: 6;
+    margin: 0 auto;
+    padding: 20px;
 
-  .content {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 20px;
-
-    @media (max-width: 768px) {
-      grid-template-columns: 1fr;
-    }
-  }
-
-  .main-content {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .card {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-
-    .card-header {
-      padding: 15px 20px;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    h2 {
-      margin: 0;
-    }
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-
-    th, td {
-      padding: 10px;
-      text-align: left;
-      border-bottom: 1px solid #eee;
-    }
-
-    th {
-      font-weight: bold;
-    }
-  }
-
-  .add-form {
-    padding: 15px;
-    border-bottom: 1px solid #eee;
-
-    input {
+    .scheduleTitle {
+      padding: 20px;
+      font-family: "Raleway", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 500;
+      font-style: normal;
       width: 100%;
-      padding: 8px;
+      font-size: 24px;
+      color: rgba(43, 54, 116, 1);
       margin-bottom: 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-
-    button {
-      padding: 8px 16px;
-      background-color: #4f46e5;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-
-      &:hover {
-        background-color: #4338ca;
-      }
-    }
-  }
-
-  .calendar {
-    .calendar-header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      justify-content: space-between;
+    }
+
+    // Add styles for the new loading and error UI elements
+    .loading, .error-message, .initialize-data {
+      padding: 20px;
+      text-align: center;
+      font-family: "Raleway", sans-serif;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      margin: 20px 0;
 
       button {
-        background: none;
+        margin-top: 15px;
+        padding: 10px 20px;
+        background-color: rgba(43, 54, 116, 1);
+        color: white;
         border: none;
-        font-size: 18px;
+        border-radius: 4px;
         cursor: pointer;
+        font-family: "Raleway", sans-serif;
+        
+        &:hover {
+          background-color: rgba(43, 54, 116, 0.8);
+        }
       }
     }
 
-    .calendar-days {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 5px;
+    .loading-details {
+      font-size: 12px;
+      color: #666;
+      margin-top: 5px;
+    }
 
-      > div {
-        text-align: center;
-        padding: 5px;
-        font-weight: bold;
+    .error-message {
+      color: #e53935;
+      border-left: 4px solid #e53935;
+      
+      h3 {
+        margin-top: 0;
+        color: #e53935;
+      }
+    }
+
+    .initialize-data {
+      border-left: 4px solid rgba(43, 54, 116, 1);
+    }
+
+    .no-data {
+      padding: 20px;
+      text-align: center;
+      font-family: "Raleway", sans-serif;
+    }
+
+    .no-data {
+      color: #757575;
+      font-style: italic;
+      padding: 15px 0;
+    }
+
+    .schedule-content {
+      display: flex;
+      gap: 20px;
+      font-family: "Raleway", sans-serif;
+      
+      @media (max-width: 768px) {
+        flex-direction: column;
       }
 
-      .calendar-day {
-        aspect-ratio: 1;
+      .main-content {
+        flex: 2;
         display: flex;
-        align-items: center;
-        justify-content: center;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .sidebar-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        padding: 15px;
+
+        .card-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 15px;
+          
+          h2 {
+            margin: 0;
+            font-size: 18px;
+            color: rgba(43, 54, 116, 1);
+          }
+        }
+
+        h2 {
+          margin: 0 0 15px 0;
+          font-size: 18px;
+          color: rgba(43, 54, 116, 1);
+        }
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+
+        th, td {
+          padding: 10px;
+          text-align: left;
+          border-bottom: 1px solid #eee;
+        }
+
+        th {
+          font-weight: 600;
+          color: rgba(43, 54, 116, 0.8);
+        }
+
+        input, select {
+          width: 100%;
+          padding: 6px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-family: "Raleway", sans-serif;
+          
+          &:focus {
+            outline: none;
+            border-color: rgba(43, 54, 116, 0.5);
+            box-shadow: 0 0 0 2px rgba(43, 54, 116, 0.1);
+          }
+        }
+
+        .status-pending {
+          color: #f57c00;
+          background-color: #fff3e0;
+        }
+
+        .status-in-progress {
+          color: #1976d2;
+          background-color: #e3f2fd;
+        }
+
+        .status-completed {
+          color: #388e3c;
+          background-color: #e8f5e9;
+        }
+
+        .status-cancelled {
+          color: #d32f2f;
+          background-color: #ffebee;
+        }
+
+        .delete-btn {
+          background-color: #f44336;
+          
+          &:hover {
+            background-color: #d32f2f;
+          }
+        }
+      }
+
+      button {
+        padding: 8px 16px;
+        background-color: rgba(43, 54, 116, 1);
+        color: white;
+        border: none;
+        border-radius: 4px;
         cursor: pointer;
-        border-radius: 50%;
+        font-family: "Raleway", sans-serif;
+        transition: background-color 0.2s ease;
 
         &:hover {
-          background-color: #f0f0f0;
+          background-color: rgba(43, 54, 116, 0.8);
         }
 
-        &.selected {
-          background-color: #4f46e5;
-          color: white;
-        }
-
-        &.today {
-          border: 2px solid #4f46e5;
-        }
-
-        &.empty {
-          visibility: hidden;
+        &:active {
+          transform: translateY(1px);
         }
       }
-    }
-  }
 
-  .driver-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 15px;
+      .add-form {
+        margin-bottom: 15px;
+        padding: 15px;
+        background-color: #f9f9f9;
+        border-radius: 4px;
 
-    .driver-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px;
-      border: 1px solid #eee;
-      border-radius: 4px;
-
-      .avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        overflow: hidden;
-
-        img {
+        input, select {
           width: 100%;
-          height: 100%;
-          object-fit: cover;
+          padding: 8px;
+          margin-bottom: 10px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-family: "Raleway", sans-serif;
+          
+          &:focus {
+            outline: none;
+            border-color: rgba(43, 54, 116, 0.5);
+            box-shadow: 0 0 0 2px rgba(43, 54, 116, 0.1);
+          }
+        }
+
+        button {
+          width: 100%;
         }
       }
 
-      .driver-name {
-        font-weight: bold;
+      .calendar {
+        .calendar-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 10px;
+
+          button {
+            background: none;
+            border: none;
+            color: rgba(43, 54, 116, 1);
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+          }
+        }
+
+        .calendar-days {
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          gap: 5px;
+
+          > div {
+            text-align: center;
+            padding: 5px;
+            font-weight: 600;
+            color: rgba(43, 54, 116, 0.8);
+          }
+
+          .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 50%;
+            position: relative;
+
+            &:hover {
+              background-color: #f0f0f0;
+            }
+
+            &.selected {
+              background-color: rgba(43, 54, 116, 1);
+              color: white;
+            }
+
+            &.today {
+              border: 2px solid rgba(43, 54, 116, 1);
+            }
+
+            &.has-schedules::after {
+              content: '';
+              position: absolute;
+              bottom: 2px;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 4px;
+              height: 4px;
+              border-radius: 50%;
+              background-color: rgba(43, 54, 116, 1);
+            }
+
+            &.empty {
+              visibility: hidden;
+            }
+          }
+        }
       }
 
-      .driver-id {
-        font-size: 12px;
-        color: #666;
+      .driver-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-height: 300px;
+        overflow-y: auto;
+
+        &::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        &::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 10px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: rgba(43, 54, 116, 0.5);
+          border-radius: 10px;
+        }
+
+        .driver-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 10px;
+          border: 1px solid #eee;
+          border-radius: 4px;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+          &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          }
+
+          .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: #f0f0f0;
+
+            img {
+              width: 100%;
+              height: 100%;
+              object-fit: cover;
+            }
+          }
+
+          .driver-name {
+            font-weight: 600;
+            color: rgba(43, 54, 116, 1);
+          }
+
+          .driver-id {
+            font-size: 12px;
+            color: #666;
+          }
+        }
       }
-    }
-  }
-
-  button {
-    padding: 8px 16px;
-    background-color: #4f46e5;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-
-    &:hover {
-      background-color: #4338ca;
     }
   }
 }
