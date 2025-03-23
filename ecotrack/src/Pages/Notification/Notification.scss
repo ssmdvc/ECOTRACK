@@ -25,9 +25,9 @@
     }
 
     &.active {
-      background-color: #3498db;
+      background-color: #07263a;
       color: #fff;
-      border-color: #3498db;
+      border-color: #07263a;
     }
   }
 }
@@ -71,12 +71,12 @@
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            background-color: #3498db;
+            background-color: #2e4374; // Changed button color
             color: #fff;
             transition: background-color 0.3s ease;
 
             &:hover {
-              background-color: #2980b9;
+              background-color: #1e3058;
             }
 
             &:nth-child(2) {
@@ -112,7 +112,7 @@
         transition: border-color 0.3s ease;
 
         &:focus {
-          border-color: #3498db;
+          border-color: #2e4374;
         }
       }
 
@@ -124,7 +124,7 @@
 
     .send-button {
       padding: 10px 20px;
-      background-color: #27ae60;
+      background-color: #2e4374; // Changed send button color
       color: #fff;
       border: none;
       border-radius: 6px;
@@ -133,7 +133,7 @@
       transition: background-color 0.3s ease;
 
       &:hover {
-        background-color: #1e8449;
+        background-color: #1e3058;
       }
     }
   }

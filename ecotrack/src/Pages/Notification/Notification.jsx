@@ -63,7 +63,6 @@ const Notification = () => {
       <Sidebar />
       <div className="newContainer">
         <Navbar />
-
         {/* Tabs */}
         <div className="tabs">
           <div
@@ -73,14 +72,14 @@ const Notification = () => {
             Scheduled Notifications
           </div>
           <div
-            className={`tab ${activeTab === 3 ? "active" : ""}`}
-            onClick={() => handleTabClick(3)}
+            className={`tab ${activeTab === 2 ? "active" : ""}`}
+            onClick={() => handleTabClick(2)}
           >
             Archived Notifications
           </div>
           <div
-            className={`tab ${activeTab === 4 ? "active" : ""}`}
-            onClick={() => handleTabClick(4)}
+            className={`tab ${activeTab === 3 ? "active" : ""}`}
+            onClick={() => handleTabClick(3)}
           >
             Create New Notification
           </div>
@@ -116,7 +115,7 @@ const Notification = () => {
           )}
 
           {/* Archived Notifications */}
-          {activeTab === 3 && (
+          {activeTab === 2 && (
             <div className="content">
               <h2>Archived Notifications</h2>
               {archivedNotifications.length > 0 ? (
@@ -140,7 +139,7 @@ const Notification = () => {
           )}
 
           {/* Create New Notification */}
-          {activeTab === 4 && (
+          {activeTab === 3 && (
             <div className="content">
               <h2>Create New Notification</h2>
 
