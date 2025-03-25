@@ -4,6 +4,7 @@ import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import DateRangeIcon from '@mui/icons-material/DateRange';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
+import ReportIcon from '@mui/icons-material/Report';
 import RecyclingIcon from '@mui/icons-material/Recycling';
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -23,6 +24,8 @@ const Sidebar = () => {
             </div>
             <div className="center">
                 <ul>
+
+                    {/* Dashboard */}
                     <p className="title-1"></p>
                     <Link to="/dashboard" className="custom-link" style={{textDecoration:"none"}}>
                     <li>
@@ -30,6 +33,8 @@ const Sidebar = () => {
                         <span>Dashboard</span>
                     </li>
                     </Link>
+
+                    {/* user */}
                     <p className="title"></p>
                     <Link to="/user" className="custom-link" style={{textDecoration:"none"}}>
                     <li>
@@ -37,6 +42,17 @@ const Sidebar = () => {
                         <span>User</span>
                     </li>
                     </Link>
+                    
+                    {/* Analytics */}
+                    <p className="title"></p>
+                    <Link to="/analytics" className="custom-link">
+                        <li>
+                            <AnalyticsIcon className="icon" />
+                            <span>Analytics</span>
+                        </li>
+                    </Link>
+
+                    {/* truck tracking*/}
                     <p className="title"></p>
                     <Link to="/trackingpage" className="custom-link">
                     <li>
@@ -44,6 +60,7 @@ const Sidebar = () => {
                         <span>Truck Tracking</span>
                     </li>
                     </Link>
+
                     <p className="title"></p>
                     <Link to="/request" className="custom-link">
                     <li>
@@ -61,7 +78,7 @@ const Sidebar = () => {
                     <p className="title"></p>
                     <Link to="/report" className="custom-link">
                     <li>
-                        <AnalyticsIcon className="icon" />
+                        <ReportIcon className="icon" />
                         <span>Report</span>
                     </li>
                     </Link>

@@ -20,6 +20,7 @@ import Request from './Pages/DisposalPage/Request';
 import Report from './Pages/Report/Report';
 import UserFeedback from './Pages/UserFeedback/UserFeedback';
 import Notification from './Pages/Notification/Notification';
+//import Analytics from "./Pages/Dashboard/Analytics";
 
 function App() {
   const {darkMode} = useContext(DarkModeContext); 
@@ -32,6 +33,9 @@ function App() {
       <Route path="/signup" element={<SignUpForm />}/>
       <Route path="/login" element={<LoginForm />}/>
       <Route path="/dashboard" element={<Dashboard />}/>
+      {/* <Route path="/analytics" element={<Analytics />} /> */}
+
+      
       <Route path="user">
         <Route index element={<List />         
           }/>
@@ -41,6 +45,7 @@ function App() {
         <Route path="new" element={          
             <NewPage inputs = {userInputs} title="Add New User" />}/>
       </Route>
+
       <Route path="trackingpage">
         <Route index element={<Tracking />}/>
       </Route>
