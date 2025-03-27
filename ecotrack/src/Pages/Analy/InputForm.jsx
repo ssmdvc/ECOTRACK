@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { db } from '../../firebase';
-import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs,doc, updateDoc } from 'firebase/firestore';
 import { TextField, Button, MenuItem, Select, FormControl, InputLabel, Modal, Box, Typography } from '@mui/material';
 import "../Analy/Analytics.scss";
 // import jsPDF from 'jspdf';
@@ -10,6 +10,7 @@ export default function InputForm() {
   const [open, setOpen] = useState(false);
   const [inputType, setInputType] = useState('');
   const [dateRecord, setDateRecorded] = useState('');
+  
 
   // Waste Collection Metrics
   const [week, setWeek] = useState('');
@@ -41,65 +42,96 @@ export default function InputForm() {
     setCost(0);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-     // Get the current date in MM/DD/YYYY format
-    const currentDate = new Date();  // Current Date
-    const formattedDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
-    
-    try {
-    // Check if the selected week already exists for the current month
-    const currentMonth = currentDate.getMonth() + 1;
-    const currentYear = currentDate.getFullYear();
+    const checkAndUpdateMonthlyTotal = async () => {
+          const currentDate = new Date();
+          const currentMonth = currentDate.getMonth() + 1;
+          const currentYear = currentDate.getFullYear();
       
-    // Check if the selected week already exists for the current month
-    const q = query(
-        collection(db, 'wasteData'),
-        where('week', '==', week),
-        where('dateRecord', '>=', `${currentMonth}/01/${currentYear}`),
-        where('dateRecord', '<=', `${currentMonth}/31/${currentYear}`)
-      );
-
-      const querySnapshot = await getDocs(q);
-
-      if (!querySnapshot.empty) {
-        alert(`Data for ${week} already exists for the current month!`);
-        return;
-      }
-        
-      if (inputType === 'waste') {
-        const currentDate = new Date();
-        const month = currentDate.getMonth() + 1;
-        const year = currentDate.getFullYear();
-
-        await addDoc(collection(db, 'wasteData'), {
-          week,
-          volume: Number(volume),
-          dateRecord: formattedDate,
-          month,
-          year,
-          timestamp: new Date()
-        });
-
-      } else if (inputType === 'averageWaste') {
-        await addDoc(collection(db, 'collectionData'), {
-          area,
-          avgWaste: Number(avgWaste)
-        });
-      } else if (inputType === 'cost') {
-        await addDoc(collection(db, 'costData'), {
-          type: costType,
-          cost: Number(cost)
-        });
-      }
-        alert('Data added successfully!');
-        handleClose();
-        } catch (error) {
-        console.error('Error adding data: ', error);
-        }
+          // Query all weekly entries for this month
+          const q = query(
+              collection(db, 'wasteData'),
+              where('month', '==', currentMonth),
+              where('year', '==', currentYear)
+          );
+      
+          const querySnapshot = await getDocs(q);
+          const weekData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      
+          // If 4 weeks exist, calculate the total volume
+          if (weekData.length === 4) {
+              const totalVolume = weekData.reduce((sum, entry) => sum + entry.volume, 0);
+      
+              // Get the last week's document (Week 4)
+              const lastWeekDoc = weekData.find(entry => entry.week === 'Week 4');
+              if (lastWeekDoc) {
+                  await updateDoc(doc(db, 'wasteData', lastWeekDoc.id), {
+                      monthlyTotal: totalVolume
+                  });
+                  console.log(`✅ Monthly total updated: ${totalVolume}`);
+              }
+          }
+      };
+      
     
-  };
+
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+    
+        // Get the current date in MM/DD/YYYY format
+        const currentDate = new Date();
+        const formattedDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
+        
+        try {
+            const currentMonth = currentDate.getMonth() + 1;
+            const currentYear = currentDate.getFullYear();
+    
+            // ✅ Check if the selected week already exists for the current month
+            const q = query(
+                collection(db, 'wasteData'),
+                where('week', '==', week),
+                where('month', '==', currentMonth),
+                where('year', '==', currentYear)
+            );
+    
+            const querySnapshot = await getDocs(q);
+    
+            if (!querySnapshot.empty) {
+                alert(`⚠️ Data for ${week} already exists for the current month!`);
+                return;
+            }
+    
+            if (inputType === 'waste') {
+                const wasteRef = await addDoc(collection(db, 'wasteData'), {
+                    week,
+                    volume: Number(volume),
+                    dateRecord: formattedDate,
+                    month: currentMonth,
+                    year: currentYear,
+                    timestamp: new Date()
+                });
+    
+                console.log('✅ Waste data added:', wasteRef.id);
+    
+                // ✅ Call checkAndUpdateMonthlyTotal **after** adding the waste entry
+                await checkAndUpdateMonthlyTotal();
+            } else if (inputType === 'averageWaste') {
+                await addDoc(collection(db, 'collectionData'), {
+                    area,
+                    avgWaste: Number(avgWaste)
+                });
+            } else if (inputType === 'cost') {
+                await addDoc(collection(db, 'costData'), {
+                    type: costType,
+                    cost: Number(cost)
+                });
+            }
+    
+            alert('✅ Data added successfully!');
+            handleClose();
+        } catch (error) {
+            console.error('❌ Error adding data: ', error);
+        }
+    };
 
        // Function to Download PDF
     //   const downloadPDF = () => {
