@@ -4,11 +4,8 @@ import 'react-calendar/dist/Calendar.css';
 
 import "./Dashboard.scss";
 import Sidebar from '../../Components/Sidebar/Sidebar';
-import Navbar from '../../Components/Navbar/Navbar';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import ReportIcon from '@mui/icons-material/Report';
 import RecyclingIcon from '@mui/icons-material/Recycling';
-import EventIcon from '@mui/icons-material/Event';
 import Map from "../../Components/Map/Map";
 import { Link } from "react-router-dom";
 import {
@@ -39,7 +36,7 @@ const Dashboard = () => {
     <div className='dashboard'>
       <Sidebar />
       <div className='dashboardContainer'>
-        <Navbar />
+       
 
         <div className='section1'>
           <div className="left-div"> 

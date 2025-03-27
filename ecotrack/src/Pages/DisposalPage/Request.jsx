@@ -97,7 +97,7 @@ const Request = () => {
     <div className="disposal">
       <Sidebar />
       <div className="disposalContainer">
-        <Navbar />
+    
         <div className="disposalTitle">Disposal Request Management</div>
 
         <div className="search-container">

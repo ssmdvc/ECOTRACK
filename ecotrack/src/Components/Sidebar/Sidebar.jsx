@@ -8,8 +8,10 @@ import ReportIcon from '@mui/icons-material/Report';
 import RecyclingIcon from '@mui/icons-material/Recycling';
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import {Link} from "react-router-dom"
+import LogoutIcon from '@mui/icons-material/Logout';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import { Link } from "react-router-dom";
 
 
 
@@ -97,13 +99,32 @@ const Sidebar = () => {
                         <span>Notification</span>
                     </li>
                     </Link>
-
-                    
-
                 </ul>
             </div> 
-        </div>
-    )
-}
+                {/* Logout Section */}
+                <div className="bottom">
+                    <hr />
+                    
+                    <div className="profile-mode">
+                        <div className="profile">
+                            <AccountCircleIcon className="icon" />
+                            <span>Profile</span>
+                        </div>
 
-export default Sidebar
+                        <div className="mode">
+                            <Brightness4Icon className="icon" />
+                            <span>Mode</span>
+                        </div>
+                    </div>
+
+                    <button className="logout-btn">
+                        <span>Sign out</span>
+                        <LogoutIcon className="logout-icon" />
+                    </button>
+                </div>
+
+                        </div>
+                    );
+                };
+
+export default Sidebar;

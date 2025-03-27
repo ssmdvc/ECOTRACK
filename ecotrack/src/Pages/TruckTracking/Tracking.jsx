@@ -84,7 +84,6 @@ const Tracking = () => {
     <div className="tracking">
       <Sidebar />
       <div className="trackingContainer">
-        <Navbar />
         <h1 className="trackingTitle">Truck Route</h1>
         <div className="trackingContent">
           <div className="routesDetails">
