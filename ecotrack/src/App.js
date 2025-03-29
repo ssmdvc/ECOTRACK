@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
+import {BrowserRouter, Routes, Route} from 'react-router-dom';
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -13,7 +13,6 @@ import NewPage from './Pages/NewPage/NewPage';
 import { userInputs } from './formSource';
 import "./style/dark.scss"
 import { DarkModeContext } from './Context/darkModeContext';
-import { AuthContext } from './Context/AuthContext';
 import SchedulePage from './Pages/SchedulePage/SchedulePage';
 import Tracking from './Pages/TruckTracking/Tracking';
 import Request from './Pages/DisposalPage/Request';

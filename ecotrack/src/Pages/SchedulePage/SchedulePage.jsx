@@ -203,6 +203,27 @@ const SchedulePage = () => {
     }
   }
 
+  ///Delete Driver from Firestore
+  const deleteDriver = async (driverId) => {
+    if (!driverId) {
+      alert("Invalid driver ID")
+      return
+    }
+  
+    try {
+      // Delete the driver from Firestore
+      await deleteDoc(doc(db, "drivers", driverId))
+  
+      // Update UI state
+      setDrivers((prevDrivers) => prevDrivers.filter(driver => driver.id !== driverId))
+  
+      console.log(`✅ Driver ${driverId} deleted successfully!`)
+    } catch (error) {
+      console.error("Error deleting driver:", error)
+      alert("Failed to delete driver. Please try again.")
+    }
+  }
+  
   // Add a new schedule to Firestore
   const addSchedule = async () => {
     if (!newSchedule.truckId || !newSchedule.driver || !newSchedule.route || !newSchedule.estimatedTime) {
@@ -287,6 +308,7 @@ const SchedulePage = () => {
     }
   }
 
+
   // Update weekly schedule in Firestore
   const updateWeeklySchedule = async (day, truckId, newRoute) => {
     try {
@@ -320,8 +342,8 @@ const SchedulePage = () => {
     const formattedTime = `${hours}:${minutes} ${period}`
     setNewSchedule({ ...newSchedule, estimatedTime: formattedTime })
     // Keep the picker open to allow for adjustments
-  }
-
+  }  
+  
   // Render time picker
   const renderTimePicker = () => {
     const hours = Array.from({ length: 12 }, (_, i) => (i === 0 ? 12 : i))
@@ -640,7 +662,7 @@ const SchedulePage = () => {
               </div>
 
               <div className="card">
-                <h2>Weekly Schedule</h2>
+                <h2>Scheduled Collection</h2>
                 <table>
                   <thead>
                     <tr>
@@ -653,52 +675,8 @@ const SchedulePage = () => {
                     {Object.entries(weeklySchedules).map(([day, trucks]) => (
                       <tr key={day}>
                         <td>{day}</td>
-                        <td>
-                          <input
-                            type="text"
-                            value={trucks.truck1.route}
-                            onChange={(e) => {
-                              // Update local state immediately for responsive UI
-                              setWeeklySchedules({
-                                ...weeklySchedules,
-                                [day]: {
-                                  ...weeklySchedules[day],
-                                  truck1: { route: e.target.value },
-                                },
-                              })
-                              // Debounce the Firestore update to avoid too many writes
-                              if (e.target.value !== trucks.truck1.route) {
-                                const timeoutId = setTimeout(() => {
-                                  updateWeeklySchedule(day, "0001", e.target.value)
-                                }, 500)
-                                return () => clearTimeout(timeoutId)
-                              }
-                            }}
-                          />
-                        </td>
-                        <td>
-                          <input
-                            type="text"
-                            value={trucks.truck2.route}
-                            onChange={(e) => {
-                              // Update local state immediately for responsive UI
-                              setWeeklySchedules({
-                                ...weeklySchedules,
-                                [day]: {
-                                  ...weeklySchedules[day],
-                                  truck2: { route: e.target.value },
-                                },
-                              })
-                              // Debounce the Firestore update to avoid too many writes
-                              if (e.target.value !== trucks.truck2.route) {
-                                const timeoutId = setTimeout(() => {
-                                  updateWeeklySchedule(day, "0002", e.target.value)
-                                }, 500)
-                                return () => clearTimeout(timeoutId)
-                              }
-                            }}
-                          />
-                        </td>
+                        <td>{trucks.truck1?.route}</td>
+                        <td>{trucks.truck2?.route}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -747,6 +725,15 @@ const SchedulePage = () => {
                           <div className="driver-name">{driver.name}</div>
                           <div className="driver-id">{driver.id}</div>
                         </div>
+                        <button
+                            className="delete-btn"
+                            onClick={() => {
+                              console.log("🟡 Delete button clicked for ID:", driver.id);
+                              deleteDriver(driver.id);
+                            }}
+                          >
+                            Delete
+                          </button>
                       </div>
                     ))}
                   </div>
