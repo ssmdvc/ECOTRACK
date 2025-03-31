@@ -15,6 +15,7 @@ export default function Analytics() {
     const [costData, setCostData] = useState([]);
     const [currentMonth, setCurrentMonth] = useState('');
     const [period, setPeriod] = useState('weekly');
+    const [avgWastePeriod, setAvgWastePeriod] = useState('weekly');
 
     useEffect(() => {
         const monthNames = [
@@ -151,6 +152,11 @@ export default function Analytics() {
         setPeriod(event.target.value);
     };
 
+    const handleAvgWastePeriodChange = (event) => {
+        setAvgWastePeriod(event.target.value);
+    };
+
+
     return (
         <div className='sidebarParentContainer'>
             <Sidebar />
@@ -215,9 +221,37 @@ export default function Analytics() {
                         </Card>
 
                         {/* Average Waste Per Collection Point */}
-                        <Card>
+                       <Card>
                             <CardContent className='cardStyle'>
                                 <Typography variant="h6" gutterBottom>Average Waste per Collection Point</Typography>
+                                <FormControl fullWidth margin="normal" sx={{
+                                    position: 'absolute',
+                                    top: '360px',
+                                    right: '200px',
+                                    borderRadius: '8px',
+                                    padding: '10px',
+                                    width: '150px',
+                                    height: '40px',
+                                    '& .MuiInputLabel-root': { color: 'gray', fontSize: '0.90rem', left: '2px', paddingTop: '11px' },
+                                    '& .MuiSelect-root': { color: '#555', display: 'flex', justifyContent: 'center', alignItems: 'center' },
+                                    '& .MuiOutlinedInput-notchedOutline': { borderColor: '#888', height: '50px', textAlign: 'center' },
+                                    '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: '#444' },
+                                }}>
+                                    <InputLabel>Filter by Period</InputLabel>
+                                    <Select value={avgWastePeriod} onChange={handleAvgWastePeriodChange} sx={{
+                                        textAlign: 'center',
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                    }}>
+                                
+                                        <MenuItem value="weekly">Weekly</MenuItem>
+                                        <MenuItem value="monthly">Monthly</MenuItem>
+                                        <MenuItem value="yearly">Yearly</MenuItem>
+                                    </Select>
+                                </FormControl>
+
+                                 {/* BarChart for Average Waste Data point */}
                                 <BarChart width={600} height={200} data={avgWasteData}>
                                     <XAxis dataKey="area" />
                                     <YAxis />
