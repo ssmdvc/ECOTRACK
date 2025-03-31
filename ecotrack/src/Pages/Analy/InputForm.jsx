@@ -214,13 +214,23 @@ export default function InputForm() {
 
             {inputType === 'averageWaste' && (
               <>
-                <TextField
+
+                    <FormControl fullWidth margin="normal">
+                    <InputLabel>Select a Zone</InputLabel>
+                        <Select value={area} onChange={(e) => setArea(e.target.value)}>
+                            <MenuItem value="Zone A">Zone A</MenuItem>
+                            <MenuItem value="Zone B">Zone B</MenuItem>
+                            <MenuItem value="Zone C">Zone C</MenuItem>
+                            
+                        </Select>
+                </FormControl>
+                {/* <TextField
                   label="Area (e.g., Zone A, Zone B)"
                   value={area}
                   onChange={(e) => setArea(e.target.value)}
                   fullWidth
                   margin="normal"
-                />
+                /> */}
                 <TextField
                   label="Average Waste Collected"
                   type="number"
