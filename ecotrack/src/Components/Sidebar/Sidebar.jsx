@@ -108,13 +108,9 @@ const Sidebar = () => {
                     <div className="profile-mode">
                         <div className="profile">
                             <AccountCircleIcon className="icon" />
-                            <span>Profile</span>
+                            <span>Settings</span>
                         </div>
 
-                        <div className="mode">
-                            <Brightness4Icon className="icon" />
-                            <span>Mode</span>
-                        </div>
                     </div>
 
                     <button className="logout-btn">
