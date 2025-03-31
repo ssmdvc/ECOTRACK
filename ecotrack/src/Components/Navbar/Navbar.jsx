@@ -1,5 +1,4 @@
 import "./Navbar.scss"
-import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import { DarkModeContext } from "../../Context/darkModeContext";
 import { useContext, useState } from "react";

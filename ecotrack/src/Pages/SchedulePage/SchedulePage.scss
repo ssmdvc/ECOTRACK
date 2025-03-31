@@ -471,11 +471,13 @@
         .driver-item {
           display: flex;
           align-items: center;
-          gap: 10px;
+          justify-content: space-between; /* Space between text and button */
+          background: #fff;
           padding: 10px;
-          border: 1px solid #eee;
-          border-radius: 4px;
-          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          border-radius: 8px;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          margin-bottom: 10px;
+          
 
           &:hover {
             transform: translateY(-2px);
@@ -484,10 +486,10 @@
 
           .avatar {
             width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            overflow: hidden;
-            background-color: #f0f0f0;
+           height: 40px;
+           border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ddd;
 
             img {
               width: 100%;
@@ -504,6 +506,24 @@
           .driver-id {
             font-size: 12px;
             color: #666;
+          }
+
+          .delete-btn {
+            background: #dc3545; /* Red background */
+            color: white;
+            border: none;
+            padding: 5px 12px; /* Adjust padding for a smaller button */
+            border-radius: 5px; /* Make it rounded */
+            cursor: pointer;
+            font-size: 14px; /* Reduce text size */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+          }
+          
+          .delete-btn:hover {
+            background: #c82333;
           }
         }
       }

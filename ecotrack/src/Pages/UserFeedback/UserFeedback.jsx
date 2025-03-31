@@ -4,8 +4,8 @@ import Sidebar from '../../Components/Sidebar/Sidebar';
 import Navbar from '../../Components/Navbar/Navbar';
 import { Share2, MessageCircle, Trash2, Star } from 'lucide-react';
 import { db } from '../../firebase';
-import { collection, query, onSnapshot, deleteDoc, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { getFeedbacks, deleteFeedback, addComment, updateFeedback, handleUpdateRating } from '../../feedbackUtils'
+import { collection, query, onSnapshot, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { deleteFeedback, updateFeedback } from '../../feedbackUtils'
 
 function StarRating({ rating }) {
   return (
