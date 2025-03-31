@@ -20,6 +20,7 @@ import Report from './Pages/Report/Report';
 import UserFeedback from './Pages/UserFeedback/UserFeedback';
 import Notification from './Pages/Notification/Notification';
 import Analytics from './Pages/Analy/Analytics';
+import WasteData from './Pages/WasteData/WasteData';
 
 function App() {
   const {darkMode} = useContext(DarkModeContext); 
@@ -33,6 +34,7 @@ function App() {
       <Route path="/login" element={<LoginForm />}/>
       <Route path="/dashboard" element={<Dashboard />}/>
       <Route path="/analytics" element={<Analytics />} />
+      <Route path="/waste-data" element={<WasteData />} />
 
       
       <Route path="user">

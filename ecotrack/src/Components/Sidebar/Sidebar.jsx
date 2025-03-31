@@ -11,6 +11,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { Link } from "react-router-dom";
 
 
@@ -97,6 +98,14 @@ const Sidebar = () => {
                     <li>
                         <NotificationsIcon className="icon" />
                         <span>Notification</span>
+                    </li>
+                    </Link>
+
+                    <p className="title"></p>
+                    <Link to="/waste-data" className="custom-link">
+                    <li>
+                        <DeleteIcon className="icon" />
+                        <span>Waste Data</span>
                     </li>
                     </Link>
                 </ul>
