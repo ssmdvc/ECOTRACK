@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Request.scss";
-import Navbar from "../../Components/Navbar/Navbar";
+// import Navbar from "../../Components/Navbar/Navbar";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import { FaSearchPlus, FaSearch } from "react-icons/fa";
 import { db, collection, getDocs } from "../../firebase";
@@ -73,9 +73,10 @@ const Request = () => {
 
   const filteredRequests = (activeTab === "pending" ? requests : archivedRequests).filter(
     (request) =>
-      request.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      request.id.includes(searchTerm)
+      request?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      request?.id?.toString().includes(searchTerm)
   );
+  
 
   const indexOfLastRequest = currentPage * requestsPerPage;
   const indexOfFirstRequest = indexOfLastRequest - requestsPerPage;
