@@ -44,9 +44,10 @@ const Sidebar = () => {
                     </li>
                     </Link>
                     
+
                     {/* Analytics */}
                     <p className="title"></p>
-                    <Link to="/analytics" className="custom-link">
+                    <Link to="/analyticsFr" className="custom-link">
                         <li>
                             <AnalyticsIcon className="icon" />
                             <span>Analytics</span>
