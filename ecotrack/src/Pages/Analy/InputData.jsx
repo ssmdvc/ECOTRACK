@@ -4,7 +4,7 @@ import { TextField, Button, MenuItem, Select, FormControl, InputLabel, Modal, Bo
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 
 export default function InputData() {
     const [open, setOpen] = useState(false);
@@ -36,25 +36,38 @@ export default function InputData() {
         e.preventDefault();
         try {
             const currentDate = date || new Date();
-            const timestamp = new Date();
+            const formattedDate = currentDate.toISOString().split('T')[0]; // Format date as YYYY-MM-DD
 
             if (inputType === 'wasteData') {
-                await addDoc(collection(db, 'wasteCollectionData'), {
+                // Check if data already exists for the selected date
+                const wasteCollectionRef = collection(db, 'wasteCollectionData');
+                const q = query(wasteCollectionRef, where('collection_date', '==', formattedDate));
+                const existingData = await getDocs(q);
+
+                if (!existingData.empty) {
+                    alert('❌ Data for this date already exists. You can only input data once per day.');
+                    return;
+                }
+
+                // Add new waste collection data
+                await addDoc(wasteCollectionRef, {
                     collection_date: currentDate,
                     collection_weight: Number(weight),
                     zone,
                     street,
-                    truck_id: truckId
+                    truck_id: truckId,
                 });
             } else if (inputType === 'costData') {
+                // Add operational cost data
                 await addDoc(collection(db, 'operationalCostData'), {
                     truck_id: truck,
                     operation_type: operationType,
                     cost: Number(cost),
                     operation_date: currentDate,
-                    timestamp
+                    timestamp: new Date(),
                 });
             }
+
             alert('✅ Data added successfully!');
             handleClose();
         } catch (error) {

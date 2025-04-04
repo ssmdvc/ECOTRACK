@@ -5,7 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import React, { useState, useEffect } from 'react';
 import { FormControl, InputLabel, Select, Card, CardContent, Typography, MenuItem } from '@mui/material';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { db } from '../../firebase'; // Removed unused imports
 
 const zoneData = [
     { zone: "Zone A", weight: 120, streets: ["Florante", "Selya", "Antenor", "Monark", "Criseta", "Fracena"] },
@@ -20,10 +20,12 @@ const costData = [
 ];
 
 export default function AnalyticsFr() {
-    const [daysData, setDaysData] = useState([]);
     const [periodWaste, setPeriodWaste] = useState('');
     const [periodZone, setPeriodZone] = useState('');
     const [costType, setCostType] = useState('');
+    const [dailyData, setDailyData] = useState([]); // State for daily waste data
+    const [weeklyZoneData, setWeeklyZoneData] = useState([]); // State for zone data
+    const [operationalCostData, setOperationalCostData] = useState([]); // State for cost data
 
     const handlePeriodChange = (setter) => (event) => setter(event.target.value);
 
@@ -32,37 +34,41 @@ export default function AnalyticsFr() {
         today.setHours(0, 0, 0, 0);
         const startOfWeek = new Date(today);
         startOfWeek.setDate(today.getDate() - today.getDay());
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(startOfWeek.getDate() + 6);
-        endOfWeek.setHours(23, 59, 59, 999);
-        return { startOfWeek, endOfWeek };
+        return { startOfWeek };
     };
 
     useEffect(() => {
-        const fetchDailyData = () => {
-            const { startOfWeek, endOfWeek } = getWeekBoundaries();
+        const fetchWeeklyData = () => {
+            const { startOfWeek } = getWeekBoundaries();
             const wasteCollectionRef = collection(db, 'wasteCollectionData');
             const q = query(
                 wasteCollectionRef,
-                where('collection_date', '>=', startOfWeek),
-                where('collection_date', '<=', endOfWeek)
+                where('collection_date', '>=', startOfWeek)
             );
 
             onSnapshot(q, (snapshot) => {
-                const data = snapshot.docs.map(doc => {
-                    const collectionDate = doc.data().collection_date.toDate();
-                    return {
-                        id: doc.id,
-                        day: collectionDate.toLocaleDateString('en-US', { weekday: 'short' }),
-                        date: collectionDate,
-                        volume: doc.data().collection_weight,
-                    };
-                });
-                setDaysData(data);
+                const data = snapshot.docs.map((doc) => ({
+                    date: doc.data().collection_date.toDate(),
+                    volume: doc.data().collection_weight,
+                }));
+                setDailyData(data); // Update state with fetched data
+                console.log('Daily Data:', data); // Debugging
             });
         };
 
-        fetchDailyData();
+        const fetchZoneData = () => {
+            // Simulate fetching zone data
+            setWeeklyZoneData(zoneData); // Use static zoneData for now
+        };
+
+        const fetchCostData = () => {
+            // Simulate fetching operational cost data
+            setOperationalCostData(costData); // Use static costData for now
+        };
+
+        fetchWeeklyData();
+        fetchZoneData();
+        fetchCostData();
     }, []);
 
     return (
@@ -82,15 +88,15 @@ export default function AnalyticsFr() {
                                 <FormControl fullWidth margin="normal" sx={{ position: 'absolute', top: '70px', right: '60px', width: '150px' }}>
                                     <InputLabel>Filter by Period</InputLabel>
                                     <Select value={periodWaste} onChange={handlePeriodChange(setPeriodWaste)}>
-                                        <MenuItem value="daily">Daily</MenuItem>
-                                        <MenuItem value="weekly">Weekly</MenuItem>
-                                        <MenuItem value="monthly">Monthly</MenuItem>
-                                        <MenuItem value="yearly">Yearly</MenuItem>
+                                        <MenuItem value="Daily Waste Collection">Daily</MenuItem>
+                                        <MenuItem value="Weekly Average Waste Collection">Weekly</MenuItem>
+                                        <MenuItem value="Monthly Average Waste Collection">Monthly</MenuItem>
+                                        <MenuItem value="Yearly Average Waste Collection">Yearly</MenuItem>
                                     </Select>
                                 </FormControl>
-                                <BarChart width={600} height={200} data={daysData}>
+                                <BarChart width={600} height={200} data={dailyData}>
                                     <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="day" />
+                                    <XAxis dataKey="data" />
                                     <YAxis />
                                     <Tooltip />
                                     <Bar dataKey="volume" fill="#8884d8" barSize={40} />
@@ -114,7 +120,7 @@ export default function AnalyticsFr() {
                                     </Select>
                                 </FormControl>
                                 <div style={{ display: "flex", alignItems: "start", gap: "50px" }}>
-                                    <BarChart width={600} height={250} data={zoneData}>
+                                    <BarChart width={600} height={250} data={weeklyZoneData}>
                                         <CartesianGrid strokeDasharray="3 3" />
                                         <XAxis dataKey="zone" />
                                         <YAxis />
@@ -160,7 +166,7 @@ export default function AnalyticsFr() {
                                         <MenuItem value="Labor">Labor</MenuItem>
                                     </Select>
                                 </FormControl>
-                                <BarChart width={600} height={200} data={costData}>
+                                <BarChart width={600} height={200} data={operationalCostData}>
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="costType" />
                                     <YAxis />
