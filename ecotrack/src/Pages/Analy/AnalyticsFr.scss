@@ -2,14 +2,14 @@
 .sidebarParentContainer {
     font-family: "Raleway", sans-serif;
     display: flex;
-     border: 2px solid red;
+    //  border: 2px solid red;
 } 
     
 
 .subContainer {
     flex: 6;
     background-color: #EFF4FB;
-    border: 2px solid green;
+    // border: 2px solid green;
 }
         
 
@@ -21,13 +21,13 @@
     align-items: flex-end;
     align-content: flex-end;
     justify-content: center;
-     border: 2px solid yellow;
+    //  border: 2px solid yellow;
 
 }
 
 
     .inputFormContainer{
-         border: 2px solid rebeccapurple;
+        //  border: 2px solid rebeccapurple;
         height: 5%;
         width:20%;
          margin-top: 1em;
@@ -39,7 +39,7 @@
     }
 
     .cardsContainer{
-        border: 2px solid pink;
+        // border: 2px solid pink;
         width: 95%; 
         height: 90%;
         display: flex;
