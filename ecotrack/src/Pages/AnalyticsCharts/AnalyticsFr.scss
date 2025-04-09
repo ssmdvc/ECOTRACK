@@ -1,0 +1,46 @@
+.sidebarParentContainer {
+    font-family: "Raleway", sans-serif;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  
+  .subContainer {
+    flex: 1;
+    background-color: #EFF4FB;
+    overflow-y: auto;
+    padding: 1em;
+    height: 100vh;
+    box-sizing: border-box;
+    border: 1px solid red;
+    width: 100%;
+  }
+  
+  .detailContainer {
+    width: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    border: 1px solid blue;
+  }
+  
+  .cardsContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+  }
+  
+  .inputFormContainer {
+    height: auto;
+    width: 20%;
+    margin-top: 1em;
+    margin-right: 10em;
+    display: flex;
+    flex-direction: row;
+    gap: 1em;
+  }
+  

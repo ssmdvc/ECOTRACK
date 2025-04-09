@@ -16,7 +16,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Chart from "chart.js/auto";
 
-export default function ExportReportsCard() {
+export default function ExportReportsCard({ onAddDataClick }) {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
@@ -184,24 +184,37 @@ export default function ExportReportsCard() {
           Export Reports
         </Typography>
         <Box display="flex" gap={2} alignItems="center" mb={2}>
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DatePicker
-              label="Start Date"
-              value={startDate}
-              onChange={setStartDate}
-              renderInput={(params) => <TextField {...params} />}
-            />
-            <DatePicker
-              label="End Date"
-              value={endDate}
-              onChange={setEndDate}
-              renderInput={(params) => <TextField {...params} />}
-            />
-          </LocalizationProvider>
-          <Button variant="contained" color="primary" onClick={handleExportPDF}>
-            Export All Data (PDF)
-          </Button>
-        </Box>
+  <LocalizationProvider dateAdapter={AdapterDateFns}>
+    <DatePicker
+      label="Start Date"
+      value={startDate}
+      onChange={setStartDate}
+      renderInput={(params) => <TextField {...params} />}
+    />
+    <DatePicker
+      label="End Date"
+      value={endDate}
+      onChange={setEndDate}
+      renderInput={(params) => <TextField {...params} />}
+    />
+  </LocalizationProvider>
+
+  <Button variant="outlined" color="primary" onClick={handleExportPDF}>
+    Export All Data (PDF)
+  </Button>
+
+  <Button
+    variant="outlined"
+    color="primary"
+    onClick={onAddDataClick}
+    sx={{
+      whiteSpace: 'nowrap'
+    }}
+  >
+    Add Data
+  </Button>
+</Box>
+
       </CardContent>
     </Card>
   );

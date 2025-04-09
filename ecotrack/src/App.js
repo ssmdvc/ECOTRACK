@@ -19,7 +19,7 @@ import Request from './Pages/DisposalPage/Request';
 import Report from './Pages/Report/Report';
 import UserFeedback from './Pages/UserFeedback/UserFeedback';
 import Notification from './Pages/Notification/Notification';
-import AnalyticsFr from './Pages/Analy/AnalyticsFr';
+import AnalyticsFr from './Pages/AnalyticsCharts/AnalyticsFr';
 
 function App() {
   const {darkMode} = useContext(DarkModeContext); 
