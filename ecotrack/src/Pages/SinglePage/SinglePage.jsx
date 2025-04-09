@@ -1,6 +1,5 @@
 import "./SinglePage.scss"
 import Sidebar from '../../Components/Sidebar/Sidebar';
-import Navbar from '../../Components/Navbar/Navbar';
 import Chart from '../../Components/Chart/Chart';
 import List from '../../Components/Table/Table';
 
@@ -10,7 +9,6 @@ const SinglePage = () => {
     <div className="single">
       <Sidebar />
       <div className="singleContainer">
-        <Navbar />
         <div className="top">
           <div className="left">
             <div className="editButton">Edit</div>

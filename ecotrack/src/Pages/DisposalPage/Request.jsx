@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "./Request.scss";
-import Navbar from "../../Components/Navbar/Navbar";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import { FaSearchPlus, FaSearch } from "react-icons/fa";
 import { db, collection, getDocs } from "../../firebase";

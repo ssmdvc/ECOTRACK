@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react"
 import Sidebar from "../../Components/Sidebar/Sidebar"
-import Navbar from "../../Components/Navbar/Navbar"
 import { initializeApp } from "firebase/app"
 import { getFirestore, collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, setDoc } from "firebase/firestore"
 import "./SchedulePage.scss"
@@ -528,7 +527,7 @@ const SchedulePage = () => {
     <div className="schedule">
       <Sidebar />
       <div className="scheduleContainer">
-        <Navbar />
+      
         <div className="scheduleTitle">Schedule Page</div>
 
         {error && (

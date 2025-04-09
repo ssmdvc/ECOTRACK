@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './UserFeedback.scss';
 import Sidebar from '../../Components/Sidebar/Sidebar';
-import Navbar from '../../Components/Navbar/Navbar';
 import { Share2, MessageCircle, Trash2, Star } from 'lucide-react';
 import { db } from '../../firebase';
 import { collection, query, onSnapshot, doc, updateDoc, serverTimestamp } from 'firebase/firestore';
@@ -148,7 +147,7 @@ function UserFeedback() {
     <div className="feedback">
       <Sidebar />
       <div className="feedbackContainer">
-        <Navbar />
+      
         <div className="feedbackTitle">User Feedback Management</div>
         <main>
           {feedbacks.length > 0 ? (

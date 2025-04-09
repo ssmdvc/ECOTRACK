@@ -87,15 +87,18 @@ export default function AnalyticsFr() {
       grouped[zone].streets[street] = (grouped[zone].streets[street] || 0) + weight;
     });
 
-    return Object.entries(grouped).map(([zone, data]) => {
-      const numPoints = Object.keys(data.streets).length || 1;
+    return Object.entries(zoneStreetsMap).map(([zone, streets]) => {
+      const zoneData = grouped[zone] || { total: 0, streets: {} };
+      const numPoints = Object.keys(zoneData.streets).length || streets.length || 1;
+    
       return {
         zone,
-        totalWeight: data.total,
-        weight: data.total / numPoints,
-        streets: zoneStreetsMap[zone] || Object.keys(data.streets),
+        totalWeight: zoneData.total || 0,
+        weight: (zoneData.total || 0) / numPoints,
+        streets,
       };
-    }).filter(entry => entry.totalWeight > 0).sort((a, b) => b.weight - a.weight);
+    }).sort((a, b) => a.zone.localeCompare(b.zone));
+    
   }, [zoneStreetsMap]);
 
   useEffect(() => {

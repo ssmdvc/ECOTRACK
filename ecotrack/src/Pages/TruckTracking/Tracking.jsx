@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import mapboxgl from "mapbox-gl";
-import Navbar from "../../Components/Navbar/Navbar";
 import Sidebar from "../../Components/Sidebar/Sidebar";
 import "./Tracking.scss";
 import { db, collection, getDocs } from "../../firebase";

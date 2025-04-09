@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Navbar from '../../Components/Navbar/Navbar';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import './Notification.scss';
 
@@ -62,7 +61,6 @@ const Notification = () => {
     <div className="new">
       <Sidebar />
       <div className="newContainer">
-        <Navbar />
         {/* Tabs */}
         <div className="tabs">
           <div

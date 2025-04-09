@@ -1,4 +1,3 @@
-import Navbar from '../../Components/Navbar/Navbar'
 import Sidebar from '../../Components/Sidebar/Sidebar'
 import './Report.scss'
 import { DataGrid } from '@mui/x-data-grid';
@@ -65,7 +64,7 @@ const Report = () => {
     <div className='report'>
         <Sidebar />
         <div className='reportContainer'>
-            <Navbar />
+        
         <div className='reportTitle'>
             Report Management
         </div>
