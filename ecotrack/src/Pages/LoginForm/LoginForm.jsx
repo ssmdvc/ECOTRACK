@@ -23,7 +23,7 @@ const LoginForm = () => {
           .then((userCredential) => {
           // Signed in 
           const user = userCredential.user;
-          dispatch({typeof:"LOGIN", payload:user})
+          dispatch({ type: "LOGIN", payload: user }); // Fixed typo: "typeof" -> "type"
           navigate("/dashboard")
           toast.success("User Login Successfully!", {
             position: "top-center",
