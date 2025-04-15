@@ -10,15 +10,13 @@ import { Link } from "react-router-dom";
 import { getWasteDataByPeriod, getChartTitle } from "../../Components/Utils/chartHelpers";
 import WasteChart from "../AnalyticsCharts/WasteChart";
 import { db } from "../../firebase";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 
 const Dashboard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
-
-  // 
-
+  const [pendingCount, setPendingCount] = useState(0);
   const [periodWaste, setPeriodWaste] = useState("weekly");
-const [rawWasteData, setRawWasteData] = useState([]);
+  const [rawWasteData, setRawWasteData] = useState([]);
 
 useEffect(() => {
   const fetchWasteData = async () => {
@@ -41,6 +39,21 @@ useEffect(() => {
 const wasteChartData = useMemo(() => getWasteDataByPeriod(rawWasteData, periodWaste), [rawWasteData, periodWaste]);
 const wasteChartTitle = useMemo(() => getChartTitle(periodWaste), [periodWaste]);
 
+useEffect(() => {
+  const fetchPendingRequests = async () => {
+    try {
+      const q = query(collection(db, "requests"), where("status", "==", "pending"));
+      const snapshot = await getDocs(q);
+      setPendingCount(snapshot.size); // total count of pending
+    } catch (err) {
+      console.error("Error fetching pending requests:", err);
+    }
+  };
+
+  fetchPendingRequests();
+}, []);
+
+
 
   return (
     <div className='dashboard'>
@@ -59,7 +72,7 @@ const wasteChartTitle = useMemo(() => getChartTitle(periodWaste), [periodWaste])
                 <Link to="/request" className="custom-link">
                   <RecyclingIcon className="dis-icon" />
                 </Link>
-                <div className="reqNum">2</div>
+                <div className="reqNum">{pendingCount}</div>
                 <div className="Dis-line"></div>
                 <div className="disposalText">Disposal Request</div>
               </div>
@@ -70,7 +83,7 @@ const wasteChartTitle = useMemo(() => getChartTitle(periodWaste), [periodWaste])
                 <Link to="/report" className="custom-link">
                   <ReportIcon className="dis-icon" />
                 </Link>
-                <div className="reqNum">2</div>
+                <div className="reqNum">{pendingCount}</div>
                 <div className="Dis-line"></div>
                 <div className="feedText">User Reports</div>
               </div>
