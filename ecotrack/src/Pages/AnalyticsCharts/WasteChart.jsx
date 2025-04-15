@@ -2,7 +2,7 @@ import React from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from "recharts";
 import { Card, CardContent, Typography, Box, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
 
-export default function WasteChart({ data, title, period, setPeriod }) {
+export default function WasteChart({ data, title, period, setPeriod, className = "" }) {
   const barColor = {
     daily: "#42a5f5",
     weekly: "#66bb6a",
@@ -11,7 +11,16 @@ export default function WasteChart({ data, title, period, setPeriod }) {
   }[period];
 
   return (
-    <Card>
+    <Card
+    
+          className={className}
+          sx={{
+            borderRadius: "12px",
+            boxShadow: "0 6px 24px rgba(0, 0, 0, 0.05)",
+            border: "1px solid #e0e0e0",
+          }}
+
+        >
       <CardContent >
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Typography variant="h6">{title}</Typography>

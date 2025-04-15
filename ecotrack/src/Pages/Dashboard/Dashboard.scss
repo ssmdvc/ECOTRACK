@@ -58,6 +58,7 @@
             gap: 10px;
             margin-top: 10px;
             margin-left: 1em;
+           
         }
 
         .right1-divContent{
@@ -66,17 +67,40 @@
             flex-direction: column;
             justify-content: space-around;
             align-items: center;
-          
+            // border: 1px solid green;
             margin-left: 1em;
         }
 
-        .totalGarbage {
-          text-align: center;
-          font-size: 16px;
-          color: #2e4374;
-          margin-bottom: 20px;
+        .waste-chart {
+          background-color: #ffffff;
+          border: 1px solid green;
+          width: 100%;
+          height: 100% ;
+        
+          .MuiTypography-root {
+            color: #2b3674;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 1em;
           
+          }
+        
+          .MuiFormControl-root {
+            background-color: #f9f9f9;
+            border-radius: 6px;
+          }
+        
+          .recharts-bar-rectangle {
+            rx: 6px;
+          }
+        
+          .recharts-cartesian-grid line {
+            stroke: #e0e0e0;
+          }
         }
+        
+        
+
 
         .map-div{
             width: 100%;
@@ -107,8 +131,10 @@
           margin-left: 1em;
           background: #fff;
           border-radius: 10px;
-          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+          // box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
       }
+
+    
         
 
         .feed-div{
