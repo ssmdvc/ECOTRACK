@@ -2,24 +2,10 @@
 
 import { useState, useEffect, useRef } from "react"
 import Sidebar from "../../Components/Sidebar/Sidebar"
-import { initializeApp } from "firebase/app"
-import { getFirestore, collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, setDoc } from "firebase/firestore"
+import Navbar from "../../Components/Navbar/Navbar"
+import { collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, setDoc } from "firebase/firestore"
+import { db } from "../../firebase.js" // Import Firestore instance from firebase.js
 import "./SchedulePage.scss"
-
-// Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAafMRXyF5aQVXGA6vjk_arexvq1Mf2Xkw",
-  authDomain: "ecotrack-web-panel.firebaseapp.com",
-  projectId: "ecotrack-web-panel",
-  storageBucket: "ecotrack-web-panel.appspot.com",
-  messagingSenderId: "879072790810",
-  appId: "1:879072790810:web:8a510c63c94958365904a3",
-}
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig)
-const db = getFirestore(app)
-console.log("Firebase Firestore initialized")
 
 const SchedulePage = () => {
   // State management
@@ -541,7 +527,7 @@ const SchedulePage = () => {
         {loading ? (
           <div className="loading">
             <p>Loading schedule data from Firestore...</p>
-            <p className="loading-details">Connecting to Firebase project: {firebaseConfig.projectId}</p>
+            <p className="loading-details">Connecting to Firebase...</p>
           </div>
         ) : (
           <div className="schedule-content">
