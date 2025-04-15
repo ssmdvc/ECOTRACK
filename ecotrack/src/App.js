@@ -20,6 +20,7 @@ import Report from './Pages/Report/Report';
 import UserFeedback from './Pages/UserFeedback/UserFeedback';
 import Notification from './Pages/Notification/Notification';
 import AnalyticsFr from './Pages/AnalyticsCharts/AnalyticsFr';
+import Setting from './Pages/Setting/Setting';          
 
 function App() {
   const {darkMode} = useContext(DarkModeContext); 
@@ -33,6 +34,7 @@ function App() {
       <Route path="/login" element={<LoginForm />}/>
       <Route path="/dashboard" element={<Dashboard />}/>
       <Route path="/analyticsFr" element={<AnalyticsFr />} />
+      <Route path="/setting" element={<Setting />} />
       
 
       

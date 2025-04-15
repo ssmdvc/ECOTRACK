@@ -102,17 +102,22 @@ const Sidebar = () => {
 
                 </ul>
             </div> 
-                {/* Logout Section */}
-                <div className="bottom">
-                    <hr />
-                    
-                    <div className="profile-mode">
-                        <div className="profile">
-                            <AccountCircleIcon className="icon" />
-                            <span>Settings</span>
-                        </div>
 
+                {/* Buttom Section */}
+                <div className="bottom">
+                    <hr /> {/* this is the line */}
+                    <div className="profile-mode">
+                    <Link to="/setting" className="custom-link">
+                        <div className="profile">
+                        <AccountCircleIcon className="icon" />
+                        <span>Settings</span>
+                        </div>
+                    </Link>
                     </div>
+
+
+
+                    
 
                     <button className="logout-btn">
                         <span>Sign out</span>
