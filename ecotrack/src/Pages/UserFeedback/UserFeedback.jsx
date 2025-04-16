@@ -23,18 +23,18 @@ function StarRating({ rating }) {
 
 function FeedbackCard({ feedback, onDelete, onShare, onRespond }) {
 
-  const { avatar, name } = feedback.user;
+  const user = feedback.user ?? {};
   const { date, content, rating, comments } = feedback;
 
-  const formattedDate = date
-    ? (date.toDate ? new Date(date.toDate()).toLocaleDateString() : new Date(date).toLocaleDateString())
+  const formattedDate = feedback.date
+    ? (feedback.date.toDate ? new Date(feedback.date.toDate()).toLocaleDateString() : new Date(feedback.date).toLocaleDateString())
     : 'Unknown Date';
 
   return (
     <div className="feedback-card">
       <div className="feedback-header">
         <div className="user-info">
-          <img src={feedback.user.avatar} alt="" className="user-avatar" />
+          <img src={feedback.user} alt="" className="user-avatar" />
           <div className="user-details">
             <span className="user-name">{feedback.user.name}</span>
             <span className="feedback-date">{formattedDate}</span>
