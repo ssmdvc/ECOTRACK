@@ -1,30 +1,38 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react"
-import Sidebar from "../../Components/Sidebar/Sidebar"
-import Navbar from "../../Components/Navbar/Navbar"
-import { collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, setDoc } from "firebase/firestore"
-import { db } from "../../firebase.js" // Import Firestore instance from firebase.js
-import "./SchedulePage.scss"
+import { useState, useEffect, useRef } from "react";
+import Sidebar from "../../Components/Sidebar/Sidebar";
+import Navbar from "../../Components/Navbar/Navbar";
+import {
+  collection,
+  addDoc,
+  doc,
+  deleteDoc,
+  updateDoc,
+  onSnapshot,
+  setDoc,
+} from "firebase/firestore";
+import { db } from "../../firebase.js"; // Import Firestore instance from firebase.js
+import "./SchedulePage.scss";
 
 const SchedulePage = () => {
   // State management
-  const [date, setDate] = useState(new Date())
-  const [drivers, setDrivers] = useState([])
-  const [schedules, setSchedules] = useState([])
-  const [weeklySchedules, setWeeklySchedules] = useState({})
-  const [showAddDriverForm, setShowAddDriverForm] = useState(false)
-  const [showAddScheduleForm, setShowAddScheduleForm] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [showTimePicker, setShowTimePicker] = useState(false)
+  const [date, setDate] = useState(new Date());
+  const [drivers, setDrivers] = useState([]);
+  const [schedules, setSchedules] = useState([]);
+  const [weeklySchedules, setWeeklySchedules] = useState({});
+  const [showAddDriverForm, setShowAddDriverForm] = useState(false);
+  const [showAddScheduleForm, setShowAddScheduleForm] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
   // Time picker refs
-  const timePickerRef = useRef(null)
-  const timeInputRef = useRef(null)
+  const timePickerRef = useRef(null);
+  const timeInputRef = useRef(null);
 
   // Form state
-  const [newDriver, setNewDriver] = useState({ name: "", id: "" })
+  const [newDriver, setNewDriver] = useState({ name: "", id: "" });
   const [newSchedule, setNewSchedule] = useState({
     status: "Pending",
     truckId: "",
@@ -32,22 +40,22 @@ const SchedulePage = () => {
     route: "",
     estimatedTime: "",
     date: new Date().toISOString().split("T")[0], // Add default date
-  })
+  });
 
   // Initialize weekly schedule structure
   useEffect(() => {
-    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-    const initialWeeklySchedules = {}
+    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    const initialWeeklySchedules = {};
 
     days.forEach((day) => {
       initialWeeklySchedules[day] = {
         truck1: { route: "" },
         truck2: { route: "" },
-      }
-    })
+      };
+    });
 
-    setWeeklySchedules(initialWeeklySchedules)
-  }, [])
+    setWeeklySchedules(initialWeeklySchedules);
+  }, []);
 
   // Handle clicks outside the time picker
   useEffect(() => {
@@ -58,179 +66,186 @@ const SchedulePage = () => {
         timeInputRef.current &&
         !timeInputRef.current.contains(event.target)
       ) {
-        setShowTimePicker(false)
+        setShowTimePicker(false);
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [timePickerRef])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [timePickerRef]);
 
   // Fetch data from Firestore on component mount
   useEffect(() => {
-    console.log("Starting to fetch data from Firestore")
-    setLoading(true)
+    console.log("Starting to fetch data from Firestore");
+    setLoading(true);
 
     try {
       // Set up listeners for drivers collection
       const driversUnsubscribe = onSnapshot(
         collection(db, "drivers"),
         (snapshot) => {
-          console.log("Drivers data received:", !snapshot.empty)
+          console.log("Drivers data received:", !snapshot.empty);
           const driversList = snapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
-          }))
-          setDrivers(driversList)
-          console.log("Drivers loaded:", driversList.length)
+          }));
+          setDrivers(driversList);
+          console.log("Drivers loaded:", driversList.length);
         },
         (error) => {
-          console.error("Error fetching drivers:", error)
-          setError("Failed to load drivers. Please try again later.")
-        },
-      )
+          console.error("Error fetching drivers:", error);
+          setError("Failed to load drivers. Please try again later.");
+        }
+      );
 
       // Set up listeners for schedules collection
       const schedulesUnsubscribe = onSnapshot(
         collection(db, "schedules"),
         (snapshot) => {
-          console.log("Schedules data received:", !snapshot.empty)
+          console.log("Schedules data received:", !snapshot.empty);
           const schedulesList = snapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
-          }))
-          setSchedules(schedulesList)
-          console.log("Schedules loaded:", schedulesList.length)
+          }));
+          setSchedules(schedulesList);
+          console.log("Schedules loaded:", schedulesList.length);
 
           // Sync with weekly schedules
           if (schedulesList.length > 0) {
-            syncWeeklySchedules()
+            syncWeeklySchedules();
           }
         },
         (error) => {
-          console.error("Error fetching schedules:", error)
-          setError("Failed to load schedules. Please try again later.")
-          setLoading(false)
-        },
-      )
+          console.error("Error fetching schedules:", error);
+          setError("Failed to load schedules. Please try again later.");
+          setLoading(false);
+        }
+      );
 
       // Set up listeners for weekly schedules collection
       const weeklySchedulesUnsubscribe = onSnapshot(
         collection(db, "weeklySchedules"),
         (snapshot) => {
-          console.log("Weekly schedules data received:", !snapshot.empty)
+          console.log("Weekly schedules data received:", !snapshot.empty);
 
           // Initialize with empty values
-          const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-          const weekly = {}
+          const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+          const weekly = {};
           days.forEach((day) => {
-            weekly[day] = { truck1: { route: "" }, truck2: { route: "" } }
-          })
+            weekly[day] = { truck1: { route: "" }, truck2: { route: "" } };
+          });
 
           // Fill with data from Firestore
           snapshot.docs.forEach((doc) => {
-            const data = doc.data()
+            const data = doc.data();
             if (weekly[data.day]) {
               if (data.truckId === "0001") {
-                weekly[data.day].truck1.route = data.route || ""
+                weekly[data.day].truck1.route = data.route || "";
               } else if (data.truckId === "0002") {
-                weekly[data.day].truck2.route = data.route || ""
+                weekly[data.day].truck2.route = data.route || "";
               }
             }
-          })
+          });
 
-          setWeeklySchedules(weekly)
-          setLoading(false)
-          console.log("Weekly schedules loaded")
+          setWeeklySchedules(weekly);
+          setLoading(false);
+          console.log("Weekly schedules loaded");
         },
         (error) => {
-          console.error("Error fetching weekly schedules:", error)
-          setError("Failed to load weekly schedules. Please try again later.")
-          setLoading(false)
-        },
-      )
+          console.error("Error fetching weekly schedules:", error);
+          setError("Failed to load weekly schedules. Please try again later.");
+          setLoading(false);
+        }
+      );
 
       // Cleanup function to unsubscribe from Firestore listeners
       return () => {
-        driversUnsubscribe()
-        schedulesUnsubscribe()
-        weeklySchedulesUnsubscribe()
-        console.log("Firestore listeners unsubscribed")
-      }
+        driversUnsubscribe();
+        schedulesUnsubscribe();
+        weeklySchedulesUnsubscribe();
+        console.log("Firestore listeners unsubscribed");
+      };
     } catch (err) {
-      console.error("Error setting up Firestore:", err)
-      setError("Failed to connect to the database. Please try again later.")
-      setLoading(false)
+      console.error("Error setting up Firestore:", err);
+      setError("Failed to connect to the database. Please try again later.");
+      setLoading(false);
     }
-  }, [])
+  }, []);
 
   // Add a new driver to Firestore
   const addDriver = async () => {
     if (!newDriver.name || !newDriver.id) {
-      alert("Please fill in all driver fields")
-      return
+      alert("Please fill in all driver fields");
+      return;
     }
 
     try {
       await addDoc(collection(db, "drivers"), {
         ...newDriver,
         avatar: "/placeholder.svg", // Default avatar
-      })
+      });
 
       // Reset form
-      setNewDriver({ name: "", id: "" })
-      setShowAddDriverForm(false)
+      setNewDriver({ name: "", id: "" });
+      setShowAddDriverForm(false);
     } catch (error) {
-      console.error("Error adding driver:", error)
-      alert("Failed to add driver. Please try again.")
+      console.error("Error adding driver:", error);
+      alert("Failed to add driver. Please try again.");
     }
-  }
+  };
 
   ///Delete Driver from Firestore
   const deleteDriver = async (driverId) => {
-    if (!driverId) {
-      alert("Invalid driver ID")
-      return
-    }
-  
     try {
-      // Delete the driver from Firestore
-      await deleteDoc(doc(db, "drivers", driverId))
-  
-      // Update UI state
-      setDrivers((prevDrivers) => prevDrivers.filter(driver => driver.id !== driverId))
-  
-      console.log(`✅ Driver ${driverId} deleted successfully!`)
+      // Delete from drivers collection
+      await deleteDoc(doc(db, "drivers", driverId));
+      console.log(`Driver ${driverId} deleted from Firestore`);
+
+      // Update the UI state by filtering out the deleted driver
+      setDrivers((prevDrivers) =>
+        prevDrivers.filter((driver) => driver.id !== driverId)
+      );
+
+      console.log(`Driver ${driverId} deleted successfully!`);
     } catch (error) {
-      console.error("Error deleting driver:", error)
-      alert("Failed to delete driver. Please try again.")
+      console.error("Error deleting driver:", error);
+      alert(`Failed to delete driver: ${error.message}. Please try again.`);
     }
-  }
-  
+  };
+
   // Add a new schedule to Firestore
   const addSchedule = async () => {
-    if (!newSchedule.truckId || !newSchedule.driver || !newSchedule.route || !newSchedule.estimatedTime) {
-      alert("Please fill in all schedule fields")
-      return
+    if (
+      !newSchedule.truckId ||
+      !newSchedule.driver ||
+      !newSchedule.route ||
+      !newSchedule.estimatedTime
+    ) {
+      alert("Please fill in all schedule fields");
+      return;
     }
 
     try {
       // Add to schedules collection
       await addDoc(collection(db, "schedules"), {
         ...newSchedule,
-      })
+      });
 
       // Also update weekly schedule
       // First, determine the day of week from the selected date
-      const scheduleDate = new Date(newSchedule.date)
-      const dayIndex = scheduleDate.getDay()
-      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-      const dayName = days[dayIndex]
+      const scheduleDate = new Date(newSchedule.date);
+      const dayIndex = scheduleDate.getDay();
+      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const dayName = days[dayIndex];
 
       // Update the weekly schedule for this day and truck
-      await updateWeeklySchedule(dayName, newSchedule.truckId, newSchedule.route)
+      await updateWeeklySchedule(
+        dayName,
+        newSchedule.truckId,
+        newSchedule.route
+      );
 
       // Reset form
       setNewSchedule({
@@ -240,68 +255,69 @@ const SchedulePage = () => {
         route: "",
         estimatedTime: "",
         date: new Date().toISOString().split("T")[0], // Reset to today's date
-      })
-      setShowAddScheduleForm(false)
+      });
+      setShowAddScheduleForm(false);
     } catch (error) {
-      console.error("Error adding schedule:", error)
-      alert("Failed to add schedule. Please try again.")
+      console.error("Error adding schedule:", error);
+      alert("Failed to add schedule. Please try again.");
     }
-  }
+  };
 
   // Delete a schedule from Firestore
   const deleteSchedule = async (scheduleId) => {
     try {
       // Get the schedule before deleting it
-      const scheduleToDelete = schedules.find((s) => s.id === scheduleId)
+      const scheduleToDelete = schedules.find((s) => s.id === scheduleId);
 
       // Delete from schedules collection
-      await deleteDoc(doc(db, "schedules", scheduleId))
+      await deleteDoc(doc(db, "schedules", scheduleId));
 
       // If this is the only schedule for this day and truck, also update weekly schedule
       if (scheduleToDelete) {
-        const scheduleDate = new Date(scheduleToDelete.date)
-        const dayIndex = scheduleDate.getDay()
-        const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-        const dayName = days[dayIndex]
+        const scheduleDate = new Date(scheduleToDelete.date);
+        const dayIndex = scheduleDate.getDay();
+        const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const dayName = days[dayIndex];
 
         // Check if there are other schedules for this day and truck
         const otherSchedulesForSameDayAndTruck = schedules.filter(
           (s) =>
-            s.id !== scheduleId && s.truckId === scheduleToDelete.truckId && new Date(s.date).getDay() === dayIndex,
-        )
+            s.id !== scheduleId &&
+            s.truckId === scheduleToDelete.truckId &&
+            new Date(s.date).getDay() === dayIndex
+        );
 
         // If no other schedules, clear the weekly schedule entry
         if (otherSchedulesForSameDayAndTruck.length === 0) {
-          await updateWeeklySchedule(dayName, scheduleToDelete.truckId, "")
+          await updateWeeklySchedule(dayName, scheduleToDelete.truckId, "");
         }
       }
     } catch (error) {
-      console.error("Error deleting schedule:", error)
-      alert("Failed to delete schedule. Please try again.")
+      console.error("Error deleting schedule:", error);
+      alert("Failed to delete schedule. Please try again.");
     }
-  }
+  };
 
   // Update a schedule status in Firestore
   const updateScheduleStatus = async (scheduleId, newStatus) => {
     try {
       await updateDoc(doc(db, "schedules", scheduleId), {
         status: newStatus,
-      })
+      });
     } catch (error) {
-      console.error("Error updating schedule status:", error)
-      alert("Failed to update schedule status. Please try again.")
+      console.error("Error updating schedule status:", error);
+      alert("Failed to update schedule status. Please try again.");
     }
-  }
-
+  };
 
   // Update weekly schedule in Firestore
   const updateWeeklySchedule = async (day, truckId, newRoute) => {
     try {
       // Create a unique ID for the weekly schedule entry
-      const docId = `${day}_${truckId}`
+      const docId = `${day}_${truckId}`;
 
       // Reference to the document
-      const weeklyScheduleRef = doc(db, "weeklySchedules", docId)
+      const weeklyScheduleRef = doc(db, "weeklySchedules", docId);
 
       // Set the document with merge option to update if exists or create if not
       await setDoc(
@@ -312,43 +328,46 @@ const SchedulePage = () => {
           route: newRoute,
           updatedAt: new Date().toISOString(),
         },
-        { merge: true },
-      )
+        { merge: true }
+      );
 
-      console.log(`Updated weekly schedule for ${day}, truck ${truckId}`)
+      console.log(`Updated weekly schedule for ${day}, truck ${truckId}`);
     } catch (error) {
-      console.error("Error updating weekly schedule:", error)
-      alert("Failed to update weekly schedule. Please try again.")
+      console.error("Error updating weekly schedule:", error);
+      alert("Failed to update weekly schedule. Please try again.");
     }
-  }
+  };
 
   // Handle time selection
   const handleTimeSelect = (hours, minutes, period) => {
-    const formattedTime = `${hours}:${minutes} ${period}`
-    setNewSchedule({ ...newSchedule, estimatedTime: formattedTime })
+    const formattedTime = `${hours}:${minutes} ${period}`;
+    setNewSchedule({ ...newSchedule, estimatedTime: formattedTime });
     // Keep the picker open to allow for adjustments
-  }  
-  
+  };
+
   // Render time picker
   const renderTimePicker = () => {
-    const hours = Array.from({ length: 12 }, (_, i) => (i === 0 ? 12 : i))
-    const minutes = ["00", "15", "30", "45"]
-    const periods = ["AM", "PM"]
+    const hours = Array.from({ length: 12 }, (_, i) => (i === 0 ? 12 : i));
+    const minutes = ["00", "15", "30", "45"];
+    const periods = ["AM", "PM"];
 
     // Parse current time values
-    const timeRegex = /^(\d+):(\d+)\s(AM|PM)$/
-    const currentTime = newSchedule.estimatedTime || "12:00 AM"
-    const match = currentTime.match(timeRegex)
+    const timeRegex = /^(\d+):(\d+)\s(AM|PM)$/;
+    const currentTime = newSchedule.estimatedTime || "12:00 AM";
+    const match = currentTime.match(timeRegex);
 
-    const currentHour = match ? Number.parseInt(match[1]) : 12
-    const currentMinute = match ? match[2] : "00"
-    const currentPeriod = match ? match[3] : "AM"
+    const currentHour = match ? Number.parseInt(match[1]) : 12;
+    const currentMinute = match ? match[2] : "00";
+    const currentPeriod = match ? match[3] : "AM";
 
     return (
       <div className="time-picker" ref={timePickerRef}>
         <div className="time-picker-header">
           <h3>Select Time</h3>
-          <button className="close-btn" onClick={() => setShowTimePicker(false)}>
+          <button
+            className="close-btn"
+            onClick={() => setShowTimePicker(false)}
+          >
             ×
           </button>
         </div>
@@ -359,9 +378,11 @@ const SchedulePage = () => {
               {hours.map((hour) => (
                 <div
                   key={`hour-${hour}`}
-                  className={`time-item ${hour === currentHour ? "selected" : ""}`}
+                  className={`time-item ${
+                    hour === currentHour ? "selected" : ""
+                  }`}
                   onClick={() => {
-                    handleTimeSelect(hour, currentMinute, currentPeriod)
+                    handleTimeSelect(hour, currentMinute, currentPeriod);
                   }}
                 >
                   {hour}
@@ -375,9 +396,11 @@ const SchedulePage = () => {
               {minutes.map((minute) => (
                 <div
                   key={`minute-${minute}`}
-                  className={`time-item ${minute === currentMinute ? "selected" : ""}`}
+                  className={`time-item ${
+                    minute === currentMinute ? "selected" : ""
+                  }`}
                   onClick={() => {
-                    handleTimeSelect(currentHour, minute, currentPeriod)
+                    handleTimeSelect(currentHour, minute, currentPeriod);
                   }}
                 >
                   {minute}
@@ -391,9 +414,11 @@ const SchedulePage = () => {
               {periods.map((period) => (
                 <div
                   key={`period-${period}`}
-                  className={`time-item ${period === currentPeriod ? "selected" : ""}`}
+                  className={`time-item ${
+                    period === currentPeriod ? "selected" : ""
+                  }`}
                   onClick={() => {
-                    handleTimeSelect(currentHour, currentMinute, period)
+                    handleTimeSelect(currentHour, currentMinute, period);
                   }}
                 >
                   {period}
@@ -403,8 +428,8 @@ const SchedulePage = () => {
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   // Render calendar
   const renderCalendar = () => {
@@ -421,42 +446,66 @@ const SchedulePage = () => {
       "October",
       "November",
       "December",
-    ]
-    const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate()
-    const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1).getDay()
+    ];
+    const daysInMonth = new Date(
+      date.getFullYear(),
+      date.getMonth() + 1,
+      0
+    ).getDate();
+    const firstDayOfMonth = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      1
+    ).getDay();
 
-    const days = []
+    const days = [];
     for (let i = 0; i < firstDayOfMonth; i++) {
-      days.push(<div key={`empty-${i}`} className="calendar-day empty"></div>)
+      days.push(<div key={`empty-${i}`} className="calendar-day empty"></div>);
     }
     for (let i = 1; i <= daysInMonth; i++) {
-      const currentDate = new Date(date.getFullYear(), date.getMonth(), i)
-      const isSelected = currentDate.toDateString() === date.toDateString()
-      const isToday = currentDate.toDateString() === new Date().toDateString()
+      const currentDate = new Date(date.getFullYear(), date.getMonth(), i);
+      const isSelected = currentDate.toDateString() === date.toDateString();
+      const isToday = currentDate.toDateString() === new Date().toDateString();
 
       // Check if there are schedules for this day
-      const dateString = currentDate.toISOString().split("T")[0]
-      const hasSchedules = schedules.some((schedule) => schedule.date === dateString)
+      const dateString = currentDate.toISOString().split("T")[0];
+      const hasSchedules = schedules.some(
+        (schedule) => schedule.date === dateString
+      );
 
       days.push(
         <div
           key={`day-${i}`}
-          className={`calendar-day ${isSelected ? "selected" : ""} ${isToday ? "today" : ""} ${hasSchedules ? "has-schedules" : ""}`}
+          className={`calendar-day ${isSelected ? "selected" : ""} ${
+            isToday ? "today" : ""
+          } ${hasSchedules ? "has-schedules" : ""}`}
           onClick={() => setDate(currentDate)}
         >
           {i}
-        </div>,
-      )
+        </div>
+      );
     }
 
     return (
       <div className="calendar">
         <div className="calendar-header">
-          <button onClick={() => setDate(new Date(date.getFullYear(), date.getMonth() - 1, 1))}>&lt;</button>
+          <button
+            onClick={() =>
+              setDate(new Date(date.getFullYear(), date.getMonth() - 1, 1))
+            }
+          >
+            &lt;
+          </button>
           <div>
             {monthNames[date.getMonth()]} {date.getFullYear()}
           </div>
-          <button onClick={() => setDate(new Date(date.getFullYear(), date.getMonth() + 1, 1))}>&gt;</button>
+          <button
+            onClick={() =>
+              setDate(new Date(date.getFullYear(), date.getMonth() + 1, 1))
+            }
+          >
+            &gt;
+          </button>
         </div>
         <div className="calendar-days">
           <div>Sun</div>
@@ -469,51 +518,53 @@ const SchedulePage = () => {
           {days}
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   // Get today's schedules
   const getTodaySchedules = () => {
-    const dateString = date.toISOString().split("T")[0]
-    return schedules.filter((schedule) => schedule.date === dateString)
-  }
+    const dateString = date.toISOString().split("T")[0];
+    return schedules.filter((schedule) => schedule.date === dateString);
+  };
 
   // Add a function to sync daily schedules with weekly schedules
   const syncWeeklySchedules = () => {
     // Create a map to store the latest schedule for each day and truck
-    const latestSchedules = {}
+    const latestSchedules = {};
 
     // Process all schedules
     schedules.forEach((schedule) => {
-      const scheduleDate = new Date(schedule.date)
-      const dayIndex = scheduleDate.getDay()
-      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-      const dayName = days[dayIndex]
-      const key = `${dayName}_${schedule.truckId}`
+      const scheduleDate = new Date(schedule.date);
+      const dayIndex = scheduleDate.getDay();
+      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const dayName = days[dayIndex];
+      const key = `${dayName}_${schedule.truckId}`;
 
       // If we don't have this day+truck combo yet, or this schedule is newer
-      if (!latestSchedules[key] || new Date(schedule.date) > new Date(latestSchedules[key].date)) {
-        latestSchedules[key] = schedule
+      if (
+        !latestSchedules[key] ||
+        new Date(schedule.date) > new Date(latestSchedules[key].date)
+      ) {
+        latestSchedules[key] = schedule;
       }
-    })
+    });
 
     // Update weekly schedules based on the latest daily schedules
     Object.values(latestSchedules).forEach((schedule) => {
-      const scheduleDate = new Date(schedule.date)
-      const dayIndex = scheduleDate.getDay()
-      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-      const dayName = days[dayIndex]
+      const scheduleDate = new Date(schedule.date);
+      const dayIndex = scheduleDate.getDay();
+      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      const dayName = days[dayIndex];
 
       // Update weekly schedule
-      updateWeeklySchedule(dayName, schedule.truckId, schedule.route)
-    })
-  }
+      updateWeeklySchedule(dayName, schedule.truckId, schedule.route);
+    });
+  };
 
   return (
     <div className="schedule">
       <Sidebar />
       <div className="scheduleContainer">
-      
         <div className="scheduleTitle">Schedule Page</div>
 
         {error && (
@@ -534,8 +585,16 @@ const SchedulePage = () => {
             <div className="main-content">
               <div className="card">
                 <div className="card-header">
-                  <h2>Today's Schedule - {date.toLocaleDateString("en-US", { day: "2-digit", month: "short" })}</h2>
-                  <button onClick={() => setShowAddScheduleForm(!showAddScheduleForm)}>
+                  <h2>
+                    Today's Schedule -{" "}
+                    {date.toLocaleDateString("en-US", {
+                      day: "2-digit",
+                      month: "short",
+                    })}
+                  </h2>
+                  <button
+                    onClick={() => setShowAddScheduleForm(!showAddScheduleForm)}
+                  >
                     {showAddScheduleForm ? "Cancel" : "Add New"}
                   </button>
                 </div>
@@ -544,17 +603,29 @@ const SchedulePage = () => {
                     <input
                       type="date"
                       value={newSchedule.date}
-                      onChange={(e) => setNewSchedule({ ...newSchedule, date: e.target.value })}
+                      onChange={(e) =>
+                        setNewSchedule({ ...newSchedule, date: e.target.value })
+                      }
                     />
                     <input
                       type="text"
                       placeholder="Truck ID (e.g., 0001 or 0002)"
                       value={newSchedule.truckId}
-                      onChange={(e) => setNewSchedule({ ...newSchedule, truckId: e.target.value })}
+                      onChange={(e) =>
+                        setNewSchedule({
+                          ...newSchedule,
+                          truckId: e.target.value,
+                        })
+                      }
                     />
                     <select
                       value={newSchedule.driver}
-                      onChange={(e) => setNewSchedule({ ...newSchedule, driver: e.target.value })}
+                      onChange={(e) =>
+                        setNewSchedule({
+                          ...newSchedule,
+                          driver: e.target.value,
+                        })
+                      }
                     >
                       <option value="">Select Driver</option>
                       {drivers.map((driver) => (
@@ -567,7 +638,12 @@ const SchedulePage = () => {
                       type="text"
                       placeholder="Route"
                       value={newSchedule.route}
-                      onChange={(e) => setNewSchedule({ ...newSchedule, route: e.target.value })}
+                      onChange={(e) =>
+                        setNewSchedule({
+                          ...newSchedule,
+                          route: e.target.value,
+                        })
+                      }
                     />
                     <div className="time-input-container">
                       <input
@@ -578,9 +654,12 @@ const SchedulePage = () => {
                         onClick={() => {
                           // Initialize with a default time if empty
                           if (!newSchedule.estimatedTime) {
-                            setNewSchedule({ ...newSchedule, estimatedTime: "12:00 AM" })
+                            setNewSchedule({
+                              ...newSchedule,
+                              estimatedTime: "12:00 AM",
+                            });
                           }
-                          setShowTimePicker(true)
+                          setShowTimePicker(true);
                         }}
                         readOnly
                       />
@@ -588,9 +667,12 @@ const SchedulePage = () => {
                         className="time-icon"
                         onClick={() => {
                           if (!newSchedule.estimatedTime) {
-                            setNewSchedule({ ...newSchedule, estimatedTime: "12:00 AM" })
+                            setNewSchedule({
+                              ...newSchedule,
+                              estimatedTime: "12:00 AM",
+                            });
                           }
-                          setShowTimePicker(true)
+                          setShowTimePicker(true);
                         }}
                       >
                         🕒
@@ -621,8 +703,15 @@ const SchedulePage = () => {
                           <td>
                             <select
                               value={schedule.status || "Pending"}
-                              onChange={(e) => updateScheduleStatus(schedule.id, e.target.value)}
-                              className={`status-${(schedule.status || "pending").toLowerCase()}`}
+                              onChange={(e) =>
+                                updateScheduleStatus(
+                                  schedule.id,
+                                  e.target.value
+                                )
+                              }
+                              className={`status-${(
+                                schedule.status || "pending"
+                              ).toLowerCase()}`}
                             >
                               <option value="Pending">Pending</option>
                               <option value="In Progress">In Progress</option>
@@ -635,7 +724,10 @@ const SchedulePage = () => {
                           <td>{schedule.route}</td>
                           <td>{schedule.estimatedTime}</td>
                           <td>
-                            <button className="delete-btn" onClick={() => deleteSchedule(schedule.id)}>
+                            <button
+                              className="delete-btn"
+                              onClick={() => deleteSchedule(schedule.id)}
+                            >
                               Delete
                             </button>
                           </td>
@@ -675,7 +767,9 @@ const SchedulePage = () => {
               <div className="card">
                 <div className="card-header">
                   <h2>Drivers</h2>
-                  <button onClick={() => setShowAddDriverForm(!showAddDriverForm)}>
+                  <button
+                    onClick={() => setShowAddDriverForm(!showAddDriverForm)}
+                  >
                     {showAddDriverForm ? "Cancel" : "Add Driver"}
                   </button>
                 </div>
@@ -685,13 +779,17 @@ const SchedulePage = () => {
                       type="text"
                       placeholder="Driver Name"
                       value={newDriver.name}
-                      onChange={(e) => setNewDriver({ ...newDriver, name: e.target.value })}
+                      onChange={(e) =>
+                        setNewDriver({ ...newDriver, name: e.target.value })
+                      }
                     />
                     <input
                       type="text"
                       placeholder="Driver ID"
                       value={newDriver.id}
-                      onChange={(e) => setNewDriver({ ...newDriver, id: e.target.value })}
+                      onChange={(e) =>
+                        setNewDriver({ ...newDriver, id: e.target.value })
+                      }
                     />
                     <button onClick={addDriver}>Add Driver</button>
                   </div>
@@ -704,21 +802,27 @@ const SchedulePage = () => {
                     {drivers.map((driver) => (
                       <div key={driver.id} className="driver-item">
                         <div className="avatar">
-                          <img src={driver.avatar || "/placeholder.svg"} alt={driver.name} />
+                          <img
+                            src={driver.avatar || "/placeholder.svg"}
+                            alt={driver.name}
+                          />
                         </div>
                         <div>
                           <div className="driver-name">{driver.name}</div>
                           <div className="driver-id">{driver.id}</div>
                         </div>
                         <button
-                            className="delete-btn"
-                            onClick={() => {
-                              console.log("🟡 Delete button clicked for ID:", driver.id);
-                              deleteDriver(driver.id);
-                            }}
-                          >
-                            Delete
-                          </button>
+                          className="delete-btn"
+                          onClick={() => {
+                            console.log(
+                              "🟡 Delete button clicked for ID:",
+                              driver.id
+                            );
+                            deleteDriver(driver.id);
+                          }}
+                        >
+                          Delete
+                        </button>
                       </div>
                     ))}
                   </div>
@@ -729,8 +833,7 @@ const SchedulePage = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SchedulePage
-
+export default SchedulePage;
