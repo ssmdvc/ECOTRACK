@@ -198,6 +198,23 @@ export default function AnalyticsFr() {
       />
 
       <Box className="subContainer">
+      <div
+        style={{
+          fontFamily: "Raleway, sans-serif",
+          fontOpticalSizing: "auto",
+          fontWeight: 500,
+          fontStyle: "normal",
+          width: "100%",
+          fontSize: "24px",
+          color: "rgba(43, 54, 116, 1)",
+          marginBottom: "25px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        Analytics
+      </div>
         <Box className="detailContainer">
           <Box className="cardsContainer">
           <ExportReportsCard onAddDataClick={handleOpen} />
