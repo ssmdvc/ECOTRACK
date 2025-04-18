@@ -1,132 +1,93 @@
 .sidebar {
-    font-family: "Raleway", sans-serif;
-    background-color: #FFFFFF;
-    width: 250px;
-    min-height: 100vh;
-    border-right: 0.5px solid rgba(0, 0, 0, 0.1);
+  font-family: "Raleway", sans-serif;
+  background-color: #FFFFFF;
+  width: 250px;
+  min-height: 100vh;
+  border-right: 0.5px solid rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+
+  .top {
+    height: 60px;
     display: flex;
-    flex-direction: column;
-    position: relative;
-  
-    .top {
-      height: 60px;
+    align-items: center;
+    justify-content: center;
+
+    .logo {
+      font-size: 20px;
+      font-weight: bolder;
+      color: rgba(43, 54, 116, 1);
+    }
+  }
+
+  .custom-link {
+    text-decoration: none;
+    color: black;
+  }
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    margin-top: 10px;
+
+    li {
       display: flex;
       align-items: center;
-      justify-content: center;
-  
-      .logo {
-        font-size: 20px;
-        font-weight: bolder;
+      padding: 10px 8px;
+      cursor: pointer;
+      margin-top: 2px;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: #ece8ff;
+      }
+
+      .icon {
+        font-size: 18px;
         color: rgba(43, 54, 116, 1);
       }
-    }
-  
-    .custom-link {
-      text-decoration: none;
-      color: black;
-    }
-  
-    .center {
-      padding: 0 15px;
-      flex: 1;
-      overflow-y: auto;
-  
-      ul {
-        list-style-type: none;
-        padding: 0;
-        margin: 0;
-  
-        .title-1 {
-          margin-top: 50px;
-        }
-  
-        .title {
-          margin-top: 15px;
-          margin-bottom: 5px;
-        }
-  
-        li {
-          display: flex;
-          align-items: center;
-          padding: 10px 8px;
-          cursor: pointer;
-  
-          &:hover {
-            background-color: #ece8ff;
-          }
-  
-          .icon {
-            font-size: 18px;
-          }
-  
-          span {
-            font-size: 14px;
-            font-weight: 600;
-            font-family: "Lato", sans-serif;
-            margin-left: 10px;
-          }
-        }
-      }
-    }
-  
-    hr {
-      border: 0.5px solid #ccc;
-      width: 100%;
-      margin: 10px 0;
-    }
-  
-    .bottom {
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-  
-      .profile-mode {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-  
-        .profile, .mode {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 14px;
-          font-weight: 600;
-          cursor: pointer;
-  
-          i {
-            font-size: 18px;
-          }
-  
-          &:hover {
-            background-color: #ece8fd;
-          }
-        }
-      }
-  
-      .logout-btn {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        background-color: #f4f4f4;
-        border: none;
-        padding: 12px 20px;
-        border-radius: 5px;
+
+      span {
         font-size: 14px;
         font-weight: 600;
-        cursor: pointer;
-        width: 100%;
-        margin-top: 2em;
-  
-        &:hover {
-          background-color: #ece8fd;
-        }
-  
-        .logout-icon {
-          margin-left: 10px;
-        }
+        font-family: "Lato", sans-serif;
+        margin-left: 10px;
       }
     }
   }
-  
+
+  .center {
+    padding: 0 15px;
+    flex: 1;
+    overflow-y: auto;
+
+    .title-1 {
+      margin-top: 50px;
+    }
+
+    .title {
+      margin-top: 15px;
+      margin-bottom: 5px;
+    }
+  }
+
+  hr {
+    border: 0.5px solid #ccc;
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .bottom {
+    padding: 0 15px 15px 15px;
+    display: flex;
+    flex-direction: column;
+
+    .profile-mode {
+      ul {
+        width: 100%;
+      }
+    }
+  }
+}
