@@ -1,8 +1,5 @@
-"use client";
-
 import { useState, useEffect, useRef } from "react";
 import Sidebar from "../../Components/Sidebar/Sidebar";
-import Navbar from "../../Components/Navbar/Navbar";
 import {
   collection,
   addDoc,
@@ -31,6 +28,13 @@ const SchedulePage = () => {
   const timePickerRef = useRef(null);
   const timeInputRef = useRef(null);
 
+  const today = new Date();
+  const localDate = new Date(
+    today.getTime() - today.getTimezoneOffset() * 60000
+  )
+    .toISOString()
+    .split("T")[0];
+
   // Form state
   const [newDriver, setNewDriver] = useState({ name: "", id: "" });
   const [newSchedule, setNewSchedule] = useState({
@@ -39,10 +43,10 @@ const SchedulePage = () => {
     driver: "",
     route: "",
     estimatedTime: "",
-    date: new Date().toISOString().split("T")[0], // Add default date
+    date: localDate,
   });
 
-  // Initialize weekly schedule structure
+  // Initialize schedule collection structure
   useEffect(() => {
     const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
     const initialWeeklySchedules = {};
@@ -254,7 +258,7 @@ const SchedulePage = () => {
         driver: "",
         route: "",
         estimatedTime: "",
-        date: new Date().toISOString().split("T")[0], // Reset to today's date
+        date: localDate,
       });
       setShowAddScheduleForm(false);
     } catch (error) {
@@ -452,11 +456,13 @@ const SchedulePage = () => {
       date.getMonth() + 1,
       0
     ).getDate();
-    const firstDayOfMonth = new Date(
+
+    let firstDayOfMonth = new Date(
       date.getFullYear(),
       date.getMonth(),
       1
     ).getDay();
+    firstDayOfMonth = (firstDayOfMonth + 6) % 7; // makes Monday the first day
 
     const days = [];
     for (let i = 0; i < firstDayOfMonth; i++) {
@@ -464,11 +470,19 @@ const SchedulePage = () => {
     }
     for (let i = 1; i <= daysInMonth; i++) {
       const currentDate = new Date(date.getFullYear(), date.getMonth(), i);
+      const getLocalDateString = (d) =>
+        new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+          .toISOString()
+          .split("T")[0];
+
+      const currentStr = getLocalDateString(currentDate);
+      const selectedStr = getLocalDateString(date);
+      const todayStr = getLocalDateString(new Date());
       const isSelected = currentDate.toDateString() === date.toDateString();
       const isToday = currentDate.toDateString() === new Date().toDateString();
 
       // Check if there are schedules for this day
-      const dateString = currentDate.toISOString().split("T")[0];
+      const dateString = getLocalDateString(currentDate);
       const hasSchedules = schedules.some(
         (schedule) => schedule.date === dateString
       );
@@ -479,7 +493,13 @@ const SchedulePage = () => {
           className={`calendar-day ${isSelected ? "selected" : ""} ${
             isToday ? "today" : ""
           } ${hasSchedules ? "has-schedules" : ""}`}
-          onClick={() => setDate(currentDate)}
+          onClick={() => {
+            setDate(currentDate);
+            setNewSchedule((prev) => ({
+              ...prev,
+              date: getLocalDateString(currentDate), // sync the form with the selected date
+            }));
+          }}
         >
           {i}
         </div>
@@ -508,48 +528,89 @@ const SchedulePage = () => {
           </button>
         </div>
         <div className="calendar-days">
-          <div>Sun</div>
           <div>Mon</div>
           <div>Tue</div>
           <div>Wed</div>
           <div>Thu</div>
           <div>Fri</div>
           <div>Sat</div>
+          <div>Sun</div>
           {days}
         </div>
       </div>
     );
   };
 
-  // Get today's schedules
+  const getLocalDateString = (d) =>
+    new Date(d.getTime() - d.getTimezoneOffset() * 60000)
+      .toISOString()
+      .split("T")[0];
+
   const getTodaySchedules = () => {
-    const dateString = date.toISOString().split("T")[0];
+    const dateString = getLocalDateString(date);
     return schedules.filter((schedule) => schedule.date === dateString);
   };
+  /// SYNC FOR SCHEDULES COLLECTION
 
-  // Add a function to sync daily schedules with weekly schedules
+  const formatDateRange = () => {
+    // Get current date
+    const now = new Date();
+    // Get Monday of current week
+    const monday = new Date(now);
+    monday.setDate(
+      now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1)
+    );
+    // Get Sunday of current week
+    const sunday = new Date(monday);
+    sunday.setDate(monday.getDate() + 6);
+    // Format dates
+    const formatDate = (date) => {
+      return date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+    };
+    return `${formatDate(monday)} - ${formatDate(sunday)}`;
+  };
+
   const syncWeeklySchedules = () => {
     // Create a map to store the latest schedule for each day and truck
     const latestSchedules = {};
 
+    // Get the current date and week number
+    const getWeekNumber = (date) => {
+      const startDate = new Date(date.getFullYear(), 0, 1);
+      const diff = date - startDate;
+      const oneDay = 1000 * 60 * 60 * 24;
+      const weekNumber = Math.ceil(diff / oneDay / 7);
+      return weekNumber;
+    };
+
+    // Get current week
+    const currentWeek = getWeekNumber(new Date());
+
     // Process all schedules
     schedules.forEach((schedule) => {
       const scheduleDate = new Date(schedule.date);
-      const dayIndex = scheduleDate.getDay();
-      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      const dayName = days[dayIndex];
-      const key = `${dayName}_${schedule.truckId}`;
+      const scheduleWeek = getWeekNumber(scheduleDate);
 
-      // If we don't have this day+truck combo yet, or this schedule is newer
-      if (
-        !latestSchedules[key] ||
-        new Date(schedule.date) > new Date(latestSchedules[key].date)
-      ) {
-        latestSchedules[key] = schedule;
+      // Only consider schedules for the current week
+      if (scheduleWeek === currentWeek) {
+        const dayIndex = scheduleDate.getDay();
+        const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const dayName = days[dayIndex];
+        const key = `${dayName}_${schedule.truckId}`;
+
+        if (
+          !latestSchedules[key] ||
+          new Date(schedule.date) > new Date(latestSchedules[key].date)
+        ) {
+          latestSchedules[key] = schedule;
+        }
       }
     });
 
-    // Update weekly schedules based on the latest daily schedules
+    // Update weekly schedules based on the latest daily schedules for the current week
     Object.values(latestSchedules).forEach((schedule) => {
       const scheduleDate = new Date(schedule.date);
       const dayIndex = scheduleDate.getDay();
@@ -559,6 +620,62 @@ const SchedulePage = () => {
       // Update weekly schedule
       updateWeeklySchedule(dayName, schedule.truckId, schedule.route);
     });
+  };
+
+  // Add this useEffect to check for week changes and refresh the schedule
+  // Add this inside your component, after the other useEffects
+  const WeeklyScheduleComponent = () => {
+    const [weeklySchedules, setWeeklySchedules] = useState({});
+    const [schedules, setSchedules] = useState([]);
+
+    const updateWeeklySchedule = (day, truckId, route) => {
+      setWeeklySchedules((prevSchedules) => {
+        const updatedSchedules = { ...prevSchedules };
+        if (!updatedSchedules[day]) {
+          updatedSchedules[day] = {};
+        }
+        updatedSchedules[day][`truck${truckId}`] = { route };
+        return updatedSchedules;
+      });
+    };
+
+    useEffect(() => {
+      // Function to check if the week has changed
+      const checkForWeekChange = () => {
+        // Get the current week number
+        const getWeekNumber = (date) => {
+          const startDate = new Date(date.getFullYear(), 0, 1);
+          const diff = date - startDate;
+          const oneDay = 1000 * 60 * 60 * 24;
+          const weekNumber = Math.ceil(diff / oneDay / 7);
+          return weekNumber;
+        };
+
+        const currentWeek = getWeekNumber(new Date());
+
+        // Get the stored week number from localStorage
+        const storedWeek = localStorage.getItem("currentWeek");
+
+        // If the week has changed or no week is stored, update and refresh
+        if (!storedWeek || Number.parseInt(storedWeek) !== currentWeek) {
+          // Store the new week number
+          localStorage.setItem("currentWeek", currentWeek.toString());
+
+          // Refresh the weekly schedule
+          syncWeeklySchedules();
+
+          console.log("Week changed, refreshed weekly schedule");
+        }
+      };
+
+      // Check immediately when component mounts
+      checkForWeekChange();
+
+      // Set up a daily check (runs once per day)
+      const intervalId = setInterval(checkForWeekChange, 86400000); // 24 hours
+
+      return () => clearInterval(intervalId);
+    }, []);
   };
 
   return (
@@ -576,10 +693,7 @@ const SchedulePage = () => {
         )}
 
         {loading ? (
-          <div className="loading">
-            <p>Loading schedule data from Firestore...</p>
-            <p className="loading-details">Connecting to Firebase...</p>
-          </div>
+          <div className="loading"></div>
         ) : (
           <div className="schedule-content">
             <div className="main-content">
@@ -607,9 +721,7 @@ const SchedulePage = () => {
                         setNewSchedule({ ...newSchedule, date: e.target.value })
                       }
                     />
-                    <input
-                      type="text"
-                      placeholder="Truck ID (e.g., 0001 or 0002)"
+                    <select
                       value={newSchedule.truckId}
                       onChange={(e) =>
                         setNewSchedule({
@@ -617,7 +729,13 @@ const SchedulePage = () => {
                           truckId: e.target.value,
                         })
                       }
-                    />
+                    >
+                      <option value="">Select Truck ID</option>
+                      <option value="0001">0001</option>
+                      <option value="0002">0002</option>
+                      {/* Add more options as needed */}
+                    </select>
+
                     <select
                       value={newSchedule.driver}
                       onChange={(e) =>
@@ -739,7 +857,7 @@ const SchedulePage = () => {
               </div>
 
               <div className="card">
-                <h2>Scheduled Collection</h2>
+                <h2>Scheduled Collection | Week of {formatDateRange()}</h2>
                 <table>
                   <thead>
                     <tr>
@@ -750,10 +868,30 @@ const SchedulePage = () => {
                   </thead>
                   <tbody>
                     {Object.entries(weeklySchedules).map(([day, trucks]) => (
-                      <tr key={day}>
+                      <tr
+                        key={day}
+                        className={(() => {
+                          // Highlight current day
+                          const now = new Date();
+                          const dayIndex = now.getDay();
+                          const adjustedDayIndex =
+                            dayIndex === 0 ? 6 : dayIndex - 1;
+                          const days = [
+                            "Mon",
+                            "Tue",
+                            "Wed",
+                            "Thu",
+                            "Fri",
+                            "Sat",
+                            "Sun",
+                          ];
+                          const today = days[adjustedDayIndex];
+                          return day === today ? "current-day" : "";
+                        })()}
+                      >
                         <td>{day}</td>
-                        <td>{trucks.truck1?.route}</td>
-                        <td>{trucks.truck2?.route}</td>
+                        <td>{trucks.truck1?.route || "-"}</td>
+                        <td>{trucks.truck2?.route || "-"}</td>
                       </tr>
                     ))}
                   </tbody>
