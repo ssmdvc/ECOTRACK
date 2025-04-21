@@ -33,7 +33,7 @@ function App() {
 
   return (
     <div className={ darkMode ? "app dark" : "app"}>
-    <BrowserRouter>
+    <BrowserRouter basename="/ecotrack">
     <Routes>
       <Route path="/" element={<LoginForm />}/>
       <Route path="/signup" element={<SignUpForm />}/>
