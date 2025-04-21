@@ -23,6 +23,94 @@ const SchedulePage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [selectedDriver, setSelectedDriver] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [formData, setFormData] = useState({});
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+
+  const handleViewDriver = (driver) => {
+    setSelectedDriver(driver);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedDriver(null);
+  };
+
+  const handleEdit = () => {
+    setFormData({ ...selectedDriver });
+    setEditMode(true);
+    setDeleteConfirm(false);
+  };
+
+  const handleCancelEdit = () => {
+    setEditMode(false);
+    setFormData({});
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      const driverRef = doc(db, "drivers", selectedDriver.id);
+      await updateDoc(driverRef, formData);
+
+      // Update the local state
+      setDrivers(
+        drivers.map((driver) =>
+          driver.id === selectedDriver.id ? { ...driver, ...formData } : driver
+        )
+      );
+
+      // Update selected driver
+      setSelectedDriver({ ...selectedDriver, ...formData });
+
+      // Exit edit mode
+      setEditMode(false);
+    } catch (error) {
+      console.error("Error updating driver: ", error);
+    }
+  };
+
+  const handleDeleteConfirm = () => {
+    setDeleteConfirm(true);
+    setEditMode(false);
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteConfirm(false);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const driverRef = doc(db, "drivers", selectedDriver.id);
+      await deleteDoc(driverRef);
+
+      // Update the local state
+      setDrivers(drivers.filter((driver) => driver.id !== selectedDriver.id));
+
+      // Close the modal
+      closeModal();
+    } catch (error) {
+      console.error("Error deleting driver: ", error);
+    }
+  };
+
+  const handleNewDriverInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewDriver({
+      ...newDriver,
+      [name]: value,
+    });
+  };
 
   // Time picker refs
   const timePickerRef = useRef(null);
@@ -192,30 +280,11 @@ const SchedulePage = () => {
       });
 
       // Reset form
-      setNewDriver({ name: "", id: "" });
+      setNewDriver({ name: "", vehicleID: "" });
       setShowAddDriverForm(false);
     } catch (error) {
       console.error("Error adding driver:", error);
       alert("Failed to add driver. Please try again.");
-    }
-  };
-
-  ///Delete Driver from Firestore
-  const deleteDriver = async (driverId) => {
-    try {
-      // Delete from drivers collection
-      await deleteDoc(doc(db, "drivers", driverId));
-      console.log(`Driver ${driverId} deleted from Firestore`);
-
-      // Update the UI state by filtering out the deleted driver
-      setDrivers((prevDrivers) =>
-        prevDrivers.filter((driver) => driver.id !== driverId)
-      );
-
-      console.log(`Driver ${driverId} deleted successfully!`);
-    } catch (error) {
-      console.error("Error deleting driver:", error);
-      alert(`Failed to delete driver: ${error.message}. Please try again.`);
     }
   };
 
@@ -901,68 +970,307 @@ const SchedulePage = () => {
 
             <div className="sidebar-content">
               <div className="card">{renderCalendar()}</div>
+              <div className="drivers-container">
+                <div className="drivers-card">
+                  <div className="drivers-header">
+                    <h2>Drivers</h2>
+                    <button
+                      onClick={() => setShowAddDriverForm(!showAddDriverForm)}
+                    >
+                      {showAddDriverForm ? "Cancel" : "Add Driver"}
+                    </button>
 
-              <div className="card">
-                <div className="card-header">
-                  <h2>Drivers</h2>
-                  <button
-                    onClick={() => setShowAddDriverForm(!showAddDriverForm)}
-                  >
-                    {showAddDriverForm ? "Cancel" : "Add Driver"}
-                  </button>
-                </div>
-                {showAddDriverForm && (
-                  <div className="add-form">
-                    <input
-                      type="text"
-                      placeholder="Driver Name"
-                      value={newDriver.name}
-                      onChange={(e) =>
-                        setNewDriver({ ...newDriver, name: e.target.value })
-                      }
-                    />
-                    <input
-                      type="text"
-                      placeholder="Driver ID"
-                      value={newDriver.id}
-                      onChange={(e) =>
-                        setNewDriver({ ...newDriver, id: e.target.value })
-                      }
-                    />
-                    <button onClick={addDriver}>Add Driver</button>
+                    {showAddDriverForm && (
+                      <div className="add-form">
+                        <input
+                          type="text"
+                          placeholder="Driver Name"
+                          value={newDriver.name}
+                          onChange={(e) =>
+                            setNewDriver({ ...newDriver, name: e.target.value })
+                          }
+                        />
+                        <input
+                          type="text"
+                          placeholder="Vehicle ID"
+                          value={newDriver.id}
+                          onChange={(e) =>
+                            setNewDriver({ ...newDriver, id: e.target.value })
+                          }
+                        />
+                        <button onClick={addDriver}>Add Driver</button>
+                      </div>
+                    )}
                   </div>
-                )}
 
-                {drivers.length === 0 ? (
-                  <div className="no-data">No drivers available</div>
-                ) : (
-                  <div className="driver-list">
+                  <div className="drivers-list">
                     {drivers.map((driver) => (
                       <div key={driver.id} className="driver-item">
-                        <div className="avatar">
+                        <div className="driver-info">
                           <img
-                            src={driver.avatar || "/placeholder.svg"}
+                            src={
+                              driver.imageUrl ||
+                              `/placeholder.svg?height=40&width=40`
+                            }
                             alt={driver.name}
+                            className="driver-image"
                           />
-                        </div>
-                        <div>
-                          <div className="driver-name">{driver.name}</div>
-                          <div className="driver-id">{driver.id}</div>
+                          <div className="driver-details">
+                            <h3>{driver.name}</h3>
+                            <p>{driver.driverId}</p>
+                          </div>
                         </div>
                         <button
-                          className="delete-btn"
-                          onClick={() => {
-                            console.log(
-                              "🟡 Delete button clicked for ID:",
-                              driver.id
-                            );
-                            deleteDriver(driver.id);
-                          }}
+                          className="view-btn"
+                          onClick={() => handleViewDriver(driver)}
                         >
-                          Delete
+                          View
                         </button>
                       </div>
                     ))}
+                  </div>
+                </div>
+
+                {showModal && selectedDriver && (
+                  <div className="modal-overlay" onClick={closeModal}>
+                    <div
+                      className="modal-content"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="modal-header">
+                        <h2>Driver Details</h2>
+                        <button className="close-btn" onClick={closeModal}>
+                          ×
+                        </button>
+                      </div>
+                      <div className="modal-body">
+                        {deleteConfirm ? (
+                          <div className="delete-confirmation">
+                            <h3>
+                              Are you sure you want to delete this driver?
+                            </h3>
+                            <p>This action cannot be undone.</p>
+                            <div className="delete-actions">
+                              <button
+                                className="cancel-btn"
+                                onClick={handleCancelDelete}
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                className="delete-confirm-btn"
+                                onClick={handleDelete}
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        ) : editMode ? (
+                          <div className="edit-form">
+                            <div className="form-group">
+                              <label>Name</label>
+                              <input
+                                type="text"
+                                name="name"
+                                value={formData.name || ""}
+                                onChange={handleInputChange}
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label>Driver ID</label>
+                              <input
+                                type="text"
+                                name="driverId"
+                                value={formData.driverId || ""}
+                                onChange={handleInputChange}
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label>Email</label>
+                              <input
+                                type="email"
+                                name="email"
+                                value={formData.email || ""}
+                                onChange={handleInputChange}
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label>Phone</label>
+                              <input
+                                type="text"
+                                name="phone"
+                                value={formData.phone || ""}
+                                onChange={handleInputChange}
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label>License</label>
+                              <input
+                                type="text"
+                                name="license"
+                                value={formData.license || ""}
+                                onChange={handleInputChange}
+                              />
+                            </div>
+                            <div className="form-group">
+                              <label>Status</label>
+                              <select
+                                name="status"
+                                value={formData.status || "Active"}
+                                onChange={handleInputChange}
+                              >
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+                                <option value="Suspended">Suspended</option>
+                              </select>
+                            </div>
+                            <div className="form-group">
+                              <label>Join Date</label>
+                              <input
+                                type="date"
+                                name="joinDate"
+                                value={formData.joinDate || ""}
+                                onChange={handleInputChange}
+                              />
+                            </div>
+                            <div className="form-row">
+                              <div className="form-group">
+                                <label>Total Trips</label>
+                                <input
+                                  type="number"
+                                  name="totalTrips"
+                                  value={formData.totalTrips || 0}
+                                  onChange={handleInputChange}
+                                />
+                              </div>
+                              <div className="form-group">
+                                <label>Rating</label>
+                                <input
+                                  type="text"
+                                  name="rating"
+                                  value={formData.rating || ""}
+                                  onChange={handleInputChange}
+                                />
+                              </div>
+                              <div className="form-group">
+                                <label>Earnings</label>
+                                <input
+                                  type="text"
+                                  name="earnings"
+                                  value={formData.earnings || ""}
+                                  onChange={handleInputChange}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="driver-profile">
+                              <img
+                                src={
+                                  selectedDriver.imageUrl ||
+                                  `/placeholder.svg?height=100&width=100`
+                                }
+                                alt={selectedDriver.name}
+                                className="driver-profile-image"
+                              />
+                              <div className="driver-profile-info">
+                                <h3>{selectedDriver.name}</h3>
+                                <p>
+                                  <strong>Driver ID:</strong>{" "}
+                                  {selectedDriver.driverId}
+                                </p>
+                                <p>
+                                  <strong>Email:</strong>{" "}
+                                  {selectedDriver.email || "N/A"}
+                                </p>
+                                <p>
+                                  <strong>Phone:</strong>{" "}
+                                  {selectedDriver.phone || "N/A"}
+                                </p>
+                                <p>
+                                  <strong>License:</strong>{" "}
+                                  {selectedDriver.license || "N/A"}
+                                </p>
+                                <p>
+                                  <strong>Status:</strong>{" "}
+                                  {selectedDriver.status || "Active"}
+                                </p>
+                                <p>
+                                  <strong>Joined:</strong>{" "}
+                                  {selectedDriver.joinDate || "N/A"}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="driver-stats">
+                              <div className="stat-item">
+                                <h4>Total Trips</h4>
+                                <p>{selectedDriver.totalTrips || "0"}</p>
+                              </div>
+                              <div className="stat-item">
+                                <h4>Rating</h4>
+                                <p>{selectedDriver.rating || "N/A"}</p>
+                              </div>
+                              <div className="stat-item">
+                                <h4>Earnings</h4>
+                                <p>${selectedDriver.earnings || "0"}</p>
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                      <div className="modal-footer">
+                        {deleteConfirm ? (
+                          <div className="footer-buttons">
+                            <button
+                              className="cancel-btn"
+                              onClick={handleCancelDelete}
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              className="delete-confirm-btn"
+                              onClick={handleDelete}
+                            >
+                              Confirm Delete
+                            </button>
+                          </div>
+                        ) : editMode ? (
+                          <div className="footer-buttons">
+                            <button
+                              className="cancel-btn"
+                              onClick={handleCancelEdit}
+                            >
+                              Cancel
+                            </button>
+                            <button
+                              className="save-btn"
+                              onClick={handleSaveEdit}
+                            >
+                              Save Changes
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="footer-buttons">
+                            <button
+                              className="delete-btn"
+                              onClick={handleDeleteConfirm}
+                            >
+                              Delete
+                            </button>
+                            <button className="edit-btn" onClick={handleEdit}>
+                              Edit
+                            </button>
+                            <button
+                              className="close-modal-btn"
+                              onClick={closeModal}
+                            >
+                              Close
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
