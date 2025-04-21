@@ -1,69 +1,97 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import mapboxgl from "mapbox-gl";
+import { getDatabase, ref, onValue } from "firebase/database";
+import { app } from "../../firebase";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import { createRoot } from "react-dom/client";
 import "./Map.scss";
 
-console.log("Map component loaded");
+mapboxgl.accessToken =
+  "pk.eyJ1IjoianN0eWFuZ2ciLCJhIjoiY200cW9pZDU4MTNleDJqczVtcnFtbmpqZCJ9.u_lupmsSJXwSNfoOAC5MKg";
 
-// Add your Mapbox API key
-mapboxgl.accessToken = "pk.eyJ1IjoianN0eWFuZ2ciLCJhIjoiY200cW9pZDU4MTNleDJqczVtcnFtbmpqZCJ9.u_lupmsSJXwSNfoOAC5MKg";
-
-const Map = ({ routes = [] }) => { // Accept routes as a prop
+const Map = () => {
   const mapContainerRef = useRef(null);
+  const [mapInstance, setMapInstance] = useState(null);
+  const [gpsMarkers, setGpsMarkers] = useState({});
 
   useEffect(() => {
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/streets-v11",
-      center: [120.9806, 14.4507], // Example coordinates
-      zoom: 15,
-      attributionControl: false, // Disable attribution control
+      center: [120.9806, 14.4507], // Initial center
+      zoom: 12,
+      attributionControl: false,
     });
 
-    // Add routes and stops to the map
-    if (routes.length > 0) {
-      routes.forEach((route, index) => {
-        const coordinates = route.stops.map((stop) => [stop.lng, stop.lat]);
+    setMapInstance(map);
 
-        // Add route line
-        map.addLayer({
-          id: `route-${index}`,
-          type: "line",
-          source: {
-            type: "geojson",
-            data: {
-              type: "Feature",
-              geometry: {
-                type: "LineString",
-                coordinates,
-              },
-            },
-          },
-          layout: {
-            "line-join": "round",
-            "line-cap": "round",
-          },
-          paint: {
-            "line-color": index % 2 === 0 ? "blue" : "red", // Alternate colors
-            "line-width": 4,
-          },
-        });
+    return () => map.remove();
+  }, []);
 
-        // Add markers for stops
-        route.stops.forEach((stop, i) => {
-          new mapboxgl.Marker({ color: i === 0 ? "red" : "blue" })
-            .setLngLat([stop.lng, stop.lat])
-            .setPopup(
-              new mapboxgl.Popup().setHTML(
-                `<p>${stop.street || `Lat: ${stop.lat}, Lng: ${stop.lng}`}</p>`
-              )
-            )
-            .addTo(map);
-        });
+  useEffect(() => {
+    if (!mapInstance) return;
+
+    const db = getDatabase(app);
+    const gpsRef = ref(db);
+
+    const unsubscribe = onValue(gpsRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) return;
+
+      const bounds = new mapboxgl.LngLatBounds();
+
+      Object.entries(data).forEach(([deviceKey, gpsData]) => {
+        const lat = gpsData.lat || gpsData.latitude;
+        const lng = gpsData.lng || gpsData.longitude;
+
+        if (!lat || !lng) return;
+
+        // Include this point in the map bounds
+        bounds.extend([lng, lat]);
+
+        const isGPSData = deviceKey === "GPSData";
+        const truckColor = isGPSData ? "#4CAF50" : "#2196F3"; // Green or Blue
+        const glowColor = "rgba(76, 175, 80, 0.4)"; // Soft green glow
+
+        const markerContainer = document.createElement("div");
+        markerContainer.style.width = "48px";
+        markerContainer.style.height = "48px";
+        markerContainer.style.borderRadius = "50%";
+        markerContainer.style.backgroundColor = "#ffffff"; // White background
+        markerContainer.style.display = "flex";
+        markerContainer.style.alignItems = "center";
+        markerContainer.style.justifyContent = "center";
+        markerContainer.style.transform = "translate(-50%, -50%)";
+        markerContainer.style.boxShadow = `0 0 12px 4px ${glowColor}`;
+        markerContainer.title = `Device: ${deviceKey}`;
+
+        const root = createRoot(markerContainer);
+        root.render(<LocalShippingIcon style={{ color: truckColor, fontSize: "28px" }} />);
+
+        if (gpsMarkers[deviceKey]) {
+          gpsMarkers[deviceKey].setLngLat([lng, lat]);
+        } else {
+          const marker = new mapboxgl.Marker({ element: markerContainer })
+            .setLngLat([lng, lat])
+            .setPopup(new mapboxgl.Popup().setText(`Truck: ${deviceKey}`))
+            .addTo(mapInstance);
+
+          setGpsMarkers((prev) => ({ ...prev, [deviceKey]: marker }));
+        }
       });
-    }
 
-    return () => map.remove(); // Clean up the map on unmount
-  }, [routes]); // Re-run effect if routes change
+      // Fit map view to all markers
+      if (!bounds.isEmpty()) {
+        mapInstance.fitBounds(bounds, {
+          padding: 60,
+          maxZoom: 15,
+          duration: 1000,
+        });
+      }
+    });
+
+    return () => unsubscribe();
+  }, [mapInstance, gpsMarkers]);
 
   return <div className="map-container" ref={mapContainerRef}></div>;
 };
