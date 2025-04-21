@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import './Notification.scss';
+import { db } from "../../firebase"; // adjust the path to your firebase config
+import { collection, addDoc, deleteDoc, doc } from "firebase/firestore";
+
 
 const Notification = () => {
   const [activeTab, setActiveTab] = useState(1);
@@ -15,47 +18,94 @@ const Notification = () => {
     setActiveTab(tabIndex);
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (title && message) {
+      if (deliveryType === "Scheduled Notification" && !targetDate) {
+        alert("Please choose a target date for scheduled notification!");
+        return;
+      }
+  
       const newNotification = {
         title,
         message,
         targetDate: deliveryType === "Scheduled Notification" ? targetDate : null,
+        type: deliveryType,
+        createdAt: new Date().toISOString(),
       };
-
-      // Save based on selected type
-      if (deliveryType === "Scheduled Notification") {
-        if (!targetDate) {
-          alert("Please choose a target date for scheduled notification!");
-          return;
+  
+      try {
+        const docRef = await addDoc(collection(db, "notifications"), newNotification);
+  
+        const notificationWithId = { ...newNotification, id: docRef.id };
+  
+        if (deliveryType === "Scheduled Notification") {
+          setScheduledNotifications([...scheduledNotifications, notificationWithId]);
+        } else {
+          setArchivedNotifications([...archivedNotifications, notificationWithId]);
         }
-        setScheduledNotifications([...scheduledNotifications, newNotification]);
-      } else if (deliveryType === "Archived Notification") {
-        setArchivedNotifications([...archivedNotifications, newNotification]);
+  
+        setTitle("");
+        setMessage("");
+        setTargetDate("");
+        setDeliveryType("Scheduled Notification");
+  
+        alert("Notification successfully saved to Firestore!");
+      } catch (error) {
+        console.error("Error adding notification: ", error);
+        alert("Something went wrong while saving the notification.");
       }
-
-      // Reset fields
-      setTitle("");
-      setMessage("");
-      setTargetDate("");
-      setDeliveryType("Scheduled Notification"); // Reset to default
     } else {
       alert("Please fill in all required fields!");
     }
   };
 
-  const moveToArchive = (notification) => {
-    setArchivedNotifications([...archivedNotifications, notification]);
-    setScheduledNotifications(scheduledNotifications.filter((notif) => notif !== notification));
-  };
+  
 
-  const deleteNotification = (notification, type) => {
-    if (type === "Scheduled Notification") {
-      setScheduledNotifications(scheduledNotifications.filter((notif) => notif !== notification));
-    } else if (type === "Archived Notification") {
-      setArchivedNotifications(archivedNotifications.filter((notif) => notif !== notification));
+  const moveToArchive = async (notification) => {
+    try {
+      // Add to "archives" collection
+      await addDoc(collection(db, "archives"), {
+        ...notification,
+        archivedAt: new Date().toISOString(),
+        type: "Archived Notification"
+      });
+  
+      // Delete from "notifications" collection
+      if (notification.id) {
+        await deleteDoc(doc(db, "notifications", notification.id));
+      }
+  
+      // Update local state
+      setArchivedNotifications([...archivedNotifications, notification]);
+      setScheduledNotifications(scheduledNotifications.filter((notif) => notif.id !== notification.id));
+  
+      alert("Notification archived successfully.");
+    } catch (error) {
+      console.error("Error moving notification to archive: ", error);
+      alert("Failed to archive the notification.");
     }
   };
+  
+
+  const deleteNotification = async (notification, type) => {
+    try {
+      if (notification.id) {
+        await deleteDoc(doc(db, "notifications", notification.id));
+      }
+  
+      if (type === "Scheduled Notification") {
+        setScheduledNotifications(scheduledNotifications.filter((notif) => notif.id !== notification.id));
+      } else if (type === "Archived Notification") {
+        setArchivedNotifications(archivedNotifications.filter((notif) => notif.id !== notification.id));
+      }
+  
+      alert("Notification deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting notification: ", error);
+      alert("Failed to delete the notification from Firestore.");
+    }
+  };
+  
 
   return (
     <div className="new">
