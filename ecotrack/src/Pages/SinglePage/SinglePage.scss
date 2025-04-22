@@ -1,78 +1,221 @@
-.single{
+.user-management {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .header {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+
+    h1 {
+      color: #333;
+      margin: 0;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .add-btn {
+      background-color: #4a6ee0;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      cursor: pointer;
+      font-weight: 500;
+
+      &:hover {
+        background-color: #3a5ecc;
+      }
+    }
+
+    .delete-btn {
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 8px 16px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #c0392b;
+      }
+    }
+  }
+
+  .table-container {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+
+      th,
+      td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #e1e5eb;
+      }
+
+      th {
+        background-color: #f1f3f5;
+        color: #495057;
+        font-weight: 600;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+
+      tr:nth-child(odd) {
+        background-color: #ffffff;
+      }
+
+      tr:hover {
+        background-color: #e9ecef;
+      }
+
+      .checkbox-column {
+        width: 40px;
+      }
+
+      input[type="checkbox"] {
+        cursor: pointer;
+      }
+    }
+
+    .view-btn {
+      background-color: #17a2b8;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 5px 10px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #138496;
+      }
+    }
+  }
+
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
-    .singleContainer{
-        flex: 6;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 
-        .top{
-            padding: 20px;
-            display: flex;
-            gap: 20px;
+    .modal-content {
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      width: 500px;
+      max-width: 90%;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      position: relative;
 
-            .left{
-                flex: 1;
-                -webkit-box-shadow: -2px 7px 18px -8px #000000; 
-                box-shadow: -2px 7px 18px -8px #000000;
-                padding: 20px;
-                position: relative;
+      h2 {
+        margin-top: 0;
+        color: #333;
+      }
 
-                .editButton{
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    padding: 5px;
-                    font-size: 12px;
-                    color: #7451f8;
-                    background-color: #7551f818;
-                    cursor: pointer;
-                    border-radius: 0px 0px 0px 5px;
-                }
+      .close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #aaa;
 
-                .item{
-                    display: flex;
-                    gap: 20px;
-
-                    .details{
-                        .itemTitle{
-                            margin-bottom: 10px;
-                            color: #555;
-                        }
-
-                        .detailItem{
-                            margin-bottom: 10px;
-                            font-size: 16px;
-
-                            .itemKey{
-                                font-weight: bold;
-                                color: gray;
-                                margin-right: 7px;
-                            }
-
-                            .itemValue{
-                                font-weight: 300;
-
-                            }
-                        }
-                    }
-                }
-            }
-
-            .right{
-                flex: 2;
-            }
+        &:hover {
+          color: #333;
         }
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+
+        label {
+          display: block;
+          margin-bottom: 5px;
+          font-weight: 500;
+          color: #555;
+        }
+
+        input {
+          width: 100%;
+          padding: 8px 12px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-size: 14px;
+
+          &:focus {
+            outline: none;
+            border-color: #4a6ee0;
+            box-shadow: 0 0 0 2px rgba(74, 110, 224, 0.2);
+          }
+        }
+      }
+
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+
+        button {
+          padding: 8px 16px;
+          border-radius: 4px;
+          cursor: pointer;
+
+          &:first-child {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            color: #333;
+
+            &:hover {
+              background-color: #e9ecef;
+            }
+          }
+
+          &:last-child {
+            background-color: #4a6ee0;
+            border: none;
+            color: white;
+
+            &:hover {
+              background-color: #3a5ecc;
+            }
+          }
+        }
+      }
     }
 
-    .bottom{
-        -webkit-box-shadow: -2px 7px 18px -8px #000000; 
-        box-shadow: -2px 7px 18px -8px #000000;
-        padding: 20px;
-        margin: 10px 20px;
-    }
+    .user-details {
+      margin: 15px 0;
 
-    .title{
-        font-size: 16px;
-        color: #404040;
-        margin-bottom: 20px;
+      p {
+        margin: 8px 0;
+
+        strong {
+          display: inline-block;
+          width: 120px;
+          color: #555;
+        }
+      }
     }
+  }
 }

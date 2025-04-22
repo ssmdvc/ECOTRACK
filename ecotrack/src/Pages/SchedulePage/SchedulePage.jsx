@@ -4,6 +4,7 @@ import {
   collection,
   addDoc,
   doc,
+  getDocs,
   deleteDoc,
   updateDoc,
   onSnapshot,
@@ -60,7 +61,15 @@ const SchedulePage = () => {
 
   const handleSaveEdit = async () => {
     try {
+      // Check if driver ID is valid
+      if (!selectedDriver.id) {
+        console.error("Selected driver does not have a valid ID");
+        return;
+      }
+
       const driverRef = doc(db, "drivers", selectedDriver.id);
+
+      // Update the document with form data
       await updateDoc(driverRef, formData);
 
       // Update the local state
@@ -76,7 +85,11 @@ const SchedulePage = () => {
       // Exit edit mode
       setEditMode(false);
     } catch (error) {
-      console.error("Error updating driver: ", error);
+      console.error("Error updating driver: ", error.message);
+      if (error.code) {
+        console.error("Error code: ", error.code);
+      }
+      console.error("Full error: ", error);
     }
   };
 
@@ -89,19 +102,9 @@ const SchedulePage = () => {
     setDeleteConfirm(false);
   };
 
-  const handleDelete = async () => {
-    try {
-      const driverRef = doc(db, "drivers", selectedDriver.id);
-      await deleteDoc(driverRef);
-
-      // Update the local state
-      setDrivers(drivers.filter((driver) => driver.id !== selectedDriver.id));
-
-      // Close the modal
-      closeModal();
-    } catch (error) {
-      console.error("Error deleting driver: ", error);
-    }
+  const handleDelete = () => {
+    if (!selectedDriver || !selectedDriver.id) return;
+    deleteDriver(selectedDriver.id);
   };
 
   const handleNewDriverInputChange = (e) => {
@@ -266,6 +269,16 @@ const SchedulePage = () => {
     }
   }, []);
 
+  const fetchDrivers = async () => {
+    const snapshot = await getDocs(collection(db, "drivers"));
+    const driverList = snapshot.docs.map((doc) => ({
+      id: doc.id, // Required for deletion
+      ...doc.data(),
+    }));
+    setDrivers(driverList);
+    deleteDriver(drivers.id);
+  };
+
   // Add a new driver to Firestore
   const addDriver = async () => {
     if (!newDriver.name || !newDriver.id) {
@@ -280,11 +293,36 @@ const SchedulePage = () => {
       });
 
       // Reset form
-      setNewDriver({ name: "", vehicleID: "" });
+      setNewDriver({ name: "", id: "" });
       setShowAddDriverForm(false);
     } catch (error) {
       console.error("Error adding driver:", error);
       alert("Failed to add driver. Please try again.");
+    }
+  };
+
+  // Delete driver
+  const deleteDriver = async (driverId) => {
+    // Get the schedule before deleting it
+    const driverToDelete = drivers.find((s) => s.id === driverId);
+    if (!driverId) {
+      alert("Invalid driver ID");
+      return;
+    }
+
+    try {
+      // This is the critical line – make sure the collection name is exactly "drivers"
+      const driverRef = doc(db, "drivers", driverId);
+      await deleteDoc(driverRef);
+
+      // Update UI
+      setDrivers((prevDrivers) => prevDrivers.filter((d) => d.id !== driverId));
+      setSelectedDriver(null);
+      setShowModal(false);
+      alert("Driver deleted successfully.");
+    } catch (error) {
+      console.error("Error deleting driver:", error);
+      alert("Failed to delete driver from database.");
     }
   };
 
@@ -619,7 +657,6 @@ const SchedulePage = () => {
     const dateString = getLocalDateString(date);
     return schedules.filter((schedule) => schedule.date === dateString);
   };
-  /// SYNC FOR SCHEDULES COLLECTION
 
   const formatDateRange = () => {
     // Get current date
@@ -691,61 +728,44 @@ const SchedulePage = () => {
     });
   };
 
-  // Add this useEffect to check for week changes and refresh the schedule
-  // Add this inside your component, after the other useEffects
-  const WeeklyScheduleComponent = () => {
-    const [weeklySchedules, setWeeklySchedules] = useState({});
-    const [schedules, setSchedules] = useState([]);
-
-    const updateWeeklySchedule = (day, truckId, route) => {
-      setWeeklySchedules((prevSchedules) => {
-        const updatedSchedules = { ...prevSchedules };
-        if (!updatedSchedules[day]) {
-          updatedSchedules[day] = {};
-        }
-        updatedSchedules[day][`truck${truckId}`] = { route };
-        return updatedSchedules;
-      });
-    };
-
-    useEffect(() => {
-      // Function to check if the week has changed
-      const checkForWeekChange = () => {
-        // Get the current week number
-        const getWeekNumber = (date) => {
-          const startDate = new Date(date.getFullYear(), 0, 1);
-          const diff = date - startDate;
-          const oneDay = 1000 * 60 * 60 * 24;
-          const weekNumber = Math.ceil(diff / oneDay / 7);
-          return weekNumber;
-        };
-
-        const currentWeek = getWeekNumber(new Date());
-
-        // Get the stored week number from localStorage
-        const storedWeek = localStorage.getItem("currentWeek");
-
-        // If the week has changed or no week is stored, update and refresh
-        if (!storedWeek || Number.parseInt(storedWeek) !== currentWeek) {
-          // Store the new week number
-          localStorage.setItem("currentWeek", currentWeek.toString());
-
-          // Refresh the weekly schedule
-          syncWeeklySchedules();
-
-          console.log("Week changed, refreshed weekly schedule");
-        }
+  // Check for week changes and refresh the schedule
+  useEffect(() => {
+    // Function to check if the week has changed
+    const checkForWeekChange = () => {
+      // Get the current week number
+      const getWeekNumber = (date) => {
+        const startDate = new Date(date.getFullYear(), 0, 1);
+        const diff = date - startDate;
+        const oneDay = 1000 * 60 * 60 * 24;
+        const weekNumber = Math.ceil(diff / oneDay / 7);
+        return weekNumber;
       };
 
-      // Check immediately when component mounts
-      checkForWeekChange();
+      const currentWeek = getWeekNumber(new Date());
 
-      // Set up a daily check (runs once per day)
-      const intervalId = setInterval(checkForWeekChange, 86400000); // 24 hours
+      // Get the stored week number from localStorage
+      const storedWeek = localStorage.getItem("currentWeek");
 
-      return () => clearInterval(intervalId);
-    }, []);
-  };
+      // If the week has changed or no week is stored, update and refresh
+      if (!storedWeek || Number.parseInt(storedWeek) !== currentWeek) {
+        // Store the new week number
+        localStorage.setItem("currentWeek", currentWeek.toString());
+
+        // Refresh the weekly schedule
+        syncWeeklySchedules();
+
+        console.log("Week changed, refreshed weekly schedule");
+      }
+    };
+
+    // Check immediately when component mounts
+    checkForWeekChange();
+
+    // Set up a daily check (runs once per day)
+    const intervalId = setInterval(checkForWeekChange, 86400000); // 24 hours
+
+    return () => clearInterval(intervalId);
+  }, [schedules]);
 
   return (
     <div className="schedule">
@@ -802,7 +822,6 @@ const SchedulePage = () => {
                       <option value="">Select Truck ID</option>
                       <option value="0001">0001</option>
                       <option value="0002">0002</option>
-                      {/* Add more options as needed */}
                     </select>
 
                     <select
@@ -981,24 +1000,59 @@ const SchedulePage = () => {
                     </button>
 
                     {showAddDriverForm && (
-                      <div className="add-form">
-                        <input
-                          type="text"
-                          placeholder="Driver Name"
-                          value={newDriver.name}
-                          onChange={(e) =>
-                            setNewDriver({ ...newDriver, name: e.target.value })
-                          }
-                        />
-                        <input
-                          type="text"
-                          placeholder="Vehicle ID"
-                          value={newDriver.id}
-                          onChange={(e) =>
-                            setNewDriver({ ...newDriver, id: e.target.value })
-                          }
-                        />
-                        <button onClick={addDriver}>Add Driver</button>
+                      <div
+                        className="modal-overlay"
+                        onClick={() => setShowAddDriverForm(false)}
+                      >
+                        <div
+                          className="modal-content"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <div className="modal-header">
+                            <h2>Add New Driver</h2>
+                            <button
+                              className="close-btn"
+                              onClick={() => setShowAddDriverForm(false)}
+                            >
+                              ×
+                            </button>
+                          </div>
+                          <div className="modal-body">
+                            <div className="add-form">
+                              <div className="form-group">
+                                <label>Driver Name</label>
+                                <input
+                                  type="text"
+                                  placeholder="Driver Name"
+                                  value={newDriver.name}
+                                  onChange={(e) =>
+                                    setNewDriver({
+                                      ...newDriver,
+                                      name: e.target.value,
+                                    })
+                                  }
+                                />
+                              </div>
+                              <div className="form-group">
+                                <label>Vehicle ID</label>
+                                <input
+                                  type="text"
+                                  placeholder="Vehicle ID"
+                                  value={newDriver.id}
+                                  onChange={(e) =>
+                                    setNewDriver({
+                                      ...newDriver,
+                                      id: e.target.value,
+                                    })
+                                  }
+                                />
+                              </div>
+                              <button className="save-btn" onClick={addDriver}>
+                                Add Driver
+                              </button>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -1010,7 +1064,8 @@ const SchedulePage = () => {
                           <img
                             src={
                               driver.imageUrl ||
-                              `/placeholder.svg?height=40&width=40`
+                              `/placeholder.svg?height=40&width=40` ||
+                              "/placeholder.svg"
                             }
                             alt={driver.name}
                             className="driver-image"
@@ -1050,20 +1105,7 @@ const SchedulePage = () => {
                               Are you sure you want to delete this driver?
                             </h3>
                             <p>This action cannot be undone.</p>
-                            <div className="delete-actions">
-                              <button
-                                className="cancel-btn"
-                                onClick={handleCancelDelete}
-                              >
-                                Cancel
-                              </button>
-                              <button
-                                className="delete-confirm-btn"
-                                onClick={handleDelete}
-                              >
-                                Delete
-                              </button>
-                            </div>
+                            <div className="delete-actions"></div>
                           </div>
                         ) : editMode ? (
                           <div className="edit-form">
@@ -1077,38 +1119,11 @@ const SchedulePage = () => {
                               />
                             </div>
                             <div className="form-group">
-                              <label>Driver ID</label>
+                              <label>Vehicle ID</label>
                               <input
                                 type="text"
                                 name="driverId"
                                 value={formData.driverId || ""}
-                                onChange={handleInputChange}
-                              />
-                            </div>
-                            <div className="form-group">
-                              <label>Email</label>
-                              <input
-                                type="email"
-                                name="email"
-                                value={formData.email || ""}
-                                onChange={handleInputChange}
-                              />
-                            </div>
-                            <div className="form-group">
-                              <label>Phone</label>
-                              <input
-                                type="text"
-                                name="phone"
-                                value={formData.phone || ""}
-                                onChange={handleInputChange}
-                              />
-                            </div>
-                            <div className="form-group">
-                              <label>License</label>
-                              <input
-                                type="text"
-                                name="license"
-                                value={formData.license || ""}
                                 onChange={handleInputChange}
                               />
                             </div>
@@ -1124,44 +1139,6 @@ const SchedulePage = () => {
                                 <option value="Suspended">Suspended</option>
                               </select>
                             </div>
-                            <div className="form-group">
-                              <label>Join Date</label>
-                              <input
-                                type="date"
-                                name="joinDate"
-                                value={formData.joinDate || ""}
-                                onChange={handleInputChange}
-                              />
-                            </div>
-                            <div className="form-row">
-                              <div className="form-group">
-                                <label>Total Trips</label>
-                                <input
-                                  type="number"
-                                  name="totalTrips"
-                                  value={formData.totalTrips || 0}
-                                  onChange={handleInputChange}
-                                />
-                              </div>
-                              <div className="form-group">
-                                <label>Rating</label>
-                                <input
-                                  type="text"
-                                  name="rating"
-                                  value={formData.rating || ""}
-                                  onChange={handleInputChange}
-                                />
-                              </div>
-                              <div className="form-group">
-                                <label>Earnings</label>
-                                <input
-                                  type="text"
-                                  name="earnings"
-                                  value={formData.earnings || ""}
-                                  onChange={handleInputChange}
-                                />
-                              </div>
-                            </div>
                           </div>
                         ) : (
                           <>
@@ -1169,7 +1146,8 @@ const SchedulePage = () => {
                               <img
                                 src={
                                   selectedDriver.imageUrl ||
-                                  `/placeholder.svg?height=100&width=100`
+                                  `/placeholder.svg?height=100&width=100` ||
+                                  "/placeholder.svg"
                                 }
                                 alt={selectedDriver.name}
                                 className="driver-profile-image"
@@ -1177,43 +1155,13 @@ const SchedulePage = () => {
                               <div className="driver-profile-info">
                                 <h3>{selectedDriver.name}</h3>
                                 <p>
-                                  <strong>Driver ID:</strong>{" "}
-                                  {selectedDriver.driverId}
-                                </p>
-                                <p>
-                                  <strong>Email:</strong>{" "}
-                                  {selectedDriver.email || "N/A"}
-                                </p>
-                                <p>
-                                  <strong>Phone:</strong>{" "}
-                                  {selectedDriver.phone || "N/A"}
-                                </p>
-                                <p>
-                                  <strong>License:</strong>{" "}
-                                  {selectedDriver.license || "N/A"}
+                                  <strong>VehicleID:</strong>{" "}
+                                  {selectedDriver.vehicleID || "N/A"}
                                 </p>
                                 <p>
                                   <strong>Status:</strong>{" "}
                                   {selectedDriver.status || "Active"}
                                 </p>
-                                <p>
-                                  <strong>Joined:</strong>{" "}
-                                  {selectedDriver.joinDate || "N/A"}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="driver-stats">
-                              <div className="stat-item">
-                                <h4>Total Trips</h4>
-                                <p>{selectedDriver.totalTrips || "0"}</p>
-                              </div>
-                              <div className="stat-item">
-                                <h4>Rating</h4>
-                                <p>{selectedDriver.rating || "N/A"}</p>
-                              </div>
-                              <div className="stat-item">
-                                <h4>Earnings</h4>
-                                <p>${selectedDriver.earnings || "0"}</p>
                               </div>
                             </div>
                           </>
@@ -1260,12 +1208,6 @@ const SchedulePage = () => {
                             </button>
                             <button className="edit-btn" onClick={handleEdit}>
                               Edit
-                            </button>
-                            <button
-                              className="close-modal-btn"
-                              onClick={closeModal}
-                            >
-                              Close
                             </button>
                           </div>
                         )}

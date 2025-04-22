@@ -492,6 +492,25 @@
           cursor: pointer;
           white-space: nowrap;
         }
+
+        .add-form {
+          .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+
+            label {
+              font-weight: bold;
+              margin-bottom: 5px;
+            }
+
+            input {
+              padding: 8px;
+              border: 1px solid #ccc;
+              border-radius: 6px;
+            }
+          }
+        }
       }
 
       // Individual driver item
@@ -601,6 +620,78 @@
 
       .modal-body {
         padding: 20px;
+
+        .edit-form {
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px 25px;
+          background-color: #ffffff;
+          border-radius: 10px;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+
+          .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+
+            label {
+              font-size: 14px;
+              font-weight: 600;
+              color: #333;
+              margin-bottom: 6px;
+            }
+
+            input,
+            select {
+              padding: 8px 12px;
+              font-size: 14px;
+              border: 1px solid #ccc;
+              border-radius: 6px;
+              transition: border 0.3s;
+
+              &:focus {
+                border-color: #007bff;
+                outline: none;
+              }
+            }
+          }
+
+          .form-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+
+            .form-group {
+              flex: 1;
+            }
+          }
+        }
+
+        .delete-actions {
+          .cancel-btn {
+            font-weight: bolder;
+            background-color: var(--light-color);
+            padding: 8px 16px;
+            border: 1px solid var(white);
+            color: rgb(43, 54, 116);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: "Raleway", sans-serif;
+            transition: background-color 0.2s ease;
+          }
+
+          .delete-confirm-btn {
+            font-weight: bolder;
+            background-color: var(--light-color);
+            color: red;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+          }
+        }
       }
 
       .driver-profile {
@@ -653,6 +744,70 @@
             font-weight: 600;
             color: var(--primary-color);
           }
+        }
+      }
+
+      .footer-buttons {
+        padding: 15px 20px;
+        border-top: 1px solid var(--border-color);
+        text-align: right;
+        .delete-btn {
+          font-weight: bolder;
+          background-color: var(--light-color);
+          color: red;
+          border: 1px solid var(--border-color);
+          border-radius: 4px;
+          padding: 8px 16px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .edit-btn {
+          font-weight: bolder;
+          background-color: var(--light-color);
+          padding: 8px 16px;
+          border: 1px solid var(white);
+          color: rgb(43, 54, 116);
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-family: "Raleway", sans-serif;
+          transition: background-color 0.2s ease;
+        }
+
+        .cancel-btn {
+          font-weight: bolder;
+          background-color: var(--light-color);
+          color: rgb(43, 54, 116);
+          border: 1px solid var(--border-color);
+          border-radius: 4px;
+          padding: 8px 16px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .save-btn {
+          font-weight: bolder;
+          background-color: var(--light-color);
+          padding: 8px 16px;
+          border: 1px solid var(white);
+          color: rgb(43, 54, 116);
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          font-family: "Raleway", sans-serif;
+          transition: background-color 0.2s ease;
+        }
+
+        .delete-confirm-btn {
+          font-weight: bolder;
+          background-color: var(--light-color);
+          color: red;
+          border: 1px solid var(--border-color);
+          border-radius: 4px;
+          padding: 8px 16px;
+          cursor: pointer;
+          transition: all 0.2s;
         }
       }
 
