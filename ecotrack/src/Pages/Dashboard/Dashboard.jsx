@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import "./Dashboard.scss";
@@ -14,7 +14,8 @@ import { collection, getDocs, query, where } from "firebase/firestore";
 
 const Dashboard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [pendingCount, setPendingCount] = useState(0);
+  const [pendingRequestsCount, setPendingRequestsCount] = useState(0);
+  const [pendingReportsCount, setPendingReportsCount] = useState(0);
   const [periodWaste, setPeriodWaste] = useState("weekly");
   const [rawWasteData, setRawWasteData] = useState([]);
 
@@ -44,7 +45,7 @@ useEffect(() => {
     try {
       const q = query(collection(db, "requests"), where("status", "==", "pending"));
       const snapshot = await getDocs(q);
-      setPendingCount(snapshot.size); // total count of pending
+      setPendingRequestsCount(snapshot.size);
     } catch (err) {
       console.error("Error fetching pending requests:", err);
     }
@@ -52,6 +53,21 @@ useEffect(() => {
 
   fetchPendingRequests();
 }, []);
+
+useEffect(() => {
+  const fetchPendingReports = async () => {
+    try {
+      const q = query(collection(db, "reports"), where("status", "==", "pending"));
+      const snapshot = await getDocs(q);
+      setPendingReportsCount(snapshot.size);
+    } catch (err) {
+      console.error("Error fetching pending reports:", err);
+    }
+  };
+
+  fetchPendingReports();
+}, []);
+
 
 
 
@@ -72,7 +88,7 @@ useEffect(() => {
                 <Link to="/request" className="custom-link">
                   <RecyclingIcon className="dis-icon" />
                 </Link>
-                <div className="reqNum">{pendingCount}</div>
+                <div className="reqNum">{pendingRequestsCount}</div>
                 <div className="Dis-line"></div>
                 <div className="disposalText">Disposal Request</div>
               </div>
@@ -83,7 +99,7 @@ useEffect(() => {
                 <Link to="/report" className="custom-link">
                   <ReportIcon className="dis-icon" />
                 </Link>
-                <div className="reqNum">{pendingCount}</div>
+                <div className="reqNum">{pendingReportsCount}</div>
                 <div className="Dis-line"></div>
                 <div className="feedText">User Reports</div>
               </div>
