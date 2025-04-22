@@ -26,3 +26,4 @@ export { collection, doc, getDoc, setDoc, updateDoc, getDocs };
 
 // Export Realtime Database utilities
 export { ref, set, get, update, onValue, remove };
+export { app};
