@@ -184,40 +184,46 @@ const SchedulePage = () => {
       alert("Please fill in all driver fields");
       return;
     }
-
+  
+    const confirmation = window.confirm("Are you sure you want to add this driver?");
+    if (!confirmation) return;
+  
     try {
       await addDoc(collection(db, "drivers"), {
         ...newDriver,
-        avatar: "/placeholder.svg", // Default avatar
       });
-
-      // Reset form
-      setNewDriver({ name: "", id: "" });
-      setShowAddDriverForm(false);
+      console.log("Driver added successfully!");
+      // Optional: clear form or update UI state here
     } catch (error) {
       console.error("Error adding driver:", error);
-      alert("Failed to add driver. Please try again.");
+      alert(`Failed to add driver: ${error.message}. Please try again.`);
     }
   };
+  
 
   ///Delete Driver from Firestore
   const deleteDriver = async (driverId) => {
+    const confirmation = window.confirm("Are you sure you want to delete this driver?");
+    if (!confirmation) return;
+  
     try {
       // Delete from drivers collection
       await deleteDoc(doc(db, "drivers", driverId));
       console.log(`Driver ${driverId} deleted from Firestore`);
-
+  
       // Update the UI state by filtering out the deleted driver
       setDrivers((prevDrivers) =>
         prevDrivers.filter((driver) => driver.id !== driverId)
       );
-
+  
       console.log(`Driver ${driverId} deleted successfully!`);
     } catch (error) {
       console.error("Error deleting driver:", error);
       alert(`Failed to delete driver: ${error.message}. Please try again.`);
     }
   };
+  
+  
 
   // Add a new schedule to Firestore
   const addSchedule = async () => {
@@ -230,27 +236,28 @@ const SchedulePage = () => {
       alert("Please fill in all schedule fields");
       return;
     }
-
+  
+    const confirmation = window.confirm("Are you sure you want to add this schedule?");
+    if (!confirmation) return;
+  
     try {
       // Add to schedules collection
       await addDoc(collection(db, "schedules"), {
         ...newSchedule,
       });
-
+  
       // Also update weekly schedule
-      // First, determine the day of week from the selected date
       const scheduleDate = new Date(newSchedule.date);
       const dayIndex = scheduleDate.getDay();
       const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
       const dayName = days[dayIndex];
-
-      // Update the weekly schedule for this day and truck
+  
       await updateWeeklySchedule(
         dayName,
         newSchedule.truckId,
         newSchedule.route
       );
-
+  
       // Reset form
       setNewSchedule({
         status: "Pending",
@@ -266,23 +273,27 @@ const SchedulePage = () => {
       alert("Failed to add schedule. Please try again.");
     }
   };
+  
 
   // Delete a schedule from Firestore
   const deleteSchedule = async (scheduleId) => {
+    const confirmation = window.confirm("Are you sure you want to delete this schedule?");
+    if (!confirmation) return;
+  
     try {
       // Get the schedule before deleting it
       const scheduleToDelete = schedules.find((s) => s.id === scheduleId);
-
+  
       // Delete from schedules collection
       await deleteDoc(doc(db, "schedules", scheduleId));
-
+  
       // If this is the only schedule for this day and truck, also update weekly schedule
       if (scheduleToDelete) {
         const scheduleDate = new Date(scheduleToDelete.date);
         const dayIndex = scheduleDate.getDay();
         const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
         const dayName = days[dayIndex];
-
+  
         // Check if there are other schedules for this day and truck
         const otherSchedulesForSameDayAndTruck = schedules.filter(
           (s) =>
@@ -290,7 +301,7 @@ const SchedulePage = () => {
             s.truckId === scheduleToDelete.truckId &&
             new Date(s.date).getDay() === dayIndex
         );
-
+  
         // If no other schedules, clear the weekly schedule entry
         if (otherSchedulesForSameDayAndTruck.length === 0) {
           await updateWeeklySchedule(dayName, scheduleToDelete.truckId, "");
@@ -301,6 +312,7 @@ const SchedulePage = () => {
       alert("Failed to delete schedule. Please try again.");
     }
   };
+  
 
   // Update a schedule status in Firestore
   const updateScheduleStatus = async (scheduleId, newStatus) => {
