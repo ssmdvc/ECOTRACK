@@ -15,5 +15,4 @@ const Report = () => {
     </div>
   );
 };
-
 export default Report;
