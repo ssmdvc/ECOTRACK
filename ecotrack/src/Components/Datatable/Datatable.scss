@@ -1,7 +1,7 @@
 .datatable {
   height: 600px;
   padding: 20px;
-
+  
   .datatableTitle {
     font-family: "Raleway", sans-serif;
     font-optical-sizing: auto;
@@ -31,27 +31,77 @@
       }
     }
   }
-
+  
+  .tableContainer {
+    width: 100%;
+    height: calc(100% - 50px);
+    overflow: hidden;
+    
+    .datagrid {
+      width: 100%;
+      border: none;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      
+      .MuiDataGrid-columnHeaders {
+        background-color: #f5f5f5;
+        font-weight: bold;
+      }
+      
+      .MuiDataGrid-row {
+        &:nth-of-type(even) {
+          background-color: #f9f9f9;
+        }
+        
+        &:hover {
+          background-color: #f0f7ff;
+        }
+      }
+      
+      // Fix horizontal scrolling
+      .MuiDataGrid-main {
+        overflow-x: hidden !important;
+      }
+      
+      .MuiDataGrid-virtualScroller {
+        overflow-x: hidden !important;
+      }
+      
+      .MuiDataGrid-cell {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+  
   .cellAction {
     display: flex;
     align-items: center;
     gap: 15px;
-
+    
     .viewButton {
       padding: 2px 5px;
-      border-radius: 5px;
       color: darkblue;
       cursor: pointer;
+      
+      &:hover {
+        background-color: rgba(0, 0, 139, 0.1);
+      }
     }
-
+    
     .deleteButton {
       padding: 2px 5px;
-      border-radius: 5px;
       color: crimson;
       cursor: pointer;
+      
+      &:hover {
+        background-color: rgba(220, 20, 60, 0.1);
+      }
     }
   }
-
+  
   // Modal styles
   .modal {
     position: fixed;
@@ -77,6 +127,12 @@
       h2 {
         margin-top: 0;
         color: rgba(43, 54, 116, 1);
+      }
+
+      h3 {
+        color: rgba(43, 54, 116, 1);
+        margin-top: 0;
+        margin-bottom: 10px;
       }
 
       .close {
@@ -173,6 +229,62 @@
           width: 120px;
           color: #252525;
           font-weight: bolder;
+        }
+      }
+    }
+  }
+  
+  // Delete confirmation modal specific styles
+  .delete-modal {
+    .modal-content {
+      max-width: 450px;
+      
+      .delete-confirmation {
+        p {
+          margin-bottom: 20px;
+          color: #666;
+        }
+        
+        .delete-actions {
+          display: flex;
+          justify-content: flex-end;
+          gap: 10px;
+          
+          button {
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            
+            &:disabled {
+              opacity: 0.6;
+              cursor: not-allowed;
+            }
+          }
+          
+          .cancel-delete {
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            color: #333;
+            
+            &:hover {
+              background-color: #e9ecef;
+            }
+          }
+          
+          .confirm-delete {
+            background-color:  rgba(43, 54, 116, 1);
+            border: none;
+            color: white;
+            
+            &:hover:not(:disabled) {
+              background-color: #b71c1c;
+            }
+            
+            &:disabled {
+              background-color: #e57373;
+              cursor: not-allowed;
+            }
+          }
         }
       }
     }

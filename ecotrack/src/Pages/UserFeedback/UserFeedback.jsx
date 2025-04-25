@@ -90,7 +90,7 @@ function UserFeedback() {
   const [feedbacks, setFeedbacks] = useState([]);
 
   useEffect(() => {
-    const q = query(collection(db, "feedbacks"));
+    const q = query(collection(db, "feedback"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const feedbacksArray = querySnapshot.docs.map((doc) => {
         console.log("Feedbacks:", feedbacks);
