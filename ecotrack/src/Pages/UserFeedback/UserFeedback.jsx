@@ -90,7 +90,7 @@ function UserFeedback() {
   const [feedbacks, setFeedbacks] = useState([]);
 
   useEffect(() => {
-    const q = query(collection(db, "feedbacks"));
+    const q = query(collection(db, "feedback"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const feedbacksArray = querySnapshot.docs.map((doc) => {
         console.log("Feedbacks:", feedbacks);
@@ -119,7 +119,7 @@ function UserFeedback() {
     const shareData = {
       title: `Feedback from ${feedback.email}`,
       text: feedback.content,
-      url: window.location.origin + `/feedbacks/${id}`,
+      url: window.location.origin + `/feedback/${id}`,
     };
 
     if (navigator.share) {
@@ -143,7 +143,7 @@ function UserFeedback() {
 
     if (response) {
       console.log(`Response to feedback ${id}: ${response}`);
-      updateDoc(doc(db, "feedbacks", id), {
+      updateDoc(doc(db, "feedback", id), {
         response: response,
         respondedAt: serverTimestamp(),
       })

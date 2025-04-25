@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import Sidebar from "../../Components/Sidebar/Sidebar"
-import { collection, addDoc, doc, getDocs, deleteDoc, updateDoc, onSnapshot, setDoc } from "firebase/firestore"
+import { collection, addDoc, doc, deleteDoc, updateDoc, onSnapshot, setDoc } from "firebase/firestore"
 import { db } from "../../firebase.js" // Import Firestore instance from firebase.js
 import "./SchedulePage.scss"
 
@@ -11,7 +11,7 @@ const SchedulePage = () => {
   const [date, setDate] = useState(new Date())
   const [drivers, setDrivers] = useState([])
   const [schedules, setSchedules] = useState([])
-  const [setWeeklySchedules] = useState({})
+  const [weeklySchedules, setWeeklySchedules] = useState({})
   const [showAddDriverForm, setShowAddDriverForm] = useState(false)
   const [showAddScheduleForm, setShowAddScheduleForm] = useState(false)
   const [loading, setLoading] = useState(true)
@@ -35,8 +35,6 @@ const SchedulePage = () => {
     setSelectedDriver(null)
     setArchiveConfirm(false)
   }
-
-  
 
   const handleArchiveConfirm = () => {
     setArchiveConfirm(true)
@@ -65,7 +63,6 @@ const SchedulePage = () => {
 
     alert("Driver archived successfully.")
   }
-
 
   // Time picker refs
   const timePickerRef = useRef(null)
@@ -154,8 +151,6 @@ const SchedulePage = () => {
           }))
           setSchedules(schedulesList)
           console.log("Schedules loaded:", schedulesList.length)
-
-          
         },
         (error) => {
           console.error("Error fetching schedules:", error)
@@ -213,8 +208,6 @@ const SchedulePage = () => {
       setLoading(false)
     }
   }, [])
-
-  
 
   // Add a new driver to Firestore
   const addDriver = async () => {
@@ -466,9 +459,6 @@ const SchedulePage = () => {
       const getLocalDateString = (d) =>
         new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().split("T")[0]
 
-      
-      
-    
       const isSelected = currentDate.toDateString() === date.toDateString()
       const isToday = currentDate.toDateString() === new Date().toDateString()
 
@@ -1004,6 +994,7 @@ const SchedulePage = () => {
                               "/placeholder.svg" ||
                               "/placeholder.svg" ||
                               "/placeholder.svg" ||
+                              "/placeholder.svg" ||
                               "/placeholder.svg"
                             }
                             alt={driver.name}
@@ -1052,6 +1043,7 @@ const SchedulePage = () => {
                               src={
                                 selectedDriver.imageUrl ||
                                 `/placeholder.svg?height=100&width=100` ||
+                                "/placeholder.svg" ||
                                 "/placeholder.svg" ||
                                 "/placeholder.svg" ||
                                 "/placeholder.svg" ||
