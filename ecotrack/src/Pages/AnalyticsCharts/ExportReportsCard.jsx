@@ -208,7 +208,7 @@ export default function ExportReportsCard({ onAddDataClick }) {
   return (
     <Card sx={{ mb: 3 }}>
       <CardContent>
-        <Typography variant="h6" align="center" gutterBottom>
+        <Typography variant="h6" align="start" gutterBottom>
           Export Reports
         </Typography>
         <Box display="flex" gap={2} alignItems="center" justifyContent="center" mb={2}>
