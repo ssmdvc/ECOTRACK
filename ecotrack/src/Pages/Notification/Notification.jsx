@@ -3,13 +3,7 @@ import Sidebar from '../../Components/Sidebar/Sidebar';
 import './Notification.scss';
 import { db } from "../../firebase"; // adjust the path to your firebase config
 import { collection, addDoc, deleteDoc, doc } from "firebase/firestore";
-
-<div className="Notification">
-<Sidebar />
-<div className="notificationContainer">
-  <div className="notificationTitle">Notification</div>
-</div>
-</div>
+import axios from "axios"; // Import axios for API requests
 
 const Notification = () => {
   const [activeTab, setActiveTab] = useState(1);
@@ -30,42 +24,51 @@ const Notification = () => {
         alert("Please choose a target date for scheduled notification!");
         return;
       }
-  
+
+      const currentDate = new Date().toISOString();
       const newNotification = {
         title,
         message,
         targetDate: deliveryType === "Scheduled Notification" ? targetDate : null,
         type: deliveryType,
-        createdAt: new Date().toISOString(),
+        createdAt: currentDate,
       };
-  
+
       try {
         const docRef = await addDoc(collection(db, "notifications"), newNotification);
-  
+
         const notificationWithId = { ...newNotification, id: docRef.id };
-  
+
         if (deliveryType === "Scheduled Notification") {
           setScheduledNotifications([...scheduledNotifications, notificationWithId]);
         } else {
           setArchivedNotifications([...archivedNotifications, notificationWithId]);
         }
-  
+
+        // Send push notification via API
+        await axios.post("https://app.nativenotify.com/api/notification", {
+          appId: 29491,
+          appToken: "4xMscEXQvK02ambrgvtOJD",
+          title,
+          body: message,
+          dateSent: new Date().toLocaleString(), // Use current date in local format
+        });
+
         setTitle("");
         setMessage("");
         setTargetDate("");
         setDeliveryType("Scheduled Notification");
-  
-        alert("Notification successfully saved to Firestore!");
+
+        alert("Notification successfully saved to Firestore and sent as a push notification!");
       } catch (error) {
-        console.error("Error adding notification: ", error);
-        alert("Something went wrong while saving the notification.");
+        console.error("Error adding notification or sending push notification: ", error);
+        alert("Something went wrong while saving the notification or sending the push notification.");
       }
     } else {
       alert("Please fill in all required fields!");
     }
   };
-  
-  
+
   const moveToArchive = async (notification) => {
     try {
       // Add to "archives" collection
@@ -74,43 +77,41 @@ const Notification = () => {
         archivedAt: new Date().toISOString(),
         type: "Archived Notification"
       });
-  
+
       // Delete from "notifications" collection
       if (notification.id) {
         await deleteDoc(doc(db, "notifications", notification.id));
       }
-  
+
       // Update local state
       setArchivedNotifications([...archivedNotifications, notification]);
       setScheduledNotifications(scheduledNotifications.filter((notif) => notif.id !== notification.id));
-  
+
       alert("Notification archived successfully.");
     } catch (error) {
       console.error("Error moving notification to archive: ", error);
       alert("Failed to archive the notification.");
     }
   };
-  
 
   const deleteNotification = async (notification, type) => {
     try {
       if (notification.id) {
         await deleteDoc(doc(db, "notifications", notification.id));
       }
-  
+
       if (type === "Scheduled Notification") {
         setScheduledNotifications(scheduledNotifications.filter((notif) => notif.id !== notification.id));
       } else if (type === "Archived Notification") {
         setArchivedNotifications(archivedNotifications.filter((notif) => notif.id !== notification.id));
       }
-  
+
       alert("Notification deleted successfully.");
     } catch (error) {
       console.error("Error deleting notification: ", error);
       alert("Failed to delete the notification from Firestore.");
     }
   };
-  
 
   return (
     <div className="new">
@@ -247,7 +248,7 @@ const Notification = () => {
 
               {/* Send Button */}
               <button onClick={handleSend} className="send-button">
-                Save Notification
+                Save and Send Notification
               </button>
             </div>
           )}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import "./NewPage.scss"
 import Sidebar from '../../Components/Sidebar/Sidebar';
+import Navbar from '../../Components/Navbar/Navbar';
 import { doc, setDoc } from "firebase/firestore"; 
 import { db } from '../../firebase';
 
@@ -21,7 +22,7 @@ const NewPage = ({inputs, title}) => {
     <div className='new'>
       <Sidebar />
       <div className="newContainer">
-        
+        <Navbar />
         <div className="top">
           <h1>{title}</h1></div>
         <div className="bottom">
