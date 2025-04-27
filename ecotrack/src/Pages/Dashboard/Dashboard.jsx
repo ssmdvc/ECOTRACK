@@ -57,7 +57,7 @@ useEffect(() => {
 useEffect(() => {
   const fetchPendingReports = async () => {
     try {
-      const q = query(collection(db, "reports"), where("status", "==", "pending"));
+      const q = query(collection(db, "reports"), where("status", "==", "Pending"));
       const snapshot = await getDocs(q);
       setPendingReportsCount(snapshot.size);
     } catch (err) {

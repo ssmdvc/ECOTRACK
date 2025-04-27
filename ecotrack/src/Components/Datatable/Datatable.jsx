@@ -241,9 +241,9 @@ const Datatable = () => {
     <div className="datatable">
       <div className="datatableTitle">
         User Management
-        <button className="link" onClick={() => setIsAddModalOpen(true)}>
+        {/* <button className="link" onClick={() => setIsAddModalOpen(true)}>
           Add New
-        </button>
+        </button> */}
       </div>
       <div className="tableContainer">
         <DataGrid
@@ -281,7 +281,7 @@ const Datatable = () => {
             <span className="close" onClick={() => setIsAddModalOpen(false)}>
               &times;
             </span>
-            <h2>Add New User</h2>
+            {/* <h2>Add New User</h2> */}
             <form onSubmit={handleAddUser}>
               <div className="form-group">
                 <label>First Name</label>
