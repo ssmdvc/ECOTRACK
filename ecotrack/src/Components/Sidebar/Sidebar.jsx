@@ -12,14 +12,19 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Link } from "react-router-dom";
 import Logout from "../../Pages/LoginForm/Logout";
 
+
 const Sidebar = () => {
   return (
     <div className="sidebar">
-      <div className="top">
-        <Link to="/dashboard" className="custom-link" style={{ textDecoration: "none", color: "black" }}>
-          <span className="logo">EcoTrack</span>
-        </Link>
-      </div>
+       <div className="top">
+    <Link to="/dashboard" className="custom-link" style={{ textDecoration: "none", color: "black" }}>
+      <img 
+        src={require("../../Components/logo.png")} 
+        alt="Truck Logo" 
+        style={{ height: "13em" }}
+      />
+    </Link>
+  </div>
 
       <div className="center">
         <ul>
