@@ -12,7 +12,8 @@ mapboxgl.accessToken =
 const Map = () => {
   const mapContainerRef = useRef(null);
   const [mapInstance, setMapInstance] = useState(null);
-  const [gpsMarkers, setGpsMarkers] = useState({});
+
+  const gpsMarkersRef = useRef({}); // ✅ Added properly
 
   useEffect(() => {
     const map = new mapboxgl.Map({
@@ -46,18 +47,17 @@ const Map = () => {
 
         if (!lat || !lng) return;
 
-        // Include this point in the map bounds
-        bounds.extend([lng, lat]);
+        bounds.extend([lng, lat]); // Always [longitude, latitude]
 
         const isGPSData = deviceKey === "GPSData";
-        const truckColor = isGPSData ? "#4CAF50" : "#2196F3"; // Green or Blue
-        const glowColor = "rgba(76, 175, 80, 0.4)"; // Soft green glow
+        const truckColor = isGPSData ? "#4CAF50" : "#2196F3";
+        const glowColor = "rgba(76, 175, 80, 0.4)";
 
         const markerContainer = document.createElement("div");
         markerContainer.style.width = "48px";
         markerContainer.style.height = "48px";
         markerContainer.style.borderRadius = "50%";
-        markerContainer.style.backgroundColor = "#ffffff"; // White background
+        markerContainer.style.backgroundColor = "#ffffff";
         markerContainer.style.display = "flex";
         markerContainer.style.alignItems = "center";
         markerContainer.style.justifyContent = "center";
@@ -68,19 +68,18 @@ const Map = () => {
         const root = createRoot(markerContainer);
         root.render(<LocalShippingIcon style={{ color: truckColor, fontSize: "28px" }} />);
 
-        if (gpsMarkers[deviceKey]) {
-          gpsMarkers[deviceKey].setLngLat([lng, lat]);
+        if (gpsMarkersRef.current[deviceKey]) {
+          gpsMarkersRef.current[deviceKey].setLngLat([lng, lat]);
         } else {
           const marker = new mapboxgl.Marker({ element: markerContainer })
             .setLngLat([lng, lat])
             .setPopup(new mapboxgl.Popup().setText(`Truck: ${deviceKey}`))
             .addTo(mapInstance);
 
-          setGpsMarkers((prev) => ({ ...prev, [deviceKey]: marker }));
+          gpsMarkersRef.current[deviceKey] = marker;
         }
       });
 
-      // Fit map view to all markers
       if (!bounds.isEmpty()) {
         mapInstance.fitBounds(bounds, {
           padding: 60,
@@ -91,7 +90,7 @@ const Map = () => {
     });
 
     return () => unsubscribe();
-  }, [mapInstance, gpsMarkers]);
+  }, [mapInstance]);
 
   return <div className="map-container" ref={mapContainerRef}></div>;
 };
