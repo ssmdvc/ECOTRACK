@@ -99,7 +99,7 @@ const ReportTable = () => {
 
   const handleViewClick = (report) => {
     setViewedReport(report);
-    setResponseMessage(report.reportRes || '');
+    setResponseMessage(report.responseMessage || '');
     setViewOpen(true);
   };
 
@@ -107,7 +107,7 @@ const ReportTable = () => {
     if (!viewedReport?.id) return;
     try {
       const reportRef = doc(db, 'reports', viewedReport.id);
-      await updateDoc(reportRef, { reportRes: responseMessage });
+      await updateDoc(reportRef, { responseMessage: responseMessage });
       alert('Response sent successfully!');
       setViewOpen(false);
     } catch (error) {
