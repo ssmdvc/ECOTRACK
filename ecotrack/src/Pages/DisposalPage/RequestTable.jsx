@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  TextField,
 } from "@mui/material";
 import {
   collection,
@@ -26,6 +27,9 @@ const RequestTable = () => {
   const [selectedRequestId, setSelectedRequestId] = useState(null);
   const [imageModal, setImageModal] = useState({ open: false, src: null });
 
+  const [responseModal, setResponseModal] = useState(false);
+  const [responseText, setResponseText] = useState("");
+
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, "requests"), (snapshot) => {
       const data = snapshot.docs.map((doc) => ({
@@ -38,24 +42,38 @@ const RequestTable = () => {
     return () => unsubscribe();
   }, []);
 
+  const openConfirmDialog = (id, newStatus) => {
+    setSelectedRequestId(id);
+    setSelectedStatus(newStatus);
+
+    if (newStatus === "Approved") {
+      setResponseModal(true); // Open response modal first
+    } else {
+      setConfirmOpen(true); // Otherwise go directly to confirm
+    }
+  };
+
   const applyStatusChange = async () => {
     if (!selectedRequestId || !selectedStatus) return;
 
     try {
       const ref = doc(db, "requests", selectedRequestId);
-      await updateDoc(ref, { status: selectedStatus });
+      const updatePayload = { status: selectedStatus };
+
+      if (selectedStatus === "Approved" && responseText.trim() !== "") {
+        updatePayload.responseMessage = responseText;
+      }
+
+      await updateDoc(ref, updatePayload);
+
       setConfirmOpen(false);
+      setResponseModal(false);
+      setResponseText('');
       setSelectedRequestId(null);
       setSelectedStatus(null);
     } catch (err) {
       console.error("Failed to update status:", err);
     }
-  };
-
-  const openConfirmDialog = (id, newStatus) => {
-    setSelectedRequestId(id);
-    setSelectedStatus(newStatus);
-    setConfirmOpen(true);
   };
 
   const cancelConfirm = () => {
@@ -181,7 +199,6 @@ const RequestTable = () => {
           fontStyle: "normal",
           width: "100%",
           fontSize: "24px",
-          color: "rgba(43, 54, 116, 1)",
           marginBottom: "25px",
           display: "flex",
           alignItems: "center",
@@ -191,6 +208,7 @@ const RequestTable = () => {
         Disposal Request Management
       </div>
 
+      {/* Tabs */}
       <div style={{ marginBottom: "10px", display: "flex", gap: "10px" }}>
         <button
           className={`tab-button ${activeTab === "pending" ? "active-tab" : ""}`}
@@ -221,6 +239,7 @@ const RequestTable = () => {
         />
       </div>
 
+      {/* DataGrid */}
       <Box
         sx={{
           height: 520,
@@ -282,6 +301,35 @@ const RequestTable = () => {
           </DialogActions>
         </Dialog>
       )}
+
+      {/* Response Modal */}
+      <Dialog open={responseModal} onClose={() => setResponseModal(false)}>
+        <DialogTitle>Response to Approved Request</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Response Message"
+            multiline
+            fullWidth
+            rows={4}
+            value={responseText}
+            onChange={(e) => setResponseText(e.target.value)}
+            sx={{ marginTop: 2 }}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setResponseModal(false)}>Cancel</Button>
+          <Button
+            onClick={() => {
+              setConfirmOpen(true);
+              setResponseModal(false);
+            }}
+            variant="contained"
+            color="primary"
+          >
+            Next
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Confirm Status Change */}
       <Dialog open={confirmOpen} onClose={cancelConfirm}>

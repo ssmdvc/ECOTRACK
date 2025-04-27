@@ -14,7 +14,7 @@ mapboxgl.accessToken =
 const DEFAULT_COORDS = { latitude: 14.5929, longitude: 120.12345 };
 
 const Tracking = () => {
-  const [routes, setRoutes] = useState([]);
+  const [schedules, setSchedules] = useState([]);
   const [gpsData, setGpsData] = useState(DEFAULT_COORDS);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -22,23 +22,25 @@ const Tracking = () => {
   const mapRef = useRef(null);
   const markerRef = useRef(null);
 
+  // 🔵 Fetching trip schedules
   useEffect(() => {
-    const fetchRoutes = async () => {
+    const fetchSchedules = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "truckRoutes"));
-        const data = querySnapshot.docs.map((doc) => ({
+        const snapshot = await getDocs(collection(db, "schedules"));
+        const data = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
         }));
-        setRoutes(data);
+        setSchedules(data);
       } catch (error) {
-        console.error("Error fetching routes:", error);
+        console.error("Error fetching schedules:", error);
       }
     };
 
-    fetchRoutes();
+    fetchSchedules();
   }, []);
 
+  // 🔵 Fetch live GPS Data
   useEffect(() => {
     const gpsRef = ref(realtimeDb, "GPSData");
 
@@ -62,6 +64,7 @@ const Tracking = () => {
     return () => unsubscribe();
   }, []);
 
+  // 🔵 Initialize the Map
   useEffect(() => {
     if (!mapContainerRef.current || mapRef.current) return;
 
@@ -72,46 +75,10 @@ const Tracking = () => {
       zoom: 14,
     });
 
-    mapRef.current.on("load", () => {
-      if (!mapRef.current || !mapRef.current.isStyleLoaded()) return;
-
-      routes.forEach((route, index) => {
-        if (!route.stops || route.stops.length === 0) return;
-
-        const coordinates = route.stops.map((stop) => [stop.lng, stop.lat]);
-
-        if (mapRef.current.getSource(`route-${index}`)) return;
-
-        mapRef.current.addSource(`route-${index}`, {
-          type: "geojson",
-          data: {
-            type: "Feature",
-            geometry: {
-              type: "LineString",
-              coordinates,
-            },
-          },
-        });
-
-        mapRef.current.addLayer({
-          id: `route-${index}`,
-          type: "line",
-          source: `route-${index}`,
-          layout: {
-            "line-join": "round",
-            "line-cap": "round",
-          },
-          paint: {
-            "line-color": index % 2 === 0 ? "blue" : "red",
-            "line-width": 4,
-          },
-        });
-      });
-    });
-
     return () => mapRef.current?.remove();
-  }, [routes]);
+  }, []);
 
+  // 🔵 Update marker based on GPS changes
   useEffect(() => {
     if (
       !gpsData ||
@@ -149,7 +116,6 @@ const Tracking = () => {
     }
   }, [gpsData.latitude, gpsData.longitude]);
 
-  // Create a custom marker using MUI truck icon
   const createTruckIcon = () => {
     const container = document.createElement("div");
     container.style.width = "48px";
@@ -175,31 +141,28 @@ const Tracking = () => {
       <div className="trackingContainer">
         <h1 className="trackingTitle">Truck Route</h1>
         <div className="trackingContent">
+          {/* 🔵 Trip Details Section */}
           <div className="routesDetails">
             <h2 className="routesHeader">Trip Details</h2>
-            {routes.length > 0 ? (
-              routes.map((route, index) => (
-                <div key={route.id} className="routeSection">
-                  <h3>Truck Number {index + 1}</h3>
-                  <p>{route.date}</p>
-                  <ul>
-                    {route.stops.map((stop, i) => (
-                      <li key={i} className="stopItem">
-                        <span className={`dot ${i === 0 ? "start" : "stop"}`}></span>
-                        {stop.street || `Lat: ${stop.lat}, Lng: ${stop.lng}`}
-                      </li>
-                    ))}
-                  </ul>
+            {schedules.length > 0 ? (
+              schedules.map((trip, index) => (
+                <div key={trip.id} className="routeSection">
+                  <h3>Truck ID: {trip.truckId}</h3>
+                  <p><strong>Driver:</strong> {trip.driver}</p>
+                  <p><strong>Route:</strong> {trip.route}</p>
+                  <p><strong>Estimated Time:</strong> {trip.estimatedTime}</p>
+                  <p><strong>Status:</strong> {trip.status}</p>
+                  <p><strong>Date:</strong> {trip.date}</p>
                 </div>
               ))
             ) : (
-              <p>No routes available</p>
+              <p>No trip details available.</p>
             )}
           </div>
 
-          {/* Map Section */}
+          {/* 🔵 Map Section */}
           <div className="mapContainer">
-          <Map />
+            <Map />
           </div>
         </div>
       </div>

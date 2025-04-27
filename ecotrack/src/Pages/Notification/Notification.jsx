@@ -1,18 +1,49 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from '../../Components/Sidebar/Sidebar';
 import './Notification.scss';
-import { db } from "../../firebase"; // adjust the path to your firebase config
-import { collection, addDoc, deleteDoc, doc } from "firebase/firestore";
-import axios from "axios"; // Import axios for API requests
+import { db } from "../../firebase";
+import { collection, getDocs, addDoc, deleteDoc, doc } from "firebase/firestore";
+import axios from "axios";
 
 const Notification = () => {
   const [activeTab, setActiveTab] = useState(1);
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [targetDate, setTargetDate] = useState("");
-  const [deliveryType, setDeliveryType] = useState("Scheduled Notification"); // User choice
+  const [deliveryType, setDeliveryType] = useState("Scheduled Notification");
   const [scheduledNotifications, setScheduledNotifications] = useState([]);
   const [archivedNotifications, setArchivedNotifications] = useState([]);
+
+  useEffect(() => {
+    fetchNotifications();
+    fetchArchives();
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      moveExpiredNotifications();
+    }, 60 * 1000); // Check every minute
+
+    return () => clearInterval(interval);
+  }, [scheduledNotifications]);
+
+  const fetchNotifications = async () => {
+    const snapshot = await getDocs(collection(db, "notifications"));
+    const data = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setScheduledNotifications(data);
+  };
+
+  const fetchArchives = async () => {
+    const snapshot = await getDocs(collection(db, "archives"));
+    const data = snapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    setArchivedNotifications(data);
+  };
 
   const handleTabClick = (tabIndex) => {
     setActiveTab(tabIndex);
@@ -38,78 +69,86 @@ const Notification = () => {
         const docRef = await addDoc(collection(db, "notifications"), newNotification);
 
         const notificationWithId = { ...newNotification, id: docRef.id };
-
-        if (deliveryType === "Scheduled Notification") {
-          setScheduledNotifications([...scheduledNotifications, notificationWithId]);
-        } else {
-          setArchivedNotifications([...archivedNotifications, notificationWithId]);
-        }
-
-        // Send push notification via API
-        await axios.post("https://app.nativenotify.com/api/notification", {
-          appId: 29491,
-          appToken: "4xMscEXQvK02ambrgvtOJD",
-          title,
-          body: message,
-          dateSent: new Date().toLocaleString(), // Use current date in local format
-        });
+        setScheduledNotifications([...scheduledNotifications, notificationWithId]);
 
         setTitle("");
         setMessage("");
         setTargetDate("");
         setDeliveryType("Scheduled Notification");
 
-        alert("Notification successfully saved to Firestore and sent as a push notification!");
+        alert("Notification successfully saved!");
+
       } catch (error) {
-        console.error("Error adding notification or sending push notification: ", error);
-        alert("Something went wrong while saving the notification or sending the push notification.");
+        console.error("Error adding notification: ", error);
+        alert("Something went wrong while saving the notification.");
       }
     } else {
       alert("Please fill in all required fields!");
     }
   };
 
-  const moveToArchive = async (notification) => {
+  const moveExpiredNotifications = async () => {
+    const now = new Date();
+    const expired = scheduledNotifications.filter(notif => 
+      notif.targetDate && new Date(notif.targetDate) <= now
+    );
+
+    for (const notif of expired) {
+      try {
+        await addDoc(collection(db, "archives"), {
+          ...notif,
+          archivedAt: now.toISOString(),
+          type: "Archived Notification",
+        });
+
+        if (notif.id) {
+          await deleteDoc(doc(db, "notifications", notif.id));
+        }
+      } catch (error) {
+        console.error("Error moving to archive: ", error);
+      }
+    }
+
+    if (expired.length > 0) {
+      fetchNotifications();
+      fetchArchives();
+    }
+  };
+
+  const resendNotification = async (notification) => {
     try {
-      // Add to "archives" collection
-      await addDoc(collection(db, "archives"), {
-        ...notification,
-        archivedAt: new Date().toISOString(),
-        type: "Archived Notification"
+      await axios.post("https://app.nativenotify.com/api/notification", {
+        appId: 29491,
+        appToken: "4xMscEXQvK02ambrgvtOJD",
+        title: notification.title,
+        body: notification.message,
+        dateSent: new Date().toLocaleString(),
       });
 
-      // Delete from "notifications" collection
-      if (notification.id) {
-        await deleteDoc(doc(db, "notifications", notification.id));
-      }
-
-      // Update local state
-      setArchivedNotifications([...archivedNotifications, notification]);
-      setScheduledNotifications(scheduledNotifications.filter((notif) => notif.id !== notification.id));
-
-      alert("Notification archived successfully.");
+      alert("Notification re-sent successfully!");
     } catch (error) {
-      console.error("Error moving notification to archive: ", error);
-      alert("Failed to archive the notification.");
+      console.error("Error re-sending notification:", error);
+      alert("Failed to re-send notification.");
     }
   };
 
   const deleteNotification = async (notification, type) => {
     try {
       if (notification.id) {
-        await deleteDoc(doc(db, "notifications", notification.id));
+        const coll = type === "Scheduled Notification" ? "notifications" : "archives";
+        await deleteDoc(doc(db, coll, notification.id));
       }
 
       if (type === "Scheduled Notification") {
-        setScheduledNotifications(scheduledNotifications.filter((notif) => notif.id !== notification.id));
-      } else if (type === "Archived Notification") {
-        setArchivedNotifications(archivedNotifications.filter((notif) => notif.id !== notification.id));
+        setScheduledNotifications(prev => prev.filter(n => n.id !== notification.id));
+      } else {
+        setArchivedNotifications(prev => prev.filter(n => n.id !== notification.id));
       }
 
       alert("Notification deleted successfully.");
     } catch (error) {
-      console.error("Error deleting notification: ", error);
-      alert("Failed to delete the notification from Firestore.");
+      console.error("Error deleting notification:", error);
+      alert("Failed to delete notification.");
     }
   };
 
@@ -119,29 +158,19 @@ const Notification = () => {
       <div className="newContainer">
         {/* Tabs */}
         <div className="tabs">
-          <div
-            className={`tab ${activeTab === 1 ? "active" : ""}`}
-            onClick={() => handleTabClick(1)}
-          >
+          <div className={`tab ${activeTab === 1 ? "active" : ""}`} onClick={() => handleTabClick(1)}>
             Scheduled Notifications
           </div>
-          <div
-            className={`tab ${activeTab === 2 ? "active" : ""}`}
-            onClick={() => handleTabClick(2)}
-          >
+          <div className={`tab ${activeTab === 2 ? "active" : ""}`} onClick={() => handleTabClick(2)}>
             Archived Notifications
           </div>
-          <div
-            className={`tab ${activeTab === 3 ? "active" : ""}`}
-            onClick={() => handleTabClick(3)}
-          >
+          <div className={`tab ${activeTab === 3 ? "active" : ""}`} onClick={() => handleTabClick(3)}>
             Create New Notification
           </div>
         </div>
 
         {/* Tab Content */}
         <div className="tab-content">
-
           {/* Scheduled Notifications */}
           {activeTab === 1 && (
             <div className="content">
@@ -152,9 +181,6 @@ const Notification = () => {
                     <li key={index}>
                       <strong>{notif.title}</strong>: {notif.message} (Scheduled for: {notif.targetDate})
                       <div className="notification-actions">
-                        <button onClick={() => moveToArchive(notif)}>
-                          Archive
-                        </button>
                         <button onClick={() => deleteNotification(notif, "Scheduled Notification")}>
                           Delete
                         </button>
@@ -177,8 +203,11 @@ const Notification = () => {
                   {archivedNotifications.map((notif, index) => (
                     <li key={index}>
                       <strong>{notif.title}</strong>: {notif.message}
-                      {notif.targetDate && `(Scheduled for: ${notif.targetDate})`}
+                      {notif.targetDate && `(Originally Scheduled: ${notif.targetDate})`}
                       <div className="notification-actions">
+                        <button onClick={() => resendNotification(notif)}>
+                          Resend
+                        </button>
                         <button onClick={() => deleteNotification(notif, "Archived Notification")}>
                           Delete
                         </button>
@@ -197,7 +226,6 @@ const Notification = () => {
             <div className="content">
               <h2>Create New Notification</h2>
 
-              {/* Delivery Type Dropdown */}
               <div className="input-group">
                 <label htmlFor="deliveryType">Delivery Type:</label>
                 <select
@@ -206,11 +234,9 @@ const Notification = () => {
                   onChange={(e) => setDeliveryType(e.target.value)}
                 >
                   <option value="Scheduled Notification">Scheduled Notification</option>
-                  <option value="Archived Notification">Archived Notification</option>
                 </select>
               </div>
 
-              {/* Target Date (only for Scheduled) */}
               {deliveryType === "Scheduled Notification" && (
                 <div className="input-group">
                   <label htmlFor="targetDate">Target Date:</label>
@@ -223,7 +249,6 @@ const Notification = () => {
                 </div>
               )}
 
-              {/* Title Input */}
               <div className="input-group">
                 <label htmlFor="title">Title:</label>
                 <input
@@ -235,7 +260,6 @@ const Notification = () => {
                 />
               </div>
 
-              {/* Message Input */}
               <div className="input-group">
                 <label htmlFor="message">Message:</label>
                 <textarea
@@ -246,9 +270,8 @@ const Notification = () => {
                 ></textarea>
               </div>
 
-              {/* Send Button */}
               <button onClick={handleSend} className="send-button">
-                Save and Send Notification
+                Save Notification
               </button>
             </div>
           )}
