@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ToastContainer } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -29,95 +29,102 @@ function PrivateRoute({ children }) {
 }
 
 function App() {
-  const {darkMode} = useContext(DarkModeContext); 
+  const { darkMode } = useContext(DarkModeContext);
 
   return (
-    <div className={ darkMode ? "app dark" : "app"}>
-    <BrowserRouter basename="/ecotrack">
-    <Routes>
-      <Route path="/" element={<LoginForm />}/>
-      <Route path="/signup" element={<SignUpForm />}/>
-      <Route path="/login" element={<LoginForm />}/>
-      <Route path="/dashboard" element={<Dashboard />}/>
-      <Route path="/analyticsFr" element={<AnalyticsFr />} />
-      <Route path="/setting" element={<Setting />} />
-      
+    <div className={darkMode ? "app dark" : "app"}>
+      <BrowserRouter basename="/ecotrack">
+        <Routes>
+          <Route path="/" element={<LoginForm />} />
+          <Route path="/signup" element={<SignUpForm />} />
+          <Route path="/login" element={<LoginForm />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/analyticsFr" element={<AnalyticsFr />} />
+          <Route path="/setting" element={<Setting />} />
 
-      
-      <Route path="/dashboard" element={
-        <PrivateRoute>
-          <Dashboard />
-        </PrivateRoute>
-      }/>
-      <Route path="/analyticsFr" element={
-        <PrivateRoute>
-          <AnalyticsFr />
-        </PrivateRoute>
-      }/>
-      <Route path="user">
-        <Route index element={
-          <PrivateRoute>
-            <List />
-          </PrivateRoute>
-        }/>
-        <Route path=":userId" element={
-          <PrivateRoute>
-            <SinglePage />
-          </PrivateRoute>
-        }/>
-        <Route path="new" element={
-          <PrivateRoute>
-            <NewPage inputs = {userInputs} title="Add New User" />
-          </PrivateRoute>
-        }/>
-      </Route>
-      <Route path="trackingpage">
-        <Route index element={
-          <PrivateRoute>
-            <Tracking />
-          </PrivateRoute>
-        }/>
-      </Route>
-      <Route path="request">
-        <Route index element={
-          <PrivateRoute>
-            <Request />
-          </PrivateRoute>
-        }/>
-      </Route>
-      <Route path="schedule">
-        <Route index element={
-          <PrivateRoute>
-            <SchedulePage />
-          </PrivateRoute>
-        }/>
-      </Route>
-      <Route path="report">
-        <Route index element={
-          <PrivateRoute>
-            <Report />
-          </PrivateRoute>
-        }/>
-      </Route>
-      <Route path="feedback">
-        <Route index element={
-          <PrivateRoute>
-            <UserFeedback />
-          </PrivateRoute>
-        }/>
-      </Route>
-      <Route path="notification">
-        <Route index element={
-          <PrivateRoute>
-            <Notification />
-          </PrivateRoute>
-        }/>
-      </Route>
-    </Routes>
-    <ToastContainer />
-    </BrowserRouter>
+          <Route path="/dashboard" element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          } />
+          <Route path="/analyticsFr" element={
+            <PrivateRoute>
+              <AnalyticsFr />
+            </PrivateRoute>
+          } />
+          <Route path="user">
+            <Route index element={
+              <PrivateRoute>
+                <List />
+              </PrivateRoute>
+            } />
+            <Route path=":userId" element={
+              <PrivateRoute>
+                <SinglePage />
+              </PrivateRoute>
+            } />
+            <Route path="new" element={
+              <PrivateRoute>
+                <NewPage inputs={userInputs} title="Add New User" />
+              </PrivateRoute>
+            } />
+          </Route>
+          <Route path="trackingpage">
+            <Route index element={
+              <PrivateRoute>
+                <Tracking />
+              </PrivateRoute>
+            } />
+          </Route>
+          <Route path="request">
+            <Route index element={
+              <PrivateRoute>
+                <Request />
+              </PrivateRoute>
+            } />
+          </Route>
+          <Route path="schedule">
+            <Route index element={
+              <PrivateRoute>
+                <SchedulePage />
+              </PrivateRoute>
+            } />
+          </Route>
+          <Route path="report">
+            <Route index element={
+              <PrivateRoute>
+                <Report />
+              </PrivateRoute>
+            } />
+          </Route>
+          <Route path="feedback">
+            <Route index element={
+              <PrivateRoute>
+                <UserFeedback />
+              </PrivateRoute>
+            } />
+          </Route>
+          <Route path="notification">
+            <Route index element={
+              <PrivateRoute>
+                <Notification />
+              </PrivateRoute>
+            } />
+          </Route>
+        </Routes>
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
+      </BrowserRouter>
     </div>
-
   );
 }
 

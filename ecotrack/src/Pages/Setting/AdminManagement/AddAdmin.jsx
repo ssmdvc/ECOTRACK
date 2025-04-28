@@ -1,6 +1,38 @@
 import React from "react";
+import { createUserWithEmailAndPassword } from "firebase/auth"; // Import Firebase auth method
+import { auth, db } from "../../../firebase"; // Import Firebase auth and Firestore
+import { setDoc, doc, Timestamp } from "firebase/firestore"; // Import Firestore methods
+import { toast } from "react-toastify"; // Import toast for notifications
 
 const AddAdmin = ({ newAdmin, setNewAdmin, handleAddAdmin }) => {
+  const handleAddAdminWithAuth = async () => {
+    try {
+      if (!newAdmin.email || !newAdmin.firstName || !newAdmin.lastName || !newAdmin.password) {
+        toast.error("Please fill in all fields!");
+        return;
+      }
+
+      // Create user in Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(auth, newAdmin.email, newAdmin.password);
+      const user = userCredential.user;
+
+      // Add user details to Firestore
+      await setDoc(doc(db, "Users", user.uid), {
+        email: newAdmin.email,
+        firstName: newAdmin.firstName,
+        lastName: newAdmin.lastName,
+        role: "admin", // Set role as admin
+        createdAt: Timestamp.now(),
+      });
+
+      toast.success("Admin added successfully!");
+      setNewAdmin({ email: "", firstName: "", lastName: "", password: "" }); // Reset form
+    } catch (error) {
+      console.error("Error adding admin:", error);
+      toast.error("Failed to add admin. Please try again.");
+    }
+  };
+
   return (
     <div className="cardBox">
       <h2>Add Admin</h2>
@@ -47,7 +79,7 @@ const AddAdmin = ({ newAdmin, setNewAdmin, handleAddAdmin }) => {
             borderRadius: "5px",
             cursor: "pointer",
           }}
-          onClick={handleAddAdmin}
+          onClick={handleAddAdminWithAuth} // Use the updated function
         >
           Add Admin
         </button>

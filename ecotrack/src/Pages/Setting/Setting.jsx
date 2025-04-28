@@ -78,7 +78,7 @@ const Setting = () => {
         firstName: newAdmin.firstName,
         lastName: newAdmin.lastName,
         password: newAdmin.password, // 🔥 Just remember, ideally passwords should be hashed
-        role: "admin", // ✅ You can set a "role" field to identify this user as Admin
+        role: "admin", // ✅ Ensure the role is set to "admin"
         createdAt: Timestamp.now(),
       });
 

@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, getDocs } from "firebase/firestore";
+import { getFirestore, collection, doc, getDoc, setDoc, updateDoc, getDocs, query, where } from "firebase/firestore";
 import { getDatabase, ref, set, get, update, onValue, remove } from "firebase/database"; // Realtime Database imports
 
 const firebaseConfig = {
@@ -22,8 +22,25 @@ export const db = getFirestore(app);
 export const realtimeDb = getDatabase(app); // Initialize Realtime Database
 
 // Export Firestore utilities
-export { collection, doc, getDoc, setDoc, updateDoc, getDocs };
+export { collection, doc, getDoc, setDoc, updateDoc, getDocs, query, where };
 
 // Export Realtime Database utilities
 export { ref, set, get, update, onValue, remove };
-export { app};
+
+export const getUserRole = async (email) => {
+  try {
+    const usersRef = collection(db, "Users");
+    const q = query(usersRef, where("email", "==", email));
+    const snapshot = await getDocs(q);
+
+    if (!snapshot.empty) {
+      const userDoc = snapshot.docs[0];
+      return userDoc.data().role; // Retrieve the role field
+    }
+  } catch (error) {
+    console.error("Error fetching user role:", error);
+  }
+  return null; // Return null if the user document does not exist or an error occurs
+};
+
+export { app };
