@@ -118,8 +118,8 @@ const Notification = () => {
   const resendNotification = async (notification) => {
     try {
       await axios.post("https://app.nativenotify.com/api/notification", {
-        appId: 29491,
-        appToken: "4xMscEXQvK02ambrgvtOJD",
+        appId: 29647,
+        appToken: "f3orkqJmLhNhN2zVbdtudr",
         title: notification.title,
         body: notification.message,
         dateSent: new Date().toLocaleString(),
