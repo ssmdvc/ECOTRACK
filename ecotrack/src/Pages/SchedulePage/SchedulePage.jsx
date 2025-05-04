@@ -78,6 +78,7 @@ const SchedulePage = () => {
     truckId: "",
     driver: "",
     route: "",
+    wasteType: "",
     estimatedTime: "",
     date: localDate,
   })
@@ -235,7 +236,13 @@ const SchedulePage = () => {
 
   // Add a new schedule to Firestore
   const addSchedule = async () => {
-    if (!newSchedule.truckId || !newSchedule.driver || !newSchedule.route || !newSchedule.estimatedTime) {
+    if (
+      !newSchedule.truckId ||
+      !newSchedule.driver ||
+      !newSchedule.route ||
+      !newSchedule.estimatedTime ||
+      !newSchedule.wasteType
+    ) {
       alert("Please fill in all schedule fields")
       return
     }
@@ -254,7 +261,7 @@ const SchedulePage = () => {
       const dayName = days[dayIndex]
 
       // Update the weekly schedule for this day and truck
-      await updateWeeklySchedule(dayName, newSchedule.truckId, newSchedule.route)
+      await updateWeeklySchedule(dayName, newSchedule.truckId, newSchedule.route, newSchedule.wasteType)
 
       // Reset form
       setNewSchedule({
@@ -262,6 +269,7 @@ const SchedulePage = () => {
         truckId: "",
         driver: "",
         route: "",
+        wasteType: "",
         estimatedTime: "",
         date: localDate,
       })
@@ -296,7 +304,7 @@ const SchedulePage = () => {
 
         // If no other schedules, clear the weekly schedule entry
         if (otherSchedulesForSameDayAndTruck.length === 0) {
-          await updateWeeklySchedule(dayName, scheduleToDelete.truckId, "")
+          await updateWeeklySchedule(dayName, scheduleToDelete.truckId, "", "")
         }
       }
     } catch (error) {
@@ -318,7 +326,7 @@ const SchedulePage = () => {
   }
 
   // Update weekly schedule in Firestore
-  const updateWeeklySchedule = async (day, truckId, newRoute) => {
+  const updateWeeklySchedule = async (day, truckId, newRoute, wasteType) => {
     try {
       // Create a unique ID for the weekly schedule entry
       const docId = `${day}_${truckId}`
@@ -333,6 +341,7 @@ const SchedulePage = () => {
           day,
           truckId,
           route: newRoute,
+          wasteType: wasteType || "",
           updatedAt: new Date().toISOString(),
         },
         { merge: true },
@@ -630,7 +639,7 @@ const SchedulePage = () => {
       const dayName = days[dayIndex]
 
       // Update weekly schedule
-      updateWeeklySchedule(dayName, schedule.truckId, schedule.route)
+      updateWeeklySchedule(dayName, schedule.truckId, schedule.route, schedule.wasteType)
     })
   }
 
@@ -773,6 +782,20 @@ const SchedulePage = () => {
                       <option value="Balagtas">Balagtas</option>
                       <option value="Puhora">Puhora</option>
                     </select>
+                    <select
+                      value={newSchedule.wasteType}
+                      onChange={(e) =>
+                        setNewSchedule({
+                          ...newSchedule,
+                          wasteType: e.target.value,
+                        })
+                      }
+                    >
+                      <option value="">Select Waste Type</option>
+                      <option value="Biodegradable">Biodegradable</option>
+                      <option value="Non-biodegradable">Non-biodegradable</option>
+                    </select>
+
                     <div className="time-input-container">
                       <input
                         type="text"
@@ -821,6 +844,7 @@ const SchedulePage = () => {
                         <th>Truck ID</th>
                         <th>Driver</th>
                         <th>Route</th>
+                        <th>Waste Type</th>
                         <th>Estimated Time</th>
                         <th>Actions</th>
                       </tr>
@@ -843,6 +867,7 @@ const SchedulePage = () => {
                           <td>{schedule.id}</td>
                           <td>{schedule.driver}</td>
                           <td>{schedule.route}</td>
+                          <td>{schedule.wasteType || "-"}</td>
                           <td>{schedule.estimatedTime}</td>
                           <td>
                             <button className="delete-btn" onClick={() => deleteSchedule(schedule.id)}>
@@ -995,6 +1020,8 @@ const SchedulePage = () => {
                               "/placeholder.svg" ||
                               "/placeholder.svg" ||
                               "/placeholder.svg" ||
+                              "/placeholder.svg" ||
+                              "/placeholder.svg" ||
                               "/placeholder.svg"
                             }
                             alt={driver.name}
@@ -1043,6 +1070,8 @@ const SchedulePage = () => {
                               src={
                                 selectedDriver.imageUrl ||
                                 `/placeholder.svg?height=100&width=100` ||
+                                "/placeholder.svg" ||
+                                "/placeholder.svg" ||
                                 "/placeholder.svg" ||
                                 "/placeholder.svg" ||
                                 "/placeholder.svg" ||
