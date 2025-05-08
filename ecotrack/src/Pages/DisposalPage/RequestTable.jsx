@@ -47,8 +47,6 @@ const RequestTable = () => {
     setSelectedStatus(newStatus);
 
     if (newStatus === "Approved") {
-      setResponseModal(true); // Open response modal first
-    } else {
       setConfirmOpen(true); // Otherwise go directly to confirm
     }
   };
@@ -302,7 +300,7 @@ const RequestTable = () => {
         </Dialog>
       )}
 
-      {/* Response Modal */}
+      {/* Response Modal
       <Dialog open={responseModal} onClose={() => setResponseModal(false)}>
         <DialogTitle>Response to Approved Request</DialogTitle>
         <DialogContent>
@@ -329,7 +327,7 @@ const RequestTable = () => {
             Next
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
 
       {/* Confirm Status Change */}
       <Dialog open={confirmOpen} onClose={cancelConfirm}>
