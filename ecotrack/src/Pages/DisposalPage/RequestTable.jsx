@@ -112,12 +112,12 @@ const RequestTable = () => {
       headerName: "Garbage Desc.",
       minWidth: 220,
     },
-    {
-      field: "date",
-      headerName: "Date",
-      minWidth: 180,
-      valueFormatter: (params) => new Date(params.value).toLocaleString(),
-    },
+    // {
+    //   field: "date",
+    //   headerName: "Date",
+    //   minWidth: 180,
+    //   valueFormatter: (params) => new Date(params.value).toLocaleString(),
+    // },
     {
       field: "imageUri",
       headerName: "Image",

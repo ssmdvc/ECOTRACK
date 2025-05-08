@@ -214,14 +214,19 @@ export default function AnalyticsFr() {
         }}
       >
         Analytics
+       
       </div>
+    
+
         <Box className="detailContainer">
           <Box className="cardsContainer">
           <ExportReportsCard onAddDataClick={handleOpen} />
 
 
             <Card>
+              
               <CardContent>
+                
                 <WasteChart data={wasteChartData} title={wasteChartTitle} period={periodWaste} setPeriod={setPeriodWaste} />
               </CardContent>
             </Card>
